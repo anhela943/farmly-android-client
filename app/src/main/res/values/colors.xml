@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="darkGreenCat">#63A51C</color>
+    <color name="greenBackground">#E9FDD9</color>
+    <color name="greenFilter">#BDE69D</color>
+    <color name="lightGreen">#96C672</color>
+
+
+    <color name="grey">#606060</color>
+    <color name="darkGreenTxt">#23651F</color>
+
+    <color name="background">#E6F4DB</color>
+    <color name="bcFav">#57902C</color>
+
+    //search gradiant
+    <color name="greenSrLight">#DDF0CE</color>
+    <color name="greenSrDark">#BDE69D</color>
+
+    //proizvod
+    <color name="greenStrokeLight">#A3DFB8</color>
+    <color name="greenStrokeDark">#86A852</color>
+
+</resources>
