@@ -7,6 +7,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.proba.R
 import com.example.proba.activity.bottomBarView
 
 @Composable
@@ -27,7 +28,10 @@ fun ProductPageScreen() {
                 price = 230,
                 producerName = "Milena Petrovic",
                 review = 2.3,
-                city = "Nis"
+                city = "Nis",
+                imageProduct = R.drawable.basket,
+                imageProducer = R.drawable.user,
+                onBackClick = { }
             )
         }
     }

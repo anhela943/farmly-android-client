@@ -1,7 +1,9 @@
 package com.example.proba.activity.product
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,15 +18,20 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,13 +48,40 @@ fun ProductPageView(
     producerName: String,
     review: Double,
     city: String,
-    Image:
+    @DrawableRes imageProduct: Int,
+    @DrawableRes imageProducer: Int,
+    onBackClick: () -> Unit
 ){
+    Image(
+        painter = painterResource(R.drawable.backgorund),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .fillMaxSize()
+            .graphicsLayer {
+                alpha = 0.5f
+            }
+    )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        IconButton(
+            onClick = onBackClick,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+        ) {
+            Image(
+                painter = painterResource(R.drawable.arrow),
+                contentDescription = "Back",
+                modifier = Modifier
+                        .size(25.dp)
+                        .rotate(180f)
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -85,16 +119,17 @@ fun ProductPageView(
 
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(30.dp)
                         .clip(RoundedCornerShape(10.dp))
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.ic_launcher_background),
+                        painter = painterResource(R.drawable.favorite),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize()
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(10.dp))
 
             Row(
                 modifier = Modifier
@@ -106,9 +141,10 @@ fun ProductPageView(
                     modifier = Modifier
                         .size(60.dp)
                         .clip(RoundedCornerShape(50.dp))
+                        .border(3.dp, colorResource(R.color.grey), CircleShape)
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.ic_launcher_background),
+                        painter = painterResource(imageProducer),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -185,10 +221,15 @@ fun ProductPageView(
                 .width(220.dp)
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(16.dp))
+                .border(
+                    width = 4.dp,
+                    color = colorResource(R.color.darkGreenTxt),
+                    shape = RoundedCornerShape(16.dp)
+                )
                 .align(Alignment.TopCenter)
         ) {
             Image(
-                painter = painterResource(R.drawable.ic_launcher_background),
+                painter = painterResource(imageProduct),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize()
             )
@@ -205,6 +246,9 @@ fun ProductPageViewReview(){
         price = 230,
         producerName = "Milena Petrovic",
         review = 2.3,
-        city = "Nis"
+        city = "Nis",
+        imageProduct = R.drawable.basket,
+        imageProducer = R.drawable.user,
+        onBackClick = { }
     )
 }
