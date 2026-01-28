@@ -54,7 +54,7 @@ fun ProfilePage(
     description: String = "lorem ipsum srnajne neko aaaaa aaaaaaaa aaaaaaaaaaaa lorem ipsum srnajne neko aaaaaaaaaaa"
 ) {
     Scaffold(
-        bottomBar = { bottomBarView(selectedLabel = "Profile") }
+        bottomBar = { bottomBarView() }
     ) { paddingValues ->
         Box(
             modifier = Modifier
