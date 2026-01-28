@@ -195,29 +195,24 @@ private fun FavoriteItem(
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(
-                        text = title,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colorResource(R.color.black)
-                    )
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(R.drawable.favorite),
-                            contentDescription = "Rating",
-                            modifier = Modifier.size(12.dp),
-                            colorFilter = ColorFilter.tint(colorResource(R.color.darkGreenTxt))
+                    Row {
+                        Text(
+                            text = title,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colorResource(R.color.black)
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.width(7.dp))
                         Text(
                             text = rating,
                             fontSize = 12.sp,
                             color = colorResource(R.color.black)
                         )
                     }
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = owner,
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
                         color = colorResource(R.color.black)
                     )
                 }
