@@ -1,24 +1,22 @@
 package com.example.proba.activity.product
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import com.example.proba.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -49,13 +47,11 @@ fun ProductView(
     producerReview: Double,
     city: String,
     @DrawableRes imageProducer: Int,
-    @DrawableRes imageProduct: Int
+    @DrawableRes imageProduct: Int,
+    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = Modifier
-            .wrapContentWidth()
-            .wrapContentHeight()
-            .padding(16.dp),
+        modifier = modifier.wrapContentHeight(),
         shape = RoundedCornerShape(36.dp),
         border = BorderStroke(
             10.dp,
@@ -77,7 +73,7 @@ fun ProductView(
 
             Box(
                 modifier = Modifier
-                    .width(220.dp)
+                    .fillMaxWidth()
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(16.dp))
             ) {
@@ -91,19 +87,20 @@ fun ProductView(
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(90.dp),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
                     Text(
                         text = productName,
-                        fontSize = 22.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = colorResource(R.color.darkGreenTxt)
                     )
                     Text(
                         text = "${price} RSD",
-                        fontSize = 16.sp,
+                        fontSize = 13.sp,
                         color = colorResource(R.color.darkGreenTxt)
                     )
                 }
@@ -125,7 +122,7 @@ fun ProductView(
 
             Row(
                 modifier = Modifier
-                    .wrapContentWidth()
+                    .fillMaxWidth()
                     .wrapContentHeight(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -143,24 +140,22 @@ fun ProductView(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = producer,
-                        fontSize = 16.sp,
+                        fontSize = 13.sp,
                         color = colorResource(R.color.darkGreenTxt)
                     )
                     Text(
-                        text = "Ocena: $producerReview",
-                        fontSize = 14.sp,
+                        text = city,
+                        fontSize = 12.sp,
                         color = colorResource(R.color.darkGreenTxt)
                     )
                 }
 
-                Spacer(modifier = Modifier.width(38.dp))
-
                 Text(
-                    text = city,
-                    fontSize = 14.sp,
+                    text = "$producerReview",
+                    fontSize = 12.sp,
                     color = colorResource(R.color.darkGreenTxt)
                 )
             }
@@ -179,6 +174,9 @@ fun ProductViewPreview() {
         producerReview = 4.5,
         city = "Novi Sad",
         imageProducer = R.drawable.user,
-        imageProduct = R.drawable.basket
+        imageProduct = R.drawable.basket,
+        modifier = Modifier
+            .width(200.dp)
+            .padding(16.dp)
     )
 }

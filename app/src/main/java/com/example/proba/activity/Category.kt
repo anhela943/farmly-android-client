@@ -8,12 +8,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -43,10 +47,9 @@ fun CategoryView(
 ) {
     Card(
         modifier = Modifier
-            .wrapContentWidth()
-            .wrapContentHeight()
-            .padding(16.dp),
-        shape = RoundedCornerShape(46.dp),
+            .height(56.dp)
+            .wrapContentWidth(),
+        shape = RoundedCornerShape(34.dp),
         border = BorderStroke(
             2.dp,
             Brush.verticalGradient(
@@ -56,12 +59,12 @@ fun CategoryView(
                 )
             )
         ),
-        elevation = CardDefaults.cardElevation(6.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
         Row(
             modifier = Modifier
-                .clip(RoundedCornerShape(46.dp))
+                .fillMaxHeight() // 👈 OVO JE KLJUČ
                 .background(
                     Brush.verticalGradient(
                         listOf(
@@ -70,29 +73,27 @@ fun CategoryView(
                         )
                     )
                 )
-                .padding(horizontal = 15.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
+            Image(
+                painter = painterResource(imageCategory),
+                contentDescription = null,
                 modifier = Modifier
-                    .size(50.dp)
-                    .clip(RoundedCornerShape(40.dp))
-            ) {
-                Image(
-                    painter = painterResource(imageCategory),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+                    .size(30.dp)
+                    .clip(CircleShape)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
 
             Text(
                 text = name,
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(R.color.black)
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black
             )
         }
+
     }
 }
 
