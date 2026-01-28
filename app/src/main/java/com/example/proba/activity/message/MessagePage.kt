@@ -3,7 +3,6 @@ package com.example.proba.activity.message
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.Text
@@ -16,13 +15,11 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proba.R
 import com.example.proba.activity.bottomBarView
-import com.example.proba.activity.messageView
 
 
 @Composable
@@ -39,8 +36,6 @@ fun MessagePage(
                 .background(colorResource(R.color.greenBackground))
                 .padding(paddingValues)
         ) {
-
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

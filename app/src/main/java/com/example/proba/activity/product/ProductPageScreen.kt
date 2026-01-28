@@ -31,7 +31,8 @@ fun ProductPageScreen() {
                 city = "Nis",
                 imageProduct = R.drawable.basket,
                 imageProducer = R.drawable.user,
-                onBackClick = { }
+                onBackClick = { },
+                onProducerClick = { }
             )
         }
     }
