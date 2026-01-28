@@ -1,5 +1,6 @@
 package com.example.proba.activity
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,7 +37,10 @@ class Category {
 }
 
 @Composable
-fun CategoryView(name: String) {
+fun CategoryView(
+    name: String,
+    @DrawableRes imageCategory: Int
+) {
     Card(
         modifier = Modifier
             .wrapContentWidth()
@@ -76,7 +80,7 @@ fun CategoryView(name: String) {
                     .clip(RoundedCornerShape(40.dp))
             ) {
                 Image(
-                    painter = painterResource(R.drawable.ic_launcher_background),
+                    painter = painterResource(imageCategory),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -97,5 +101,5 @@ fun CategoryView(name: String) {
 @Preview(showBackground = true)
 @Composable
 fun CategoryViewPreview() {
-    CategoryView(name = "Dairy")
+    CategoryView(name = "Dairy",imageCategory = R.drawable.logo)
 }

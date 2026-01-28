@@ -1,7 +1,9 @@
 package com.example.proba.activity
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,7 +38,8 @@ import com.example.proba.R
 
 @Composable
 fun reviewView(
-    name: String
+    name: String,
+    @DrawableRes imageUser: Int
 ){
     Card(
         modifier = Modifier
@@ -65,9 +69,10 @@ fun reviewView(
                         modifier = Modifier
                             .size(60.dp)
                             .clip(RoundedCornerShape(30.dp))
+                            .border(3.dp, colorResource(R.color.grey), CircleShape)
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.ic_launcher_background),
+                            painter = painterResource(imageUser),
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize()
                         )
@@ -138,6 +143,7 @@ fun reviewView(
 @Composable
 fun reviewViewReview(){
     reviewView(
-        name = "Milena"
+        name = "Milena",
+        imageUser = R.drawable.user
     )
 }

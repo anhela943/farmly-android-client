@@ -81,7 +81,6 @@ fun OnboardingPager(onGetStartedClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun OnboardingPagerPreview() {
-    // Preview ne podržava swipe animacije, ali prikazuje prvi ekran
     MaterialTheme {
         OnboardingPager(
             onGetStartedClick = { /* Preview ne radi ništa */ }

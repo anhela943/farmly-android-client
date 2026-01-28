@@ -1,8 +1,10 @@
 package com.example.proba.activity
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,7 +39,8 @@ import com.example.proba.R
 fun messageView(
     producer: String,
     lastMssg: String,
-    timeMssg: Int
+    timeMssg: Int,
+    @DrawableRes imageUser: Int
 ){
     Card(
         modifier = Modifier
@@ -61,9 +65,10 @@ fun messageView(
                     modifier = Modifier
                         .size(60.dp)
                         .clip(RoundedCornerShape(30.dp))
+                        .border(3.dp, colorResource(R.color.grey), CircleShape)
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.ic_launcher_background),
+                        painter = painterResource(imageUser),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -105,6 +110,7 @@ fun messageViewReview(){
     messageView(
         producer = "Milena",
         lastMssg = "Hvala na ogovoru",
-        timeMssg = 5
+        timeMssg = 5,
+        imageUser = R.drawable.user
     )
 }

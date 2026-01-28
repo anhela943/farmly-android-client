@@ -1,5 +1,6 @@
 package com.example.proba.activity
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,7 +39,8 @@ import com.example.proba.R
 fun favoriteView(
     productName: String,
     review: Double,
-    producer: String
+    producer: String,
+    @DrawableRes imageProduct: Int
 ){
 
     Card(
@@ -81,7 +83,7 @@ fun favoriteView(
                         .clip(RoundedCornerShape(10.dp))
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.ic_launcher_background),
+                        painter = painterResource(imageProduct),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -119,7 +121,7 @@ fun favoriteView(
                         .clip(RoundedCornerShape(40.dp))
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.ic_launcher_background),
+                        painter = painterResource(R.drawable.favorite),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -136,6 +138,7 @@ fun favoriteViewreview(){
     favoriteView(
         productName = "Plums",
         review = 4.2,
-        producer = "Andjela"
+        producer = "Andjela",
+        imageProduct = R.drawable.logo
     )
 }
