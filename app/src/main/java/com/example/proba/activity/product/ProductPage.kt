@@ -85,7 +85,7 @@ fun ProductPageView(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(700.dp)
+                .fillMaxHeight(0.85f)
                 .align(Alignment.BottomCenter)
                 .clip(RoundedCornerShape(topStart = 100.dp, topEnd = 100.dp))
                 .background(colorResource(R.color.greenBackground)),
