@@ -1,5 +1,6 @@
 package com.example.proba.activity
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -18,10 +19,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,15 +39,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proba.R
 
 @Composable
-fun searchView(
-    @DrawableRes imageUser: Int
-){
+fun SearchView(
+    onSearchChange: (String) -> Unit = {},
+    onMenuClick: () -> Unit = {},
+    onSearchClick: () -> Unit = {}
+) {
+    var text by remember { mutableStateOf(TextFieldValue("")) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -58,44 +72,64 @@ fun searchView(
                         )
                     )
                 )
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .border(2.dp, colorResource(R.color.grey), CircleShape)
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Slika korisnika
+                IconButton(
+                    onClick = {
+                        Log.d("SearchView", "MENU kliknut")
+                    },
+                    modifier = Modifier.size(30.dp)
                 ) {
                     Image(
-                        painter = painterResource(imageUser),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize()
+                        painter = painterResource(R.drawable.menu),
+                        contentDescription = "Menu"
                     )
                 }
 
+
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Text(
-                    text = "Search",
-                    fontSize = 15.sp,
-                    color = colorResource(R.color.grey)
+                TextField(
+                    value = text,
+                    onValueChange = {
+                        text = it
+                        onSearchChange(it.text)
+                    },
+                    placeholder = { Text("Search", color = colorResource(R.color.grey)) },
+                    singleLine = true,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedTextColor = colorResource(R.color.black),
+                        unfocusedTextColor = colorResource(R.color.black),
+                        focusedPlaceholderColor = colorResource(R.color.grey),
+                        unfocusedPlaceholderColor = colorResource(R.color.grey),
+                        cursorColor = colorResource(R.color.black),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    )
                 )
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(8.dp))
 
-                Box(
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clip(RoundedCornerShape(20.dp))
+                IconButton(
+                    onClick = {
+                        Log.d("SearchView", "MENU SEARCH")
+                    },
+                    modifier = Modifier.size(30.dp)
                 ) {
                     Image(
                         painter = painterResource(R.drawable.search),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize()
+                        contentDescription = "Search"
                     )
                 }
             }
@@ -105,6 +139,10 @@ fun searchView(
 
 @Preview(showBackground = true)
 @Composable
-fun searchViewReview(){
-    searchView(imageUser = R.drawable.user)
+fun SearchViewPreview() {
+    SearchView(
+        onMenuClick = { println("Menu clicked") },
+        onSearchClick = { println("Search clicked")
+        }
+    )
 }

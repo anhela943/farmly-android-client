@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -63,11 +65,11 @@ fun bottomBarView() {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            BottomBarItem("Home",  icon = R.drawable.home)
-            BottomBarItem("Explore",  icon = R.drawable.search)
-            BottomBarItem("Favorite",  icon = R.drawable.favorite)
-            BottomBarItem("Message",  icon = R.drawable.mssg)
-            BottomBarItem("Profile",  icon = R.drawable.user)
+            BottomBarItem("Home",  icon = R.drawable.home, onClick = { })
+            BottomBarItem("Explore",  icon = R.drawable.search, onClick = { })
+            BottomBarItem("Favorite",  icon = R.drawable.favorite, onClick = { })
+            BottomBarItem("Message",  icon = R.drawable.mssg, onClick = { })
+            BottomBarItem("Profile",  icon = R.drawable.user, onClick = { })
         }
     }
 }
@@ -75,21 +77,19 @@ fun bottomBarView() {
 @Composable
 fun BottomBarItem(
     label: String,
-    @DrawableRes icon: Int
+    @DrawableRes icon: Int,
+    onClick: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .size(20.dp)
-
+        IconButton(
+            onClick = onClick
         ) {
-            Image(
+            Icon(
                 painter = painterResource(icon),
                 contentDescription = label,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.size(24.dp)
             )
         }
 
@@ -102,7 +102,6 @@ fun BottomBarItem(
         )
     }
 }
-
 
 
 @Preview(showBackground = true)

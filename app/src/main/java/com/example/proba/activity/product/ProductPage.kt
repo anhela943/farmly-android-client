@@ -39,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proba.R
-import com.example.proba.activity.searchView
 
 @Composable
 fun ProductPageView(
@@ -50,7 +49,8 @@ fun ProductPageView(
     city: String,
     @DrawableRes imageProduct: Int,
     @DrawableRes imageProducer: Int,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onProducerClick: () -> Unit
 ){
     Image(
         painter = painterResource(R.drawable.backgorund),
@@ -137,7 +137,8 @@ fun ProductPageView(
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
+                IconButton(
+                    onClick = onProducerClick,
                     modifier = Modifier
                         .size(60.dp)
                         .clip(RoundedCornerShape(50.dp))
@@ -249,6 +250,9 @@ fun ProductPageViewReview(){
         city = "Nis",
         imageProduct = R.drawable.basket,
         imageProducer = R.drawable.user,
-        onBackClick = { }
+        onBackClick = { },
+        onProducerClick = {
+           //to producer pfp
+        }
     )
 }

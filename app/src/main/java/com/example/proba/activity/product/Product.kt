@@ -1,5 +1,7 @@
 package com.example.proba.activity.product
 
+import android.util.Log
+import androidx.annotation.DrawableRes
 import com.example.proba.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -20,6 +22,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,7 +47,9 @@ fun ProductView(
     price: Double,
     producer: String,
     producerReview: Double,
-    city: String
+    city: String,
+    @DrawableRes imageProducer: Int,
+    @DrawableRes imageProduct: Int
 ) {
     Card(
         modifier = Modifier
@@ -77,7 +82,7 @@ fun ProductView(
                     .clip(RoundedCornerShape(16.dp))
             ) {
                 Image(
-                    painter = painterResource(R.drawable.ic_launcher_background),
+                    painter = painterResource(imageProduct),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -103,12 +108,17 @@ fun ProductView(
                     )
                 }
 
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.LightGray)
-                )
+                IconButton(
+                    onClick = {
+                        //
+                    },
+                    modifier = Modifier.size(30.dp)
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.favorite),
+                        contentDescription = "Favorite"
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -119,12 +129,17 @@ fun ProductView(
                     .wrapContentHeight(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.Gray)
-                )
+                IconButton(
+                    onClick = {
+
+                    },
+                    modifier = Modifier.size(30.dp)
+                ) {
+                    Image(
+                        painter = painterResource(imageProducer),
+                        contentDescription = "Producer"
+                    )
+                }
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -162,6 +177,8 @@ fun ProductViewPreview() {
         price = 120.0,
         producer = "Marko",
         producerReview = 4.5,
-        city = "Novi Sad"
+        city = "Novi Sad",
+        imageProducer = R.drawable.user,
+        imageProduct = R.drawable.basket
     )
 }

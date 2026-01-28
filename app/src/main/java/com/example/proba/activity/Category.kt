@@ -96,8 +96,6 @@ fun CategoryView(
     }
 }
 
-
-
 @Preview(showBackground = true)
 @Composable
 fun CategoryViewPreview() {
