@@ -65,7 +65,7 @@ fun MessageChatPage(
     @DrawableRes producerAvatar: Int = R.drawable.user,
     @DrawableRes productImage: Int = R.drawable.basket
 ) {
-    var isDropdownExpanded by remember { mutableStateOf(true) }
+    var isDropdownExpanded by remember { mutableStateOf(false) }
     var isReviewVisible by remember { mutableStateOf(false)}
     var messageText by remember { mutableStateOf("") }
     val arrowRotation by animateFloatAsState(
