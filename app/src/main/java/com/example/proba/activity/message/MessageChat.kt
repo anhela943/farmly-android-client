@@ -74,7 +74,7 @@ fun MessageChatPage(
     )
 
     Scaffold(
-        bottomBar = { bottomBarView(selectedLabel = "Message") }
+        bottomBar = { bottomBarView() }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -214,12 +214,20 @@ fun MessageChatPage(
                                             color = colorResource(R.color.grey)
                                         )
                                         Spacer(modifier = Modifier.height(2.dp))
-                                        Text(
-                                            text = productRating,
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.Medium,
-                                            color = colorResource(R.color.grey)
-                                        )
+                                        Row{
+                                            Image(
+                                                painter = painterResource(R.drawable.star),
+                                                contentDescription = "Favorite",
+                                                modifier = Modifier.size(15.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(3.dp))
+                                            Text(
+                                                text = productRating,
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.Medium,
+                                                color = colorResource(R.color.grey)
+                                            )
+                                        }
                                     }
 
                             TextButton(

@@ -222,7 +222,7 @@ private fun FavoriteItem(
                     modifier = Modifier.size(28.dp)
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.favorite),
+                        painter = painterResource(R.drawable.heart),
                         contentDescription = "Favorite",
                         modifier = Modifier.size(22.dp),
                         colorFilter = ColorFilter.tint(colorResource(R.color.darkGreenTxt))

@@ -100,10 +100,10 @@ fun reviewView(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(colorResource(R.color.darkGreenCat))
+                                .background(colorResource(R.color.grey))
                         ) {
                             Image(
-                                painter = painterResource(R.drawable.ic_launcher_background),
+                                painter = painterResource(R.drawable.star),
                                 contentDescription = null,
                                 modifier = Modifier.fillMaxSize()
                             )

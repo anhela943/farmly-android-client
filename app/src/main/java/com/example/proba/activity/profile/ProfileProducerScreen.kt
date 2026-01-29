@@ -169,7 +169,7 @@ fun ProfileProducerView() {
                             ProductView(
                                 productName = "Tomatoes",
                                 price = 200.0,
-                                producer = "Proizvodjac",
+                                producer = "Milena",
                                 producerReview = 4.5,
                                 city = "Niš",
                                 imageProducer = R.drawable.user,
@@ -177,9 +177,9 @@ fun ProfileProducerView() {
                                 modifier = Modifier.weight(1f)
                             )
                             ProductView(
-                                productName = "Potatoes",
+                                productName = "Petra",
                                 price = 220.0,
-                                producer = "Proizvodjac",
+                                producer = "Petra",
                                 producerReview = 4.5,
                                 city = "Niš",
                                 imageProducer = R.drawable.user,
