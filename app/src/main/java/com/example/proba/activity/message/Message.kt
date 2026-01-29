@@ -36,6 +36,7 @@ import com.example.proba.R
 fun messageView(
     producer: String,
     lastMssg: String,
+    productName: String,
     timeMssg: Int,
     @DrawableRes imageUser: Int
 ){
@@ -74,12 +75,22 @@ fun messageView(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Column {
-                    Text(
-                        text = producer,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colorResource(R.color.black)
-                    )
+                    Row{
+                        Text(
+                            text = producer + " -",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colorResource(R.color.black)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = productName,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = colorResource(R.color.black)
+                        )
+                    }
+
                     Row() {
                         Text(
                             text = lastMssg + "    -",
@@ -107,6 +118,7 @@ fun messageViewReview(){
     messageView(
         producer = "Milena",
         lastMssg = "Hvala na ogovoru",
+        productName = "Paradajz",
         timeMssg = 5,
         imageUser = R.drawable.user
     )
