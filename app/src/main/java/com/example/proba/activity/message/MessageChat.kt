@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -64,7 +65,7 @@ fun MessageChatPage(
     @DrawableRes producerAvatar: Int = R.drawable.user,
     @DrawableRes productImage: Int = R.drawable.basket
 ) {
-    var isDropdownExpanded by remember { mutableStateOf(false) }
+    var isDropdownExpanded by remember { mutableStateOf(true) }
     var isReviewVisible by remember { mutableStateOf(false)}
     var messageText by remember { mutableStateOf("") }
     val arrowRotation by animateFloatAsState(
@@ -82,7 +83,8 @@ fun MessageChatPage(
                     Brush.verticalGradient(
                         listOf(
                             colorResource(R.color.greenBackground),
-                            colorResource(R.color.greenSrDark)
+                            colorResource(R.color.greenSrDark),
+                            colorResource(R.color.greenStrokeDark)
                         )
                     )
                 )
@@ -157,19 +159,26 @@ fun MessageChatPage(
 
                     AnimatedVisibility(visible = isDropdownExpanded) {
                         Column(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(1.dp)
-                                    .background(colorResource(R.color.greenStrokeLight).copy(alpha = 0.6f))
+                                    .height(3.dp)
+                                    .shadow(
+                                        elevation = 6.dp,
+                                        shape = RoundedCornerShape(2.dp),
+                                        clip = false
+                                    )
+                                    .background(colorResource(R.color.greenStrokeDark).copy(alpha = 0.7f))
                             )
 
                             Box(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 6.dp)
+                                    .fillMaxWidth(0.92f)
+                                    .widthIn(max = 340.dp)
+                                    .padding(horizontal = 12.dp, vertical = 4.dp)
                                     .clip(RoundedCornerShape(18.dp))
                                     .background(colorResource(R.color.greenSrLight))
                                     .padding(horizontal = 10.dp, vertical = 8.dp)
