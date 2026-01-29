@@ -83,6 +83,7 @@ fun MessagePage(
                     messageView(
                         producer = "Milena",
                         lastMssg = "Hvala na odgovoru",
+                        productName = "Paradajz",
                         timeMssg = 6,
                         imageUser = R.drawable.user
                     )
@@ -92,6 +93,7 @@ fun MessagePage(
                     messageView(
                         producer = "Radomir",
                         lastMssg = "Odličan kvalitet",
+                        productName = "Paradajz",
                         timeMssg = 1,
                         imageUser = R.drawable.user
                     )
@@ -101,6 +103,7 @@ fun MessagePage(
                     messageView(
                         producer = "Elena",
                         lastMssg = "Upravo sam preuzela",
+                        productName = "Paradajz",
                         timeMssg = 16,
                         imageUser = R.drawable.user
                     )
@@ -110,6 +113,7 @@ fun MessagePage(
                     messageView(
                         producer = "Mile",
                         lastMssg = "Sveže i ukusno",
+                        productName = "Paradajz",
                         timeMssg = 3,
                         imageUser = R.drawable.user
                     )

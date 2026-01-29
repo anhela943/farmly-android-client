@@ -1,10 +1,13 @@
 package com.example.proba.activity.message
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,7 +30,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.text.font.FontFamily
@@ -43,6 +45,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,11 +56,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.proba.R
 import com.example.proba.activity.bottomBarView
+import kotlin.math.log
 
 @Composable
 fun MessageChatPage(
     onBackClick: () -> Unit,
-    onLeaveReviewClick: () -> Unit = {},
     producerName: String = "Petra Petrovic Pr",
     productName: String = "Tomatoes",
     productPrice: String = "200 din",
@@ -68,6 +71,14 @@ fun MessageChatPage(
     var isDropdownExpanded by remember { mutableStateOf(false) }
     var isReviewVisible by remember { mutableStateOf(false)}
     var messageText by remember { mutableStateOf("") }
+    val isPreview = LocalInspectionMode.current
+    val logMessageChat: (String) -> Unit = { message ->
+        if (isPreview) {
+            println("MessageChat: $message")
+        } else {
+            Log.d("MessageChat", message)
+        }
+    }
     val arrowRotation by animateFloatAsState(
         targetValue = if (isDropdownExpanded) -90f else 90f,
         label = "dropdownArrowRotation"
@@ -90,11 +101,6 @@ fun MessageChatPage(
                 )
                 .padding(paddingValues)
         ) {
-            val openReview = {
-                isReviewVisible = true
-                onLeaveReviewClick()
-            }
-
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -145,7 +151,10 @@ fun MessageChatPage(
                         )
 
                         IconButton(
-                            onClick = { isDropdownExpanded = !isDropdownExpanded }
+                            onClick = {
+                                isDropdownExpanded = !isDropdownExpanded
+                                logMessageChat("Leave review clicked")
+                            }
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.arrow),
@@ -230,14 +239,22 @@ fun MessageChatPage(
                                         }
                                     }
 
-                            TextButton(
-                                onClick = openReview
-                            ) {
-                                Text(
-                                    text = "Leave review",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = colorResource(R.color.darkGreenTxt)
+                                    Button(
+                                        onClick = {
+                                            isReviewVisible = true
+                                            logMessageChat("Is stanje : " + isReviewVisible)
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.Transparent,
+                                            contentColor = colorResource(R.color.darkGreenTxt)
+                                        ),
+                                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
+                                    ) {
+                                        Text(
+                                            text = "Leave review",
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = colorResource(R.color.darkGreenTxt)
                                         )
                                     }
                                 }
@@ -287,7 +304,10 @@ fun MessageChatPage(
             )
         }
 
+        logMessageChat("Is stanje posle : " + isReviewVisible)
+
         if (isReviewVisible) {
+            logMessageChat("Is stanje unutar IF-a : " + isReviewVisible)
             ReviewOverlay(
                 reviewerName = producerName,
                 reviewerAvatar = producerAvatar,
@@ -307,12 +327,24 @@ private fun ReviewOverlay(
 ) {
     var reviewText by remember { mutableStateOf("") }
 
-    Dialog(onDismissRequest = onDismiss) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(Color.Black.copy(alpha = 0.35f))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    onDismiss()
+                }
+        )
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.55f)
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .align(Alignment.Center),
             shape = RoundedCornerShape(26.dp),
             elevation = CardDefaults.cardElevation(12.dp),
             colors = CardDefaults.cardColors(containerColor = colorResource(R.color.greenSrLight))
@@ -390,6 +422,26 @@ private fun ReviewOverlay(
                 ) {
                     Text(
                         text = "Post the review",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(44.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(R.color.grey)
+                    ),
+                    shape = RoundedCornerShape(22.dp)
+                ) {
+                    Text(
+                        text = "Close",
                         color = Color.White,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold
