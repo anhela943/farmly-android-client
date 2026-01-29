@@ -34,10 +34,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-class Product{
-}
-
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.ui.graphics.graphicsLayer
 
 @Composable
 fun ProductView(
@@ -50,6 +52,9 @@ fun ProductView(
     @DrawableRes imageProduct: Int,
     modifier: Modifier = Modifier
 ) {
+    var isFavorite by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(if (isFavorite) 1.2f else 1f)
+
     Card(
         modifier = modifier.wrapContentHeight(),
         shape = RoundedCornerShape(36.dp),
@@ -106,16 +111,20 @@ fun ProductView(
                 }
 
                 IconButton(
-                    onClick = {
-                        //
-                    },
-                    modifier = Modifier.size(30.dp)
+                    onClick = { isFavorite = !isFavorite },
+                    modifier = Modifier.size(32.dp)
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.favorite),
-                        contentDescription = "Favorite"
+                        painter = painterResource(
+                            if (isFavorite) R.drawable.heart else R.drawable.favorite
+                        ),
+                        contentDescription = "Favorite",
+                        modifier = Modifier.size(
+                            if (isFavorite) 26.dp else 30.dp
+                        )
                     )
                 }
+
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -152,7 +161,13 @@ fun ProductView(
                         color = colorResource(R.color.darkGreenTxt)
                     )
                 }
-
+                
+                Image(
+                    painter = painterResource(R.drawable.star),
+                    contentDescription = "Star",
+                    modifier = Modifier.size(15.dp)
+                )
+                Spacer(modifier = Modifier.width(3.dp))
                 Text(
                     text = "$producerReview",
                     fontSize = 12.sp,

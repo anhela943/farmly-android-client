@@ -161,12 +161,21 @@ fun ProductPageView(
                         color = colorResource(R.color.black)
                     )
                     Spacer(modifier = Modifier.height(7.dp))
-                    Text(
-                        text = "Ocena: $review",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colorResource(R.color.black)
-                    )
+
+                    Row{
+                        Image(
+                            painter = painterResource(R.drawable.star),
+                            contentDescription = "Star",
+                            modifier = Modifier.size(15.dp)
+                        )
+                        Spacer(modifier = Modifier.width(3.dp))
+                        Text(
+                            text = "$review",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colorResource(R.color.black)
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.width(110.dp))
                 Text(
