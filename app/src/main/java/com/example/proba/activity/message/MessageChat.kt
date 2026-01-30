@@ -226,7 +226,7 @@ fun MessageChatPage(
                                             color = colorResource(R.color.grey)
                                         )
                                         Spacer(modifier = Modifier.height(2.dp))
-                                        Row{
+                                        Row {
                                             Image(
                                                 painter = painterResource(R.drawable.star),
                                                 contentDescription = "Favorite",

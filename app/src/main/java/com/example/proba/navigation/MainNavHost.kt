@@ -10,8 +10,11 @@ import com.example.proba.activity.favorite.FavoriteScreenView
 import com.example.proba.activity.message.MessageChatPage
 import com.example.proba.activity.message.MessagePage
 import com.example.proba.activity.product.ProductPageScreen
+import com.example.proba.activity.product.ProductAddView
+import com.example.proba.activity.product.ProductEditView
 import com.example.proba.activity.product.ProducesScreenView
 import com.example.proba.activity.profile.EditProductView
+import com.example.proba.activity.profile.ProfileCreateView
 import com.example.proba.activity.profile.ProfilePage
 import com.example.proba.activity.profile.ProfileProducerView
 import com.example.proba.viewmodel.FavoritesViewModel
@@ -55,10 +58,28 @@ fun MainNavHost(startDestination: String = MainRoutes.Home) {
                 onBackClick = { navController.popBackStack() }
             )
         }
+        composable(MainRoutes.ProfileCreate) {
+            ProfileCreateView(
+                navController = navController,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
         composable(MainRoutes.Product) {
             ProductPageScreen(
                 navController = navController,
                 favoritesViewModel = favoritesViewModel
+            )
+        }
+        composable(MainRoutes.ProductAdd) {
+            ProductAddView(
+                navController = navController,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+        composable(MainRoutes.ProductEdit) {
+            ProductEditView(
+                navController = navController,
+                onBackClick = { navController.popBackStack() }
             )
         }
         composable(MainRoutes.MessageChat) {

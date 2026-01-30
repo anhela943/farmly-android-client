@@ -10,4 +10,7 @@ object MainRoutes {
     const val MessageChat = "message_chat"
     const val ProfileProducer = "profile_producer"
     const val EditProduct = "edit_product"
+    const val ProfileCreate = "profile_create"
+    const val ProductAdd = "product_add"
+    const val ProductEdit = "product_edit"
 }

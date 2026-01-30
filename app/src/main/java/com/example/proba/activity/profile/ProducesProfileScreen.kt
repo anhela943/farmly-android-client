@@ -49,6 +49,7 @@ import com.example.proba.R
 import com.example.proba.activity.bottomBarView
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.proba.navigation.MainRoutes
 
 @Composable
 fun EditProductView(
@@ -221,7 +222,7 @@ fun EditProductView(
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
             Button(
-                onClick = { },
+                onClick = { navController.navigate(MainRoutes.ProductAdd) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp, vertical = 14.dp)

@@ -1,6 +1,7 @@
 package com.example.proba.activity.profile
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,46 +15,63 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.proba.R
-import com.example.proba.activity.bottomBarView
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.proba.navigation.MainRoutes
+import com.example.proba.R
+import com.example.proba.activity.bottomBarView
 
 @Composable
-fun ProfilePage(
+fun ProfileCreateView(
     navController: NavController,
     onBackClick: () -> Unit,
     profileName: String = "Petra Petrovic Pr",
     profileEmail: String = "petra.petrovic@gmail.com",
-    fullName: String = "Petar Petrovic",
-    email: String = "petar@gmail.com",
-    city: String = "Niš",
-    phoneNumber: String = "(+381) 60 1234 456",
-    description: String = "lorem ipsum srnajne neko aaaaa aaaaaaaa aaaaaaaaaaaa lorem ipsum srnajne neko aaaaaaaaaaa"
+    defaultFullName: String = "Petra Petrovic",
+    defaultEmail: String = "petrapetrovic@gmail.com",
+    defaultCity: String = "Niš",
+    defaultPhoneNumber: String = "(+381) 60 1 245 678",
+    defaultPassword: String = ""
 ) {
+    var fullName by rememberSaveable { mutableStateOf(defaultFullName) }
+    var email by rememberSaveable { mutableStateOf(defaultEmail) }
+    var city by rememberSaveable { mutableStateOf(defaultCity) }
+    var phoneNumber by rememberSaveable { mutableStateOf(defaultPhoneNumber) }
+    var password by rememberSaveable { mutableStateOf(defaultPassword) }
+
     Scaffold(
         bottomBar = { bottomBarView(navController) }
     ) { paddingValues ->
@@ -77,6 +95,8 @@ fun ProfilePage(
                     .padding(horizontal = 20.dp)
                     .padding(top = 8.dp)
             ) {
+                val bottomInset = paddingValues.calculateBottomPadding()
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -122,7 +142,11 @@ fun ProfilePage(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 20.dp, vertical = 20.dp),
+                                .padding(
+                                    start = 20.dp,
+                                    end = 20.dp,
+                                    bottom = 15.dp
+                                ),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Spacer(modifier = Modifier.height(78.dp))
@@ -146,41 +170,63 @@ fun ProfilePage(
 
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                ProfileField(label = "Full Name", value = fullName)
-                                ProfileField(label = "Email", value = email)
-                                ProfileField(label = "City", value = city)
-                                ProfileField(label = "Phone Number", value = phoneNumber)
-                                ProfileField(label = "Description", value = description)
+                                ProfileCreateField(
+                                    label = "Full Name",
+                                    value = fullName,
+                                    onValueChange = { fullName = it }
+                                )
+                                ProfileCreateField(
+                                    label = "Email",
+                                    value = email,
+                                    onValueChange = { email = it }
+                                )
+                                ProfileCreateField(
+                                    label = "City",
+                                    value = city,
+                                    onValueChange = { city = it }
+                                )
+                                ProfileCreateField(
+                                    label = "Phone Number",
+                                    value = phoneNumber,
+                                    onValueChange = { phoneNumber = it },
+                                    leadingIcon = {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(12.dp)
+                                                .background(
+                                                    color = colorResource(R.color.darkGreenTxt),
+                                                    shape = CircleShape
+                                                )
+                                        )
+                                    }
+                                )
+                                ProfileCreateField(
+                                    label = "Set Password",
+                                    value = password,
+                                    onValueChange = { password = it },
+                                    isPassword = true
+                                )
                             }
 
-                            Spacer(modifier = Modifier.height(15.dp))
+                            Spacer(modifier = Modifier.height(14.dp))
 
-                            ProfileActionButton(
-                                text = "My products",
-                                containerColor = colorResource(R.color.greenFilter),
-                                contentColor = colorResource(R.color.darkGreenTxt),
-                                onClick = { navController.navigate(MainRoutes.EditProduct) },
-                                modifier = actionButtonModifier
-                            )
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            ProfileActionButton(
-                                text = "Edit profile",
+                            ProfilePrimaryButton(
+                                text = "Save changes",
                                 containerColor = colorResource(R.color.darkGreenTxt),
                                 contentColor = colorResource(R.color.white),
-                                onClick = { navController.navigate(MainRoutes.ProfileCreate) },
+                                onClick = { },
                                 modifier = actionButtonModifier
                             )
+
                             Spacer(modifier = Modifier.height(20.dp))
                         }
                     }
 
                     Card(
                         modifier = Modifier
-                            .size(164.dp)
+                            .size(132.dp)
                             .offset(y = (-48).dp),
                         shape = CircleShape,
                         elevation = CardDefaults.cardElevation(6.dp),
@@ -202,33 +248,68 @@ fun ProfilePage(
 }
 
 @Composable
-private fun ProfileField(
+private fun ProfileCreateField(
     label: String,
-    value: String
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    isPassword: Boolean = false,
+    leadingIcon: (@Composable (() -> Unit))? = null
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Text(
             text = label,
-            fontSize = 20.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = colorResource(R.color.darkGreenTxt)
         )
         Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = value,
-            fontSize = 20.sp,
-            color = colorResource(R.color.black)
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(
+                    elevation = 6.dp,
+                    shape = RoundedCornerShape(12.dp),
+                    clip = false
+                )
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(12.dp)
+                )
+        ) {
+            OutlinedTextField(
+                value = value,
+                onValueChange = onValueChange,
+                singleLine = true,
+                leadingIcon = leadingIcon,
+                visualTransformation = if (isPassword) {
+                    PasswordVisualTransformation()
+                } else {
+                    VisualTransformation.None
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedTextColor = colorResource(R.color.black),
+                    unfocusedTextColor = colorResource(R.color.black),
+                    cursorColor = colorResource(R.color.darkGreenTxt)
+                )
+            )
+        }
     }
 }
 
 @Composable
-private fun ProfileActionButton(
+private fun ProfilePrimaryButton(
     text: String,
-    containerColor: androidx.compose.ui.graphics.Color,
-    contentColor: androidx.compose.ui.graphics.Color,
+    containerColor: Color,
+    contentColor: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -254,8 +335,8 @@ private fun ProfileActionButton(
 
 @Preview(showBackground = true)
 @Composable
-fun ProfilePagePreview() {
-    ProfilePage(
+fun ProfileCreatePreview() {
+    ProfileCreateView(
         navController = rememberNavController(),
         onBackClick = {}
     )
