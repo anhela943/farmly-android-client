@@ -23,6 +23,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,9 +33,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.proba.R
 import com.example.proba.activity.homePage.CategoryView
 import com.example.proba.activity.product.ProductView
+import com.example.proba.model.ProductUi
+import com.example.proba.viewmodel.FavoritesViewModel
+import com.example.proba.navigation.MainRoutes
 
 @Composable
-fun HomePage() {
+fun HomePage(
+    navController: NavController,
+    favoritesViewModel: FavoritesViewModel = viewModel()
+) {
     var showFilter by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -123,7 +132,7 @@ fun HomePage() {
                     fontWeight = FontWeight.Bold,
                     color = colorResource(R.color.darkGreenTxt),
                     modifier = Modifier.clickable {
-                        // TODO: Navigate to Products page
+                        navController.navigate(MainRoutes.Explore)
                     }
                 )
             }
@@ -140,25 +149,47 @@ fun HomePage() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    ProductView(
-                        productName = "Tomatoes",
+                    val productLeft = ProductUi.from(
+                        name = "Tomatoes",
                         price = 200.0,
                         producer = "Proizvodjac",
                         producerReview = 4.5,
                         city = "Niš",
                         imageProducer = R.drawable.user,
-                        imageProduct = R.drawable.basket,
+                        imageProduct = R.drawable.basket
+                    )
+                    ProductView(
+                        productName = productLeft.name,
+                        price = productLeft.price,
+                        producer = productLeft.producer,
+                        producerReview = productLeft.producerReview,
+                        city = productLeft.city,
+                        imageProducer = productLeft.imageProducer,
+                        imageProduct = productLeft.imageProduct,
+                        isFavorite = favoritesViewModel.isFavorite(productLeft),
+                        onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
                         modifier = Modifier.weight(1f)
                     )
 
-                    ProductView(
-                        productName = "Potatoes",
+                    val productRight = ProductUi.from(
+                        name = "Potatoes",
                         price = 220.0,
                         producer = "Proizvodjac",
                         producerReview = 4.5,
                         city = "Niš",
                         imageProducer = R.drawable.user,
-                        imageProduct = R.drawable.basket,
+                        imageProduct = R.drawable.basket
+                    )
+                    ProductView(
+                        productName = productRight.name,
+                        price = productRight.price,
+                        producer = productRight.producer,
+                        producerReview = productRight.producerReview,
+                        city = productRight.city,
+                        imageProducer = productRight.imageProducer,
+                        imageProduct = productRight.imageProduct,
+                        isFavorite = favoritesViewModel.isFavorite(productRight),
+                        onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -167,25 +198,47 @@ fun HomePage() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    ProductView(
-                        productName = "Apples",
+                    val productLeft = ProductUi.from(
+                        name = "Apples",
                         price = 180.0,
                         producer = "Proizvodjac",
                         producerReview = 4.2,
                         city = "Novi Sad",
                         imageProducer = R.drawable.user,
-                        imageProduct = R.drawable.basket,
+                        imageProduct = R.drawable.basket
+                    )
+                    ProductView(
+                        productName = productLeft.name,
+                        price = productLeft.price,
+                        producer = productLeft.producer,
+                        producerReview = productLeft.producerReview,
+                        city = productLeft.city,
+                        imageProducer = productLeft.imageProducer,
+                        imageProduct = productLeft.imageProduct,
+                        isFavorite = favoritesViewModel.isFavorite(productLeft),
+                        onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
                         modifier = Modifier.weight(1f)
                     )
 
-                    ProductView(
-                        productName = "Carrots",
+                    val productRight = ProductUi.from(
+                        name = "Carrots",
                         price = 150.0,
                         producer = "Proizvodjac",
                         producerReview = 4.7,
                         city = "Beograd",
                         imageProducer = R.drawable.user,
-                        imageProduct = R.drawable.basket,
+                        imageProduct = R.drawable.basket
+                    )
+                    ProductView(
+                        productName = productRight.name,
+                        price = productRight.price,
+                        producer = productRight.producer,
+                        producerReview = productRight.producerReview,
+                        city = productRight.city,
+                        imageProducer = productRight.imageProducer,
+                        imageProduct = productRight.imageProduct,
+                        isFavorite = favoritesViewModel.isFavorite(productRight),
+                        onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -198,7 +251,7 @@ fun HomePage() {
             modifier = Modifier
                 .align(Alignment.BottomCenter)
         ) {
-            bottomBarView()
+            bottomBarView(navController)
         }
 
         FilterView(
@@ -215,5 +268,7 @@ fun HomePage() {
 @Preview(showBackground = true)
 @Composable
 fun HomePagePreview() {
-    HomePage()
+    HomePage(
+        navController = rememberNavController()
+    )
 }

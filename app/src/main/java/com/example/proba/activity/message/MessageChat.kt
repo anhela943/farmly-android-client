@@ -56,10 +56,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.proba.R
 import com.example.proba.activity.bottomBarView
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import kotlin.math.log
 
 @Composable
 fun MessageChatPage(
+    navController: NavController,
     onBackClick: () -> Unit,
     producerName: String = "Petra Petrovic Pr",
     productName: String = "Tomatoes",
@@ -85,7 +88,7 @@ fun MessageChatPage(
     )
 
     Scaffold(
-        bottomBar = { bottomBarView() }
+        bottomBar = { bottomBarView(navController) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -482,5 +485,8 @@ private fun MessageBubble(
 @Preview(showBackground = true)
 @Composable
 fun MessageChatPagePreview() {
-    MessageChatPage(onBackClick = {})
+    MessageChatPage(
+        navController = rememberNavController(),
+        onBackClick = {}
+    )
 }

@@ -1,0 +1,13 @@
+package com.example.proba.navigation
+
+object MainRoutes {
+    const val Home = "home"
+    const val Explore = "explore"
+    const val Favorite = "favorite"
+    const val Message = "message"
+    const val Profile = "profile"
+    const val Product = "product"
+    const val MessageChat = "message_chat"
+    const val ProfileProducer = "profile_producer"
+    const val EditProduct = "edit_product"
+}

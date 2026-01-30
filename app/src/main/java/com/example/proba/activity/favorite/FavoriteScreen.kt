@@ -23,8 +23,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -40,19 +38,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proba.R
 import com.example.proba.activity.SearchView
 import com.example.proba.activity.bottomBarView
+import com.example.proba.viewmodel.FavoritesViewModel
 
 @Composable
-fun FavoriteScreenView() {
-    val favorites = remember {
-        mutableStateListOf(
-            FavoriteItemUi("Plum", "4.5", "Petra Petrovic", R.drawable.basket),
-            FavoriteItemUi("Potatoes", "4.5", "Petra Petrovic", R.drawable.basket),
-            FavoriteItemUi("Tomatoes", "4.5", "Milena Ratkovic", R.drawable.basket)
-        )
-    }
+fun FavoriteScreenView(
+    navController: NavController,
+    favoritesViewModel: FavoritesViewModel = viewModel()
+) {
+    val favorites = favoritesViewModel.favorites
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -80,7 +79,7 @@ fun FavoriteScreenView() {
             ) {
                 IconButton(
                     onClick = {
-                        // TODO: Navigate back
+                        navController.popBackStack()
                     },
                     modifier = Modifier.size(30.dp)
                 ) {
@@ -118,19 +117,48 @@ fun FavoriteScreenView() {
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                favorites.forEach { item ->
-                    FavoriteItem(
-                        title = item.title,
-                        rating = item.rating,
-                        owner = item.owner,
-                        image = item.image,
-                        onCardClick = {
-                            // TODO: Navigate to product details
-                        },
-                        onHeartClick = {
-                            favorites.remove(item)
-                        }
-                    )
+                if (favorites.isEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 40.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.favorite),
+                            contentDescription = "No favorites",
+                            modifier = Modifier.size(68.dp),
+                            colorFilter = ColorFilter.tint(colorResource(R.color.darkGreenTxt))
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Nema favorita",
+                            fontSize = 26.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = colorResource(R.color.darkGreenTxt)
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Dodaj proizvode klikom na srce",
+                            fontSize = 18.sp,
+                            color = colorResource(R.color.darkGreenTxt)
+                        )
+                    }
+                } else {
+                    favorites.forEach { item ->
+                        FavoriteItem(
+                            title = item.name,
+                            rating = item.producerReview,
+                            owner = item.producer,
+                            image = item.imageProduct,
+                            onCardClick = {
+                                // TODO: Navigate to product details
+                            },
+                            onHeartClick = {
+                                favoritesViewModel.removeFavorite(item)
+                            }
+                        )
+                    }
                 }
             }
 
@@ -140,7 +168,7 @@ fun FavoriteScreenView() {
         Column(
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
-            bottomBarView()
+            bottomBarView(navController)
         }
     }
 }
@@ -148,7 +176,7 @@ fun FavoriteScreenView() {
 @Composable
 private fun FavoriteItem(
     title: String,
-    rating: String,
+    rating: Double,
     owner: String,
     image: Int,
     onCardClick: () -> Unit,
@@ -204,7 +232,7 @@ private fun FavoriteItem(
                         )
                         Spacer(modifier = Modifier.width(7.dp))
                         Text(
-                            text = rating,
+                            text = rating.toString(),
                             fontSize = 12.sp,
                             color = colorResource(R.color.black)
                         )
@@ -233,15 +261,10 @@ private fun FavoriteItem(
     }
 }
 
-private data class FavoriteItemUi(
-    val title: String,
-    val rating: String,
-    val owner: String,
-    val image: Int
-)
-
 @Preview(showBackground = true)
 @Composable
 fun FavoriteScreenViewPreview() {
-    FavoriteScreenView()
+    FavoriteScreenView(
+        navController = rememberNavController()
+    )
 }

@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,7 +39,8 @@ fun messageView(
     lastMssg: String,
     productName: String,
     timeMssg: Int,
-    @DrawableRes imageUser: Int
+    @DrawableRes imageUser: Int,
+    onClick: () -> Unit = {}
 ){
     Card(
         modifier = Modifier
@@ -54,6 +56,7 @@ fun messageView(
                 .fillMaxWidth()
                 .background(colorResource(R.color.greenSrLight))
                 .padding(16.dp)
+                .clickable { onClick() }
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),

@@ -20,14 +20,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proba.R
 import com.example.proba.activity.bottomBarView
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.proba.navigation.MainRoutes
 
 
 @Composable
 fun MessagePage(
+    navController: NavController,
     onBackClick: () -> Unit
 ) {
     Scaffold(
-        bottomBar = { bottomBarView() }
+        bottomBar = { bottomBarView(navController) }
     ) { paddingValues ->
 
         Column(
@@ -85,7 +89,8 @@ fun MessagePage(
                         lastMssg = "Hvala na odgovoru",
                         productName = "Paradajz",
                         timeMssg = 6,
-                        imageUser = R.drawable.user
+                        imageUser = R.drawable.user,
+                        onClick = { navController.navigate(MainRoutes.MessageChat) }
                     )
                 }
 
@@ -95,7 +100,8 @@ fun MessagePage(
                         lastMssg = "Odličan kvalitet",
                         productName = "Paradajz",
                         timeMssg = 1,
-                        imageUser = R.drawable.user
+                        imageUser = R.drawable.user,
+                        onClick = { navController.navigate(MainRoutes.MessageChat) }
                     )
                 }
 
@@ -105,7 +111,8 @@ fun MessagePage(
                         lastMssg = "Upravo sam preuzela",
                         productName = "Paradajz",
                         timeMssg = 16,
-                        imageUser = R.drawable.user
+                        imageUser = R.drawable.user,
+                        onClick = { navController.navigate(MainRoutes.MessageChat) }
                     )
                 }
 
@@ -115,7 +122,8 @@ fun MessagePage(
                         lastMssg = "Sveže i ukusno",
                         productName = "Paradajz",
                         timeMssg = 3,
-                        imageUser = R.drawable.user
+                        imageUser = R.drawable.user,
+                        onClick = { navController.navigate(MainRoutes.MessageChat) }
                     )
                 }
             }
@@ -127,5 +135,8 @@ fun MessagePage(
 @Preview(showBackground = true)
 @Composable
 fun MessagePagePreview() {
-    MessagePage(onBackClick = {})
+    MessagePage(
+        navController = rememberNavController(),
+        onBackClick = {}
+    )
 }

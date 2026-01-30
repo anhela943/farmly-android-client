@@ -17,6 +17,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -28,12 +32,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proba.R
+import com.example.proba.activity.FilterView
 import com.example.proba.activity.SearchView
 import com.example.proba.activity.bottomBarView
+import com.example.proba.model.ProductUi
+import com.example.proba.viewmodel.FavoritesViewModel
 
 @Composable
-fun ProducesScreenView() {
+fun ProducesScreenView(
+    navController: NavController,
+    favoritesViewModel: FavoritesViewModel = viewModel()
+) {
+    var showFilter by remember { mutableStateOf(false) }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.backgorund),
@@ -62,7 +78,7 @@ fun ProducesScreenView() {
             ) {
                 IconButton(
                     onClick = {
-                        // TODO: Navigate back
+                        navController.popBackStack()
                     },
                     modifier = Modifier.size(30.dp)
                 ) {
@@ -78,7 +94,7 @@ fun ProducesScreenView() {
 
                 Box(modifier = Modifier.weight(1f)) {
                     SearchView(
-                        onMenuClick = { /* TODO */ },
+                        onMenuClick = { showFilter = true },
                         onSearchClick = { /* TODO */ },
                         onSearchChange = { query -> /* TODO */ }
                     )
@@ -105,24 +121,46 @@ fun ProducesScreenView() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    ProductView(
-                        productName = "Tomatoes",
+                    val productLeft = ProductUi.from(
+                        name = "Tomatoes",
                         price = 200.0,
                         producer = "Proizvodjac",
                         producerReview = 4.5,
                         city = "Niš",
                         imageProducer = R.drawable.user,
-                        imageProduct = R.drawable.basket,
-                        modifier = Modifier.weight(1f)
+                        imageProduct = R.drawable.basket
                     )
                     ProductView(
-                        productName = "Potatoes",
+                        productName = productLeft.name,
+                        price = productLeft.price,
+                        producer = productLeft.producer,
+                        producerReview = productLeft.producerReview,
+                        city = productLeft.city,
+                        imageProducer = productLeft.imageProducer,
+                        imageProduct = productLeft.imageProduct,
+                        isFavorite = favoritesViewModel.isFavorite(productLeft),
+                        onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
+                        modifier = Modifier.weight(1f)
+                    )
+                    val productRight = ProductUi.from(
+                        name = "Potatoes",
                         price = 220.0,
                         producer = "Proizvodjac",
                         producerReview = 4.5,
                         city = "Niš",
                         imageProducer = R.drawable.user,
-                        imageProduct = R.drawable.basket,
+                        imageProduct = R.drawable.basket
+                    )
+                    ProductView(
+                        productName = productRight.name,
+                        price = productRight.price,
+                        producer = productRight.producer,
+                        producerReview = productRight.producerReview,
+                        city = productRight.city,
+                        imageProducer = productRight.imageProducer,
+                        imageProduct = productRight.imageProduct,
+                        isFavorite = favoritesViewModel.isFavorite(productRight),
+                        onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -131,24 +169,46 @@ fun ProducesScreenView() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    ProductView(
-                        productName = "Strawberry",
+                    val productLeft = ProductUi.from(
+                        name = "Strawberry",
                         price = 250.0,
                         producer = "Proizvodjac",
                         producerReview = 4.5,
                         city = "Niš",
                         imageProducer = R.drawable.user,
-                        imageProduct = R.drawable.basket,
-                        modifier = Modifier.weight(1f)
+                        imageProduct = R.drawable.basket
                     )
                     ProductView(
-                        productName = "Plum",
+                        productName = productLeft.name,
+                        price = productLeft.price,
+                        producer = productLeft.producer,
+                        producerReview = productLeft.producerReview,
+                        city = productLeft.city,
+                        imageProducer = productLeft.imageProducer,
+                        imageProduct = productLeft.imageProduct,
+                        isFavorite = favoritesViewModel.isFavorite(productLeft),
+                        onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
+                        modifier = Modifier.weight(1f)
+                    )
+                    val productRight = ProductUi.from(
+                        name = "Plum",
                         price = 300.0,
                         producer = "Proizvodjac",
                         producerReview = 4.5,
                         city = "Niš",
                         imageProducer = R.drawable.user,
-                        imageProduct = R.drawable.basket,
+                        imageProduct = R.drawable.basket
+                    )
+                    ProductView(
+                        productName = productRight.name,
+                        price = productRight.price,
+                        producer = productRight.producer,
+                        producerReview = productRight.producerReview,
+                        city = productRight.city,
+                        imageProducer = productRight.imageProducer,
+                        imageProduct = productRight.imageProduct,
+                        isFavorite = favoritesViewModel.isFavorite(productRight),
+                        onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -157,24 +217,46 @@ fun ProducesScreenView() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    ProductView(
-                        productName = "Potatoes",
+                    val productLeft = ProductUi.from(
+                        name = "Potatoes",
                         price = 220.0,
                         producer = "Proizvodjac",
                         producerReview = 4.5,
                         city = "Niš",
                         imageProducer = R.drawable.user,
-                        imageProduct = R.drawable.basket,
-                        modifier = Modifier.weight(1f)
+                        imageProduct = R.drawable.basket
                     )
                     ProductView(
-                        productName = "Strawberry",
+                        productName = productLeft.name,
+                        price = productLeft.price,
+                        producer = productLeft.producer,
+                        producerReview = productLeft.producerReview,
+                        city = productLeft.city,
+                        imageProducer = productLeft.imageProducer,
+                        imageProduct = productLeft.imageProduct,
+                        isFavorite = favoritesViewModel.isFavorite(productLeft),
+                        onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
+                        modifier = Modifier.weight(1f)
+                    )
+                    val productRight = ProductUi.from(
+                        name = "Strawberry",
                         price = 250.0,
                         producer = "Proizvodjac",
                         producerReview = 4.5,
                         city = "Niš",
                         imageProducer = R.drawable.user,
-                        imageProduct = R.drawable.basket,
+                        imageProduct = R.drawable.basket
+                    )
+                    ProductView(
+                        productName = productRight.name,
+                        price = productRight.price,
+                        producer = productRight.producer,
+                        producerReview = productRight.producerReview,
+                        city = productRight.city,
+                        imageProducer = productRight.imageProducer,
+                        imageProduct = productRight.imageProduct,
+                        isFavorite = favoritesViewModel.isFavorite(productRight),
+                        onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -186,13 +268,23 @@ fun ProducesScreenView() {
         Column(
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
-            bottomBarView()
+            bottomBarView(navController)
         }
+
+        FilterView(
+            isOpen = showFilter,
+            onDismiss = { showFilter = false },
+            modifier = Modifier
+                .fillMaxSize()
+                .zIndex(2f)
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun ProducesScreenViewPreview() {
-    ProducesScreenView()
+    ProducesScreenView(
+        navController = rememberNavController()
+    )
 }

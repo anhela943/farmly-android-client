@@ -9,12 +9,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.proba.R
 import com.example.proba.activity.bottomBarView
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun ProductPageScreen() {
+fun ProductPageScreen(
+    navController: NavController
+) {
     Scaffold(
         bottomBar = {
-            bottomBarView()
+            bottomBarView(navController)
         }
     ) { paddingValues ->
 
@@ -31,7 +35,7 @@ fun ProductPageScreen() {
                 city = "Nis",
                 imageProduct = R.drawable.basket,
                 imageProducer = R.drawable.user,
-                onBackClick = { },
+                onBackClick = { navController.popBackStack() },
                 onProducerClick = { }
             )
         }
@@ -41,5 +45,5 @@ fun ProductPageScreen() {
 @Preview(showBackground = true)
 @Composable
 fun ProductPageScreenPreview() {
-    ProductPageScreen()
+    ProductPageScreen(rememberNavController())
 }

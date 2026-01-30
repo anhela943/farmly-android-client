@@ -37,6 +37,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proba.R
+import com.example.proba.navigation.MainRoutes
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import org.w3c.dom.Text
 
 class bottomBar{
@@ -44,9 +49,23 @@ class bottomBar{
 }
 
 @Composable
-fun bottomBarView() {
+fun bottomBarView(
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
+    val navBackStackEntry = navController.currentBackStackEntryAsState().value
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    val items = listOf(
+        BottomBarDestination("Home", R.drawable.home, MainRoutes.Home),
+        BottomBarDestination("Explore", R.drawable.search, MainRoutes.Explore),
+        BottomBarDestination("Favorite", R.drawable.favorite, MainRoutes.Favorite),
+        BottomBarDestination("Message", R.drawable.mssg, MainRoutes.Message),
+        BottomBarDestination("Profile", R.drawable.user, MainRoutes.Profile)
+    )
+
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(
             topStart = 40.dp,
@@ -65,19 +84,39 @@ fun bottomBarView() {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            BottomBarItem("Home",  icon = R.drawable.home, onClick = { })
-            BottomBarItem("Explore",  icon = R.drawable.search, onClick = { })
-            BottomBarItem("Favorite",  icon = R.drawable.favorite, onClick = { })
-            BottomBarItem("Message",  icon = R.drawable.mssg, onClick = { })
-            BottomBarItem("Profile",  icon = R.drawable.user, onClick = { })
+            items.forEach { item ->
+                BottomBarItem(
+                    label = item.label,
+                    icon = item.icon,
+                    selected = currentRoute == item.route,
+                    onClick = {
+                        if (currentRoute != item.route) {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    }
+                )
+            }
         }
     }
 }
+
+private data class BottomBarDestination(
+    val label: String,
+    @DrawableRes val icon: Int,
+    val route: String
+)
 
 @Composable
 fun BottomBarItem(
     label: String,
     @DrawableRes icon: Int,
+    selected: Boolean,
     onClick: () -> Unit
 ) {
     Column(
@@ -98,7 +137,11 @@ fun BottomBarItem(
         Text(
             text = label,
             fontSize = 10.sp,
-            color = colorResource(R.color.black)
+            color = if (selected) {
+                colorResource(R.color.darkGreenTxt)
+            } else {
+                colorResource(R.color.black)
+            }
         )
     }
 }
@@ -107,5 +150,5 @@ fun BottomBarItem(
 @Preview(showBackground = true)
 @Composable
 fun bottomBarViewPreview(){
-    bottomBarView()
+    bottomBarView(rememberNavController())
 }

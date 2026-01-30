@@ -41,9 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proba.R
 import com.example.proba.activity.bottomBarView
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun ProfilePage(
+    navController: NavController,
     onBackClick: () -> Unit,
     profileName: String = "Petra Petrovic Pr",
     profileEmail: String = "petra.petrovic@gmail.com",
@@ -54,7 +57,7 @@ fun ProfilePage(
     description: String = "lorem ipsum srnajne neko aaaaa aaaaaaaa aaaaaaaaaaaa lorem ipsum srnajne neko aaaaaaaaaaa"
 ) {
     Scaffold(
-        bottomBar = { bottomBarView() }
+        bottomBar = { bottomBarView(navController) }
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -234,5 +237,8 @@ private fun ProfileField(
 @Preview(showBackground = true)
 @Composable
 fun ProfilePagePreview() {
-    ProfilePage(onBackClick = {})
+    ProfilePage(
+        navController = rememberNavController(),
+        onBackClick = {}
+    )
 }

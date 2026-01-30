@@ -47,9 +47,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proba.R
 import com.example.proba.activity.bottomBarView
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun EditProductView() {
+fun EditProductView(
+    navController: NavController
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.backgorund),
@@ -91,7 +95,7 @@ fun EditProductView() {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(
-                            onClick = { },
+                            onClick = { navController.popBackStack() },
                             modifier = Modifier
                                 .size(30.dp)
                                 .offset(x = (-16).dp, y = (-50).dp)
@@ -233,7 +237,7 @@ fun EditProductView() {
                 Text(text = "Add product", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             }
 
-            bottomBarView()
+            bottomBarView(navController)
         }
     }
 }
@@ -357,5 +361,5 @@ private fun EditIconButton() {
 @Preview(showBackground = true)
 @Composable
 fun EditProductViewPreview() {
-    EditProductView()
+    EditProductView(rememberNavController())
 }

@@ -34,11 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.graphicsLayer
 
 @Composable
@@ -50,9 +47,10 @@ fun ProductView(
     city: String,
     @DrawableRes imageProducer: Int,
     @DrawableRes imageProduct: Int,
+    isFavorite: Boolean,
+    onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var isFavorite by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(if (isFavorite) 1.2f else 1f)
 
     Card(
@@ -111,7 +109,7 @@ fun ProductView(
                 }
 
                 IconButton(
-                    onClick = { isFavorite = !isFavorite },
+                    onClick = onFavoriteClick,
                     modifier = Modifier.size(32.dp)
                 ) {
                     Image(
@@ -119,9 +117,9 @@ fun ProductView(
                             if (isFavorite) R.drawable.heart else R.drawable.favorite
                         ),
                         contentDescription = "Favorite",
-                        modifier = Modifier.size(
-                            if (isFavorite) 26.dp else 30.dp
-                        )
+                        modifier = Modifier
+                            .size(if (isFavorite) 26.dp else 30.dp)
+                            .graphicsLayer(scaleX = scale, scaleY = scale)
                     )
                 }
 
@@ -190,6 +188,8 @@ fun ProductViewPreview() {
         city = "Novi Sad",
         imageProducer = R.drawable.user,
         imageProduct = R.drawable.basket,
+        isFavorite = false,
+        onFavoriteClick = {},
         modifier = Modifier
             .width(200.dp)
             .padding(16.dp)
