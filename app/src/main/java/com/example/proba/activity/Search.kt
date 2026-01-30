@@ -82,6 +82,7 @@ fun SearchView(
                 IconButton(
                     onClick = {
                         Log.d("SearchView", "MENU kliknut")
+                        onMenuClick()
                     },
                     modifier = Modifier.size(30.dp)
                 ) {
@@ -124,6 +125,7 @@ fun SearchView(
                 IconButton(
                     onClick = {
                         Log.d("SearchView", "MENU SEARCH")
+                        onSearchClick()
                     },
                     modifier = Modifier.size(30.dp)
                 ) {
