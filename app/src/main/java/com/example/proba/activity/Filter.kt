@@ -100,7 +100,7 @@ private fun FilterPanel(modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
     val expanded = remember { mutableStateMapOf<String, Boolean>() }
     val selected = remember { mutableStateMapOf<String, Boolean>() }
-    var priceRange by remember { mutableStateOf(15f..75f) }
+    var priceRange by remember { mutableStateOf(0f..5000f) }
     var city by remember { mutableStateOf("") }
 
     val categories = remember {

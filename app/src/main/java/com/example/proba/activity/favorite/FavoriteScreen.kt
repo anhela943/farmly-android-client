@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +46,7 @@ import com.example.proba.R
 import com.example.proba.activity.SearchView
 import com.example.proba.activity.bottomBarView
 import com.example.proba.viewmodel.FavoritesViewModel
+import com.example.proba.navigation.MainRoutes
 
 @Composable
 fun FavoriteScreenView(
@@ -69,7 +71,7 @@ fun FavoriteScreenView(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 100.dp)
         ) {
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(60.dp))
 
             Row(
                 modifier = Modifier
@@ -89,28 +91,21 @@ fun FavoriteScreenView(
                         modifier = Modifier.rotate(180f)
                     )
                 }
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                Box(modifier = Modifier.weight(1f)) {
-                    SearchView(
-                        onMenuClick = { /* TODO */ },
-                        onSearchClick = { /* TODO */ },
-                        onSearchChange = { query -> /* TODO */ }
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Favorites",
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.darkGreenTxt),
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
+                Spacer(modifier = Modifier.size(30.dp))
             }
-
             Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = "Favorites",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(R.color.darkGreenTxt),
-                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
-            )
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -152,7 +147,7 @@ fun FavoriteScreenView(
                             owner = item.producer,
                             image = item.imageProduct,
                             onCardClick = {
-                                // TODO: Navigate to product details
+                                navController.navigate(MainRoutes.Product)
                             },
                             onHeartClick = {
                                 favoritesViewModel.removeFavorite(item)

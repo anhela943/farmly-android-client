@@ -11,6 +11,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ import com.example.proba.activity.product.ProductView
 import com.example.proba.model.ProductUi
 import com.example.proba.viewmodel.FavoritesViewModel
 import com.example.proba.navigation.MainRoutes
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomePage(
@@ -43,6 +45,17 @@ fun HomePage(
     favoritesViewModel: FavoritesViewModel = viewModel()
 ) {
     var showFilter by remember { mutableStateOf(false) }
+    val adImages = remember {
+        listOf(R.drawable.onboarding1, R.drawable.onboarding2, R.drawable.onboarding3)
+    }
+    var adIndex by remember { mutableStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(3500)
+            adIndex = (adIndex + 1) % adImages.size
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -51,7 +64,7 @@ fun HomePage(
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer {
-                    alpha = 0.5f
+                    alpha = 0.25f
                 },
             contentScale = ContentScale.Crop
         )
@@ -68,7 +81,7 @@ fun HomePage(
                 onSearchClick = { /* TODO */ },
                 onSearchChange = { query -> /* TODO */ }
             )
-
+            //reklama
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -79,7 +92,7 @@ fun HomePage(
                 colors = CardDefaults.cardColors(containerColor = Color.Transparent)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.onboarding2),
+                    painter = painterResource(id = adImages[adIndex]),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -167,6 +180,8 @@ fun HomePage(
                         imageProducer = productLeft.imageProducer,
                         imageProduct = productLeft.imageProduct,
                         isFavorite = favoritesViewModel.isFavorite(productLeft),
+                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
                         modifier = Modifier.weight(1f)
                     )
@@ -189,6 +204,8 @@ fun HomePage(
                         imageProducer = productRight.imageProducer,
                         imageProduct = productRight.imageProduct,
                         isFavorite = favoritesViewModel.isFavorite(productRight),
+                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
                         modifier = Modifier.weight(1f)
                     )
@@ -216,6 +233,8 @@ fun HomePage(
                         imageProducer = productLeft.imageProducer,
                         imageProduct = productLeft.imageProduct,
                         isFavorite = favoritesViewModel.isFavorite(productLeft),
+                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
                         modifier = Modifier.weight(1f)
                     )
@@ -238,6 +257,8 @@ fun HomePage(
                         imageProducer = productRight.imageProducer,
                         imageProduct = productRight.imageProduct,
                         isFavorite = favoritesViewModel.isFavorite(productRight),
+                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
                         modifier = Modifier.weight(1f)
                     )

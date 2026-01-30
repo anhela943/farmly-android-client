@@ -43,14 +43,17 @@ import com.example.proba.R
 @Composable
 fun ProductPageView(
     productName: String,
-    price: Int,
+    price: Double,
     producerName: String,
     review: Double,
     city: String,
     @DrawableRes imageProduct: Int,
     @DrawableRes imageProducer: Int,
+    isFavorite: Boolean,
     onBackClick: () -> Unit,
-    onProducerClick: () -> Unit
+    onProducerClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    onContactProducerClick: () -> Unit
 ){
     Image(
         painter = painterResource(R.drawable.backgorund),
@@ -59,7 +62,7 @@ fun ProductPageView(
         modifier = Modifier
             .fillMaxSize()
             .graphicsLayer {
-                alpha = 0.5f
+                alpha = 0.25f
             }
     )
 
@@ -117,14 +120,17 @@ fun ProductPageView(
                     color = colorResource(R.color.black)
                 )
 
-                Box(
+                IconButton(
+                    onClick = onFavoriteClick,
                     modifier = Modifier
                         .size(30.dp)
                         .clip(RoundedCornerShape(10.dp))
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.favorite),
-                        contentDescription = null,
+                        painter = painterResource(
+                            if (isFavorite) R.drawable.heart else R.drawable.favorite
+                        ),
+                        contentDescription = "Favorite",
                         modifier = Modifier.fillMaxSize()
                     )
                 }
@@ -209,7 +215,7 @@ fun ProductPageView(
                     modifier = Modifier.padding(10.dp)
                 )
                 Button(
-                    onClick = { /* TODO */ },
+                    onClick = onContactProducerClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
@@ -253,15 +259,16 @@ fun ProductPageView(
 fun ProductPageViewReview(){
     ProductPageView(
         productName = "Sljive",
-        price = 230,
+        price = 230.0,
         producerName = "Milena Petrovic",
         review = 2.3,
         city = "Nis",
         imageProduct = R.drawable.basket,
         imageProducer = R.drawable.user,
+        isFavorite = false,
         onBackClick = { },
-        onProducerClick = {
-           //to producer pfp
-        }
+        onProducerClick = { },
+        onFavoriteClick = { },
+        onContactProducerClick = { }
     )
 }

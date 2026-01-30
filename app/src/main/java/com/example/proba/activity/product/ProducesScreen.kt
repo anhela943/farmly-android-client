@@ -42,6 +42,7 @@ import com.example.proba.activity.SearchView
 import com.example.proba.activity.bottomBarView
 import com.example.proba.model.ProductUi
 import com.example.proba.viewmodel.FavoritesViewModel
+import com.example.proba.navigation.MainRoutes
 
 @Composable
 fun ProducesScreenView(
@@ -57,7 +58,7 @@ fun ProducesScreenView(
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer {
-                    alpha = 0.5f
+                    alpha = 0.25f
                 },
             contentScale = ContentScale.Crop
         )
@@ -139,6 +140,8 @@ fun ProducesScreenView(
                         imageProducer = productLeft.imageProducer,
                         imageProduct = productLeft.imageProduct,
                         isFavorite = favoritesViewModel.isFavorite(productLeft),
+                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
                         modifier = Modifier.weight(1f)
                     )
@@ -160,6 +163,8 @@ fun ProducesScreenView(
                         imageProducer = productRight.imageProducer,
                         imageProduct = productRight.imageProduct,
                         isFavorite = favoritesViewModel.isFavorite(productRight),
+                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
                         modifier = Modifier.weight(1f)
                     )
@@ -187,6 +192,8 @@ fun ProducesScreenView(
                         imageProducer = productLeft.imageProducer,
                         imageProduct = productLeft.imageProduct,
                         isFavorite = favoritesViewModel.isFavorite(productLeft),
+                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
                         modifier = Modifier.weight(1f)
                     )
@@ -208,6 +215,8 @@ fun ProducesScreenView(
                         imageProducer = productRight.imageProducer,
                         imageProduct = productRight.imageProduct,
                         isFavorite = favoritesViewModel.isFavorite(productRight),
+                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
                         modifier = Modifier.weight(1f)
                     )
@@ -235,6 +244,8 @@ fun ProducesScreenView(
                         imageProducer = productLeft.imageProducer,
                         imageProduct = productLeft.imageProduct,
                         isFavorite = favoritesViewModel.isFavorite(productLeft),
+                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
                         modifier = Modifier.weight(1f)
                     )
@@ -256,6 +267,8 @@ fun ProducesScreenView(
                         imageProducer = productRight.imageProducer,
                         imageProduct = productRight.imageProduct,
                         isFavorite = favoritesViewModel.isFavorite(productRight),
+                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
                         modifier = Modifier.weight(1f)
                     )

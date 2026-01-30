@@ -56,7 +56,10 @@ fun MainNavHost(startDestination: String = MainRoutes.Home) {
             )
         }
         composable(MainRoutes.Product) {
-            ProductPageScreen(navController)
+            ProductPageScreen(
+                navController = navController,
+                favoritesViewModel = favoritesViewModel
+            )
         }
         composable(MainRoutes.MessageChat) {
             MessageChatPage(

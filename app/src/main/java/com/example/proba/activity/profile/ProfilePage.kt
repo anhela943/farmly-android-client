@@ -1,7 +1,6 @@
 package com.example.proba.activity.profile
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,19 +10,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -43,6 +40,7 @@ import com.example.proba.R
 import com.example.proba.activity.bottomBarView
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.proba.navigation.MainRoutes
 
 @Composable
 fun ProfilePage(
@@ -76,9 +74,8 @@ fun ProfilePage(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp, vertical = 12.dp)
-                    .padding(bottom = 24.dp)
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 8.dp)
             ) {
                 Row(
                     modifier = Modifier
@@ -100,18 +97,21 @@ fun ProfilePage(
 
                 val screenHeight = LocalConfiguration.current.screenHeightDp.dp
                 val surfaceColor = colorResource(R.color.greenBackground)
-                val cardMinHeight = maxOf(screenHeight - 200.dp, 560.dp)
+                val cardMinHeight = maxOf(screenHeight - 140.dp, 560.dp)
+                val actionButtonModifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
 
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp),
+                        .padding(top = 4.dp),
                     contentAlignment = Alignment.TopCenter
                 ) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 40.dp)
+                            .padding(top = 24.dp)
                             .heightIn(min = cardMinHeight),
                         shape = RoundedCornerShape(topStart = 100.dp, topEnd = 100.dp),
                         elevation = CardDefaults.cardElevation(6.dp),
@@ -125,7 +125,7 @@ fun ProfilePage(
                                 .padding(horizontal = 20.dp, vertical = 20.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Spacer(modifier = Modifier.height(60.dp))
+                            Spacer(modifier = Modifier.height(78.dp))
 
                             Text(
                                 text = profileName,
@@ -155,43 +155,33 @@ fun ProfilePage(
                                 ProfileField(label = "Description", value = description)
                             }
 
-                            Spacer(modifier = Modifier.height(30.dp))
+                            Spacer(modifier = Modifier.height(15.dp))
 
-                            Button(
-                                onClick = { },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(48.dp),
-                                shape = RoundedCornerShape(16.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = colorResource(R.color.greenFilter),
-                                    contentColor = colorResource(R.color.darkGreenTxt)
-                                )
-                            ) {
-                                Text(text = "My products", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-                            }
+                            ProfileActionButton(
+                                text = "My products",
+                                containerColor = colorResource(R.color.greenFilter),
+                                contentColor = colorResource(R.color.darkGreenTxt),
+                                onClick = { navController.navigate(MainRoutes.EditProduct) },
+                                modifier = actionButtonModifier
+                            )
 
                             Spacer(modifier = Modifier.height(12.dp))
 
-                            Button(
+                            ProfileActionButton(
+                                text = "Edit profile",
+                                containerColor = colorResource(R.color.darkGreenTxt),
+                                contentColor = colorResource(R.color.white),
                                 onClick = { },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(48.dp),
-                                shape = RoundedCornerShape(16.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = colorResource(R.color.darkGreenTxt),
-                                    contentColor = colorResource(R.color.white)
-                                )
-                            ) {
-                                Text(text = "Edit profile", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
+                                modifier = actionButtonModifier
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
                         }
                     }
 
                     Card(
-                        modifier = Modifier.size(120.dp),
+                        modifier = Modifier
+                            .size(164.dp)
+                            .offset(y = (-48).dp),
                         shape = CircleShape,
                         elevation = CardDefaults.cardElevation(6.dp),
                         colors = CardDefaults.cardColors(containerColor = colorResource(R.color.white))
@@ -231,6 +221,34 @@ private fun ProfileField(
             fontSize = 20.sp,
             color = colorResource(R.color.black)
         )
+    }
+}
+
+@Composable
+private fun ProfileActionButton(
+    text: String,
+    containerColor: androidx.compose.ui.graphics.Color,
+    contentColor: androidx.compose.ui.graphics.Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(13.dp),
+        color = containerColor
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = contentColor
+            )
+        }
     }
 }
 

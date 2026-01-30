@@ -11,11 +11,26 @@ import com.example.proba.R
 import com.example.proba.activity.bottomBarView
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.proba.navigation.MainRoutes
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.proba.model.ProductUi
+import com.example.proba.viewmodel.FavoritesViewModel
 
 @Composable
 fun ProductPageScreen(
-    navController: NavController
+    navController: NavController,
+    favoritesViewModel: FavoritesViewModel = viewModel()
 ) {
+    val product = ProductUi.from(
+        name = "Sljive",
+        price = 230.0,
+        producer = "Milena Petrovic",
+        producerReview = 2.3,
+        city = "Nis",
+        imageProduct = R.drawable.basket,
+        imageProducer = R.drawable.user
+    )
+
     Scaffold(
         bottomBar = {
             bottomBarView(navController)
@@ -28,15 +43,18 @@ fun ProductPageScreen(
                 .padding(paddingValues)
         ) {
             ProductPageView(
-                productName = "Sljive",
-                price = 230,
-                producerName = "Milena Petrovic",
-                review = 2.3,
-                city = "Nis",
-                imageProduct = R.drawable.basket,
-                imageProducer = R.drawable.user,
+                productName = product.name,
+                price = product.price,
+                producerName = product.producer,
+                review = product.producerReview,
+                city = product.city,
+                imageProduct = product.imageProduct,
+                imageProducer = product.imageProducer,
+                isFavorite = favoritesViewModel.isFavorite(product),
                 onBackClick = { navController.popBackStack() },
-                onProducerClick = { }
+                onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
+                onFavoriteClick = { favoritesViewModel.toggleFavorite(product) },
+                onContactProducerClick = { navController.navigate(MainRoutes.MessageChat) }
             )
         }
     }

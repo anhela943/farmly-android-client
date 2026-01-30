@@ -60,7 +60,7 @@ fun EditProductView(
             contentDescription = null,
             modifier = Modifier
                 .fillMaxSize()
-                .graphicsLayer { alpha = 0.5f },
+                .graphicsLayer { alpha = 0.25f },
             contentScale = ContentScale.Crop
         )
 

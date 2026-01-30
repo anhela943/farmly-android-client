@@ -49,6 +49,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proba.model.ProductUi
 import com.example.proba.viewmodel.FavoritesViewModel
+import com.example.proba.navigation.MainRoutes
 
 @Composable
 fun ProfileProducerView(
@@ -62,7 +63,7 @@ fun ProfileProducerView(
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer {
-                    alpha = 0.5f
+                    alpha = 0.25f
                 },
             contentScale = ContentScale.Crop
         )
@@ -72,7 +73,6 @@ fun ProfileProducerView(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 10.dp)
-                .padding(bottom = 100.dp)
         ) {
             IconButton(
                 onClick = {
@@ -99,7 +99,7 @@ fun ProfileProducerView(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = screenHeight - 120.dp),
+                        .heightIn(min = screenHeight - 40.dp),
                     shape = RoundedCornerShape(topStart =  120.dp, topEnd =  120.dp),
                     elevation = CardDefaults.cardElevation(6.dp),
                     colors = CardDefaults.cardColors(
@@ -110,7 +110,7 @@ fun ProfileProducerView(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 60.dp, bottom = 20.dp, start = 16.dp, end = 16.dp),
+                            .padding(top = 60.dp, bottom = 120.dp, start = 16.dp, end = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -197,6 +197,8 @@ fun ProfileProducerView(
                                 imageProducer = productLeft.imageProducer,
                                 imageProduct = productLeft.imageProduct,
                                 isFavorite = favoritesViewModel.isFavorite(productLeft),
+                                onProductClick = { navController.navigate(MainRoutes.Product) },
+                                onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                                 onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
                                 modifier = Modifier.weight(1f)
                             )
@@ -218,6 +220,8 @@ fun ProfileProducerView(
                                 imageProducer = productRight.imageProducer,
                                 imageProduct = productRight.imageProduct,
                                 isFavorite = favoritesViewModel.isFavorite(productRight),
+                                onProductClick = { navController.navigate(MainRoutes.Product) },
+                                onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                                 onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
                                 modifier = Modifier.weight(1f)
                             )

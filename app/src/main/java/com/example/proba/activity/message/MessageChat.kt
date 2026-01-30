@@ -291,6 +291,15 @@ fun MessageChatPage(
                 value = messageText,
                 onValueChange = { messageText = it },
                 placeholder = { Text("Message...", color = colorResource(R.color.grey)) },
+                trailingIcon = {
+                    IconButton(onClick = { /* TODO: send message */ }) {
+                        Image(
+                            painter = painterResource(R.drawable.arrow),
+                            contentDescription = "Send",
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 12.dp),

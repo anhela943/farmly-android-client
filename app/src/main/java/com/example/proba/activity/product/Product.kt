@@ -48,12 +48,15 @@ fun ProductView(
     @DrawableRes imageProducer: Int,
     @DrawableRes imageProduct: Int,
     isFavorite: Boolean,
+    onProductClick: () -> Unit,
+    onProducerClick: () -> Unit,
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scale by animateFloatAsState(if (isFavorite) 1.2f else 1f)
 
     Card(
+        onClick = onProductClick,
         modifier = modifier.wrapContentHeight(),
         shape = RoundedCornerShape(36.dp),
         border = BorderStroke(
@@ -134,9 +137,7 @@ fun ProductView(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = {
-
-                    },
+                    onClick = onProducerClick,
                     modifier = Modifier.size(30.dp)
                 ) {
                     Image(
@@ -190,6 +191,8 @@ fun ProductViewPreview() {
         imageProduct = R.drawable.basket,
         isFavorite = false,
         onFavoriteClick = {},
+        onProductClick = {},
+        onProducerClick = {},
         modifier = Modifier
             .width(200.dp)
             .padding(16.dp)
