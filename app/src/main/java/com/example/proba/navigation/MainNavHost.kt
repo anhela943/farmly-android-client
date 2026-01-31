@@ -19,6 +19,7 @@ import com.example.proba.activity.profile.ProfileCreateView
 import com.example.proba.activity.profile.ProfilePage
 import com.example.proba.activity.profile.ProfileProducerView
 import com.example.proba.util.TokenManager
+import com.example.proba.viewmodel.ChatsViewModel
 import com.example.proba.viewmodel.FavoritesViewModel
 import com.example.proba.viewmodel.ProfileViewModel
 
@@ -30,6 +31,7 @@ fun MainNavHost(startDestination: String = MainRoutes.Home) {
     val profileViewModel: ProfileViewModel = viewModel(
         factory = ProfileViewModel.Factory(TokenManager(context.applicationContext))
     )
+    val chatsViewModel: ChatsViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -56,7 +58,8 @@ fun MainNavHost(startDestination: String = MainRoutes.Home) {
         composable(MainRoutes.Message) {
             MessagePage(
                 navController = navController,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                chatsViewModel = chatsViewModel
             )
         }
         composable(MainRoutes.Profile) {

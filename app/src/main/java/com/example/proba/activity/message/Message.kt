@@ -1,6 +1,5 @@
 package com.example.proba.activity.message
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,28 +24,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.proba.R
 
 @Composable
 fun messageView(
-    producer: String,
+    chatName: String,
     lastMssg: String,
-    productName: String,
-    timeMssg: Int,
-    @DrawableRes imageUser: Int,
+    imageUrl: String?,
     onClick: () -> Unit = {}
 ){
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(horizontal = 16.dp, vertical = 6.dp),
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .clickable { onClick() },
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
@@ -56,7 +57,7 @@ fun messageView(
                 .fillMaxWidth()
                 .background(colorResource(R.color.greenSrLight))
                 .padding(16.dp)
-                .clickable { onClick() }
+
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -68,46 +69,45 @@ fun messageView(
                         .clip(RoundedCornerShape(30.dp))
                         .border(3.dp, colorResource(R.color.grey), CircleShape)
                 ) {
-                    Image(
-                        painter = painterResource(imageUser),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    if (!imageUrl.isNullOrBlank()) {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.user),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Column {
-                    Row{
-                        Text(
-                            text = producer + " -",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colorResource(R.color.black)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = productName,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = colorResource(R.color.black)
-                        )
-                    }
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = chatName,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.black),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
 
-                    Row() {
+                    Row {
                         Text(
-                            text = lastMssg + "    -",
+                            text = lastMssg,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
-                            color = colorResource(R.color.grey)
+                            color = colorResource(R.color.grey),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = timeMssg.toString(),
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colorResource(R.color.grey)
-                        )
+
                     }
                 }
             }
@@ -119,10 +119,8 @@ fun messageView(
 @Composable
 fun messageViewReview(){
     messageView(
-        producer = "Milena",
-        lastMssg = "Hvala na ogovoru",
-        productName = "Paradajz",
-        timeMssg = 5,
-        imageUser = R.drawable.user
+        chatName = "Milena - Paradajz",
+        lastMssg = "Hvala na odgovoru",
+        imageUrl = null
     )
 }
