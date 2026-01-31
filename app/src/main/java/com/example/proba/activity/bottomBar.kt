@@ -57,11 +57,11 @@ fun bottomBarView(
     val currentRoute = navBackStackEntry?.destination?.route
 
     val items = listOf(
-        BottomBarDestination("Home", R.drawable.home, MainRoutes.Home),
-        BottomBarDestination("Explore", R.drawable.search, MainRoutes.Explore),
-        BottomBarDestination("Favorite", R.drawable.favorite, MainRoutes.Favorite),
-        BottomBarDestination("Message", R.drawable.mssg, MainRoutes.Message),
-        BottomBarDestination("Profile", R.drawable.user, MainRoutes.Profile)
+        BottomBarDestination("Home", R.drawable.home, R.drawable.homef, MainRoutes.Home),
+        BottomBarDestination("Explore", R.drawable.search, R.drawable.searchf, MainRoutes.Explore),
+        BottomBarDestination("Favorite", R.drawable.favorite, R.drawable.heart, MainRoutes.Favorite),
+        BottomBarDestination("Message", R.drawable.mssg, R.drawable.envelopef, MainRoutes.Message),
+        BottomBarDestination("Profile", R.drawable.user, R.drawable.userf, MainRoutes.Profile)
     )
 
     Card(
@@ -88,6 +88,7 @@ fun bottomBarView(
                 BottomBarItem(
                     label = item.label,
                     icon = item.icon,
+                    selectedIcon = item.selectedIcon,
                     selected = currentRoute == item.route,
                     onClick = {
                         if (currentRoute != item.route) {
@@ -109,6 +110,7 @@ fun bottomBarView(
 private data class BottomBarDestination(
     val label: String,
     @DrawableRes val icon: Int,
+    @DrawableRes val selectedIcon: Int,
     val route: String
 )
 
@@ -116,6 +118,7 @@ private data class BottomBarDestination(
 fun BottomBarItem(
     label: String,
     @DrawableRes icon: Int,
+    @DrawableRes selectedIcon: Int,
     selected: Boolean,
     onClick: () -> Unit
 ) {
@@ -126,9 +129,10 @@ fun BottomBarItem(
             onClick = onClick
         ) {
             Icon(
-                painter = painterResource(icon),
+                painter = painterResource(if (selected) selectedIcon else icon),
                 contentDescription = label,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
+                tint = Color.Unspecified
             )
         }
 

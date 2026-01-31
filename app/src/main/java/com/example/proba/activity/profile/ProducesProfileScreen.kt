@@ -136,6 +136,7 @@ fun EditProductView(
                             rating = "4.5",
                             imageProduct = R.drawable.basket,
                             imageProducer = R.drawable.user,
+                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
                             modifier = Modifier.weight(1f)
                         )
                         EditProductCard(
@@ -145,6 +146,7 @@ fun EditProductView(
                             rating = "4.5",
                             imageProduct = R.drawable.basket,
                             imageProducer = R.drawable.user,
+                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -160,6 +162,7 @@ fun EditProductView(
                             rating = "4.5",
                             imageProduct = R.drawable.basket,
                             imageProducer = R.drawable.user,
+                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
                             modifier = Modifier.weight(1f)
                         )
                         EditProductCard(
@@ -169,6 +172,7 @@ fun EditProductView(
                             rating = "4.5",
                             imageProduct = R.drawable.basket,
                             imageProducer = R.drawable.user,
+                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -184,6 +188,7 @@ fun EditProductView(
                             rating = "4.6",
                             imageProduct = R.drawable.basket,
                             imageProducer = R.drawable.user,
+                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
                             modifier = Modifier.weight(1f)
                         )
                         EditProductCard(
@@ -193,6 +198,7 @@ fun EditProductView(
                             rating = "4.4",
                             imageProduct = R.drawable.basket,
                             imageProducer = R.drawable.user,
+                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -208,6 +214,7 @@ fun EditProductView(
                             rating = "4.7",
                             imageProduct = R.drawable.basket,
                             imageProducer = R.drawable.user,
+                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
                             modifier = Modifier.weight(1f)
                         )
                         Spacer(modifier = Modifier.weight(1f))
@@ -251,6 +258,7 @@ private fun EditProductCard(
     rating: String,
     @DrawableRes imageProduct: Int,
     @DrawableRes imageProducer: Int,
+    onEdit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -339,16 +347,18 @@ private fun EditProductCard(
                     }
                 }
 
-                EditIconButton()
+                EditIconButton(onClick = onEdit)
             }
         }
     }
 }
 
 @Composable
-private fun EditIconButton() {
+private fun EditIconButton(
+    onClick: () -> Unit
+) {
     IconButton(
-        onClick = { },
+        onClick = onClick,
         modifier = Modifier.size(38.dp)
     ) {
         Image(

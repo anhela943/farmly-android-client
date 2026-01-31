@@ -116,11 +116,31 @@ fun HomePage(
                     .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                CategoryView(name = "Dairy", imageCategory = R.drawable.logo)
-                CategoryView(name = "Meat", imageCategory = R.drawable.logo)
-                CategoryView(name = "Fruit", imageCategory = R.drawable.logo)
-                CategoryView(name = "Fruit", imageCategory = R.drawable.logo)
-                CategoryView(name = "Fruit", imageCategory = R.drawable.logo)
+                CategoryView(
+                    name = "Dairy",
+                    imageCategory = R.drawable.logo,
+                    onClick = { navController.navigate(MainRoutes.Explore) }
+                )
+                CategoryView(
+                    name = "Meat",
+                    imageCategory = R.drawable.logo,
+                    onClick = { navController.navigate(MainRoutes.Explore) }
+                )
+                CategoryView(
+                    name = "Fruit",
+                    imageCategory = R.drawable.logo,
+                    onClick = { navController.navigate(MainRoutes.Explore) }
+                )
+                CategoryView(
+                    name = "Fruit",
+                    imageCategory = R.drawable.logo,
+                    onClick = { navController.navigate(MainRoutes.Explore) }
+                )
+                CategoryView(
+                    name = "Fruit",
+                    imageCategory = R.drawable.logo,
+                    onClick = { navController.navigate(MainRoutes.Explore) }
+                )
             }
 
             Spacer(modifier = Modifier.height(12.dp))

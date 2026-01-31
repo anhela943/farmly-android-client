@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -38,12 +39,14 @@ class Category {
 @Composable
 fun CategoryView(
     name: String,
-    @DrawableRes imageCategory: Int
+    @DrawableRes imageCategory: Int,
+    onClick: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
             .height(56.dp)
-            .wrapContentWidth(),
+            .wrapContentWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(34.dp),
         border = BorderStroke(
             2.dp,

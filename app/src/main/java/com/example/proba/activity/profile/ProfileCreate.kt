@@ -326,7 +326,6 @@ private fun ProfilePrimaryButton(
             Text(
                 text = text,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
                 color = contentColor
             )
         }
