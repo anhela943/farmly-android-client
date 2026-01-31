@@ -2,14 +2,14 @@ package com.example.proba.activity.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,7 +30,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -68,33 +67,11 @@ fun ProfilePage(
                 contentScale = ContentScale.Crop
             )
 
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = onBackClick,
-                        modifier = Modifier.size(30.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.arrow),
-                            contentDescription = "Back",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .rotate(180f)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                }
-
                 when (val state = profileViewModel.profileState) {
                     is Resource.Loading -> {
                         Box(
@@ -148,6 +125,22 @@ fun ProfilePage(
                         )
                     }
                 }
+
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .size(30.dp)
+                        .align(Alignment.TopStart)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.arrow),
+                        contentDescription = "Back",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .rotate(180f)
+                    )
+                }
             }
         }
     }
@@ -165,9 +158,7 @@ private fun ProfileContent(
     description: String,
     imageUrl: String?
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val surfaceColor = colorResource(R.color.greenBackground)
-    val cardMinHeight = maxOf(screenHeight - 140.dp, 560.dp)
     val actionButtonModifier = Modifier
         .fillMaxWidth()
         .height(48.dp)
@@ -175,14 +166,14 @@ private fun ProfileContent(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 4.dp),
+            .verticalScroll(rememberScrollState())
+            .padding(top = 75.dp),
         contentAlignment = Alignment.TopCenter
     ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp)
-                .heightIn(min = cardMinHeight),
+                .padding(top = 24.dp),
             shape = RoundedCornerShape(topStart = 100.dp, topEnd = 100.dp),
             elevation = CardDefaults.cardElevation(6.dp),
             colors = CardDefaults.cardColors(
