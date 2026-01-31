@@ -1,5 +1,6 @@
 package com.example.proba.data.repository
 
+import com.example.proba.data.model.response.ChatInfoResponse
 import com.example.proba.data.model.response.ChatListResponse
 import com.example.proba.data.model.response.ErrorResponse
 import com.example.proba.data.remote.ApiClient
@@ -28,6 +29,27 @@ class ChatRepository {
             val errorResponse = parseError(errorBody)
             Resource.Error(
                 message = errorResponse?.message ?: "Failed to load chats"
+            )
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Network error occurred")
+        }
+    }
+
+    suspend fun getChatInfo(chatId: String): Resource<ChatInfoResponse> = withContext(Dispatchers.IO) {
+        try {
+            val response = chatApi.getChatInfo(chatId)
+
+            if (response.isSuccessful) {
+                response.body()?.let { chatInfo ->
+                    return@withContext Resource.Success(chatInfo)
+                }
+                return@withContext Resource.Error("Empty response body")
+            }
+
+            val errorBody = response.errorBody()?.string()
+            val errorResponse = parseError(errorBody)
+            Resource.Error(
+                message = errorResponse?.message ?: "Failed to load chat info"
             )
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Network error occurred")

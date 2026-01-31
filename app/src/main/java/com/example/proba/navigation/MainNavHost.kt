@@ -2,9 +2,11 @@ package com.example.proba.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proba.activity.HomePage
 import com.example.proba.activity.favorite.FavoriteScreenView
@@ -19,6 +21,7 @@ import com.example.proba.activity.profile.ProfileCreateView
 import com.example.proba.activity.profile.ProfilePage
 import com.example.proba.activity.profile.ProfileProducerView
 import com.example.proba.util.TokenManager
+import com.example.proba.viewmodel.ChatInfoViewModel
 import com.example.proba.viewmodel.ChatsViewModel
 import com.example.proba.viewmodel.FavoritesViewModel
 import com.example.proba.viewmodel.ProfileViewModel
@@ -93,10 +96,18 @@ fun MainNavHost(startDestination: String = MainRoutes.Home) {
                 onBackClick = { navController.popBackStack() }
             )
         }
-        composable(MainRoutes.MessageChat) {
+        composable(
+            MainRoutes.MessageChat,
+            arguments = listOf(navArgument("chatId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+            val chatInfoViewModel: ChatInfoViewModel = viewModel(
+                factory = ChatInfoViewModel.Factory(chatId)
+            )
             MessageChatPage(
                 navController = navController,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                chatInfoViewModel = chatInfoViewModel
             )
         }
         composable(MainRoutes.ProfileProducer) {

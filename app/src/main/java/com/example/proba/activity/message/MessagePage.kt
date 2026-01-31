@@ -180,7 +180,7 @@ fun MessagePage(
                                         chatName = chat.name,
                                         lastMssg = chat.lastMessage ?: "",
                                         imageUrl = chat.imageUrl,
-                                        onClick = { navController.navigate(MainRoutes.MessageChat) }
+                                        onClick = { navController.navigate(MainRoutes.messageChatRoute(chat.id)) }
                                     )
                                 }
                             }

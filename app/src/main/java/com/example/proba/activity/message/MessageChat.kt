@@ -1,7 +1,6 @@
 package com.example.proba.activity.message
 
 import android.util.Log
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -27,6 +26,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -45,48 +45,29 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
+import coil.compose.AsyncImage
 import com.example.proba.R
 import com.example.proba.activity.bottomBarView
+import com.example.proba.data.model.response.ChatInfoResponse
+import com.example.proba.util.Resource
+import com.example.proba.viewmodel.ChatInfoViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import kotlin.math.log
 
 @Composable
 fun MessageChatPage(
     navController: NavController,
     onBackClick: () -> Unit,
-    producerName: String = "Petra Petrovic Pr",
-    productName: String = "Tomatoes",
-    productPrice: String = "200 din",
-    productRating: String = "4.5",
-    @DrawableRes producerAvatar: Int = R.drawable.user,
-    @DrawableRes productImage: Int = R.drawable.basket
+    chatInfoViewModel: ChatInfoViewModel
 ) {
-    var isDropdownExpanded by remember { mutableStateOf(false) }
-    var isReviewVisible by remember { mutableStateOf(false)}
-    var messageText by remember { mutableStateOf("") }
-    val isPreview = LocalInspectionMode.current
-    val logMessageChat: (String) -> Unit = { message ->
-        if (isPreview) {
-            println("MessageChat: $message")
-        } else {
-            Log.d("MessageChat", message)
-        }
-    }
-    val arrowRotation by animateFloatAsState(
-        targetValue = if (isDropdownExpanded) -90f else 90f,
-        label = "dropdownArrowRotation"
-    )
-
     Scaffold(
         bottomBar = { bottomBarView(navController) }
     ) { paddingValues ->
@@ -104,62 +85,153 @@ fun MessageChatPage(
                 )
                 .padding(paddingValues)
         ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                shape = RoundedCornerShape(24.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = colorResource(R.color.greenBackground)
-                )
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+            when (val state = chatInfoViewModel.chatInfoState) {
+                is Resource.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        IconButton(
-                            onClick = onBackClick,
-                            modifier = Modifier.size(30.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.arrow),
-                                contentDescription = "Back",
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .rotate(180f)
-                            )
-                        }
+                        CircularProgressIndicator(
+                            color = colorResource(R.color.darkGreenTxt)
+                        )
+                    }
+                }
 
+                is Resource.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = state.message,
+                                fontSize = 16.sp,
+                                color = colorResource(R.color.grey),
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(
+                                onClick = { chatInfoViewModel.loadChatInfo() },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorResource(R.color.darkGreenTxt)
+                                ),
+                                shape = RoundedCornerShape(13.dp)
+                            ) {
+                                Text("Retry", color = Color.White)
+                            }
+                        }
+                    }
+                }
+
+                is Resource.Success -> {
+                    ChatContent(
+                        navController = navController,
+                        onBackClick = onBackClick,
+                        chatInfo = state.data
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ChatContent(
+    navController: NavController,
+    onBackClick: () -> Unit,
+    chatInfo: ChatInfoResponse
+) {
+    val isPreview = LocalInspectionMode.current
+    val logMessageChat: (String) -> Unit = { message ->
+        if (isPreview) {
+            println("MessageChat: $message")
+        } else {
+            Log.d("MessageChat", message)
+        }
+    }
+
+    var isDropdownExpanded by remember { mutableStateOf(false) }
+    var isReviewVisible by remember { mutableStateOf(false) }
+    var messageText by remember { mutableStateOf("") }
+
+    val arrowRotation by animateFloatAsState(
+        targetValue = if (isDropdownExpanded) -90f else 90f,
+        label = "dropdownArrowRotation"
+    )
+
+    val user = chatInfo.user
+    val product = chatInfo.product
+    val reviewAllowed = chatInfo.reviewAllowed == true
+
+    Box(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = colorResource(R.color.greenBackground)
+            )
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(
+                        onClick = onBackClick,
+                        modifier = Modifier.size(30.dp)
+                    ) {
                         Image(
-                            painter = painterResource(producerAvatar),
-                            contentDescription = "Producer avatar",
+                            painter = painterResource(R.drawable.arrow),
+                            contentDescription = "Back",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .rotate(180f)
+                        )
+                    }
+
+                    if (!user.imageUrl.isNullOrBlank()) {
+                        AsyncImage(
+                            model = user.imageUrl,
+                            contentDescription = "User avatar",
+                            modifier = Modifier
+                                .size(38.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.user),
+                            contentDescription = "User avatar",
                             modifier = Modifier
                                 .size(38.dp)
                                 .clip(CircleShape)
                         )
+                    }
 
-                        Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                        Text(
-                            text = producerName,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colorResource(R.color.black),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f)
-                        )
+                    Text(
+                        text = user.name,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.black),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
 
+                    if (product != null) {
                         IconButton(
                             onClick = {
                                 isDropdownExpanded = !isDropdownExpanded
-                                logMessageChat("Leave review clicked")
                             }
                         ) {
                             Image(
@@ -171,7 +243,9 @@ fun MessageChatPage(
                             )
                         }
                     }
+                }
 
+                if (product != null) {
                     AnimatedVisibility(visible = isDropdownExpanded) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
@@ -186,7 +260,9 @@ fun MessageChatPage(
                                         shape = RoundedCornerShape(2.dp),
                                         clip = false
                                     )
-                                    .background(colorResource(R.color.greenStrokeDark).copy(alpha = 0.7f))
+                                    .background(
+                                        colorResource(R.color.greenStrokeDark).copy(alpha = 0.7f)
+                                    )
                             )
 
                             Box(
@@ -202,13 +278,24 @@ fun MessageChatPage(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Image(
-                                        painter = painterResource(productImage),
-                                        contentDescription = "Product image",
-                                        modifier = Modifier
-                                            .size(48.dp)
-                                            .clip(RoundedCornerShape(12.dp))
-                                    )
+                                    if (!product.imageUrl.isNullOrBlank()) {
+                                        AsyncImage(
+                                            model = product.imageUrl,
+                                            contentDescription = "Product image",
+                                            modifier = Modifier
+                                                .size(48.dp)
+                                                .clip(RoundedCornerShape(12.dp)),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    } else {
+                                        Image(
+                                            painter = painterResource(R.drawable.basket),
+                                            contentDescription = "Product image",
+                                            modifier = Modifier
+                                                .size(48.dp)
+                                                .clip(RoundedCornerShape(12.dp))
+                                        )
+                                    }
 
                                     Spacer(modifier = Modifier.width(10.dp))
 
@@ -216,52 +303,58 @@ fun MessageChatPage(
                                         modifier = Modifier.weight(1f)
                                     ) {
                                         Text(
-                                            text = productName,
+                                            text = product.name,
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.SemiBold,
                                             color = colorResource(R.color.black)
                                         )
                                         Spacer(modifier = Modifier.height(2.dp))
                                         Text(
-                                            text = productPrice,
+                                            text = "${"%.2f".format(product.price)} din",
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.Medium,
                                             color = colorResource(R.color.grey)
                                         )
-                                        Spacer(modifier = Modifier.height(2.dp))
-                                        Row {
-                                            Image(
-                                                painter = painterResource(R.drawable.star),
-                                                contentDescription = "Favorite",
-                                                modifier = Modifier.size(15.dp)
-                                            )
-                                            Spacer(modifier = Modifier.width(3.dp))
-                                            Text(
-                                                text = productRating,
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight.Medium,
-                                                color = colorResource(R.color.grey)
-                                            )
+                                        if (user.overallRating != null) {
+                                            Spacer(modifier = Modifier.height(2.dp))
+                                            Row {
+                                                Image(
+                                                    painter = painterResource(R.drawable.star),
+                                                    contentDescription = "Rating",
+                                                    modifier = Modifier.size(15.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(3.dp))
+                                                Text(
+                                                    text = user.overallRating.toString(),
+                                                    fontSize = 12.sp,
+                                                    fontWeight = FontWeight.Medium,
+                                                    color = colorResource(R.color.grey)
+                                                )
+                                            }
                                         }
                                     }
 
-                                    Button(
-                                        onClick = {
-                                            isReviewVisible = true
-                                            logMessageChat("Is stanje : " + isReviewVisible)
-                                        },
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color.Transparent,
-                                            contentColor = colorResource(R.color.darkGreenTxt)
-                                        ),
-                                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-                                    ) {
-                                        Text(
-                                            text = "Leave review",
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = colorResource(R.color.darkGreenTxt)
-                                        )
+                                    if (reviewAllowed) {
+                                        Button(
+                                            onClick = {
+                                                isReviewVisible = true
+                                                logMessageChat("Leave review clicked")
+                                            },
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = Color.Transparent,
+                                                contentColor = colorResource(R.color.darkGreenTxt)
+                                            ),
+                                            elevation = ButtonDefaults.buttonElevation(
+                                                defaultElevation = 0.dp
+                                            )
+                                        ) {
+                                            Text(
+                                                text = "Leave review",
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = colorResource(R.color.darkGreenTxt)
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -269,74 +362,72 @@ fun MessageChatPage(
                     }
                 }
             }
+        }
 
-            Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                MessageBubble(
-                    text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-                    isOwnMessage = true
-                )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            MessageBubble(
+                text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                isOwnMessage = true
+            )
 
-                MessageBubble(
-                    text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-                    isOwnMessage = false
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            TextField(
-                value = messageText,
-                onValueChange = { messageText = it },
-                placeholder = { Text("Message...", color = colorResource(R.color.grey)) },
-                trailingIcon = {
-                    IconButton(onClick = { /* TODO: send message */ }) {
-                        Image(
-                            painter = painterResource(R.drawable.arrow),
-                            contentDescription = "Send",
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                shape = RoundedCornerShape(30.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedTextColor = colorResource(R.color.black),
-                    unfocusedTextColor = colorResource(R.color.black),
-                    cursorColor = colorResource(R.color.black)
-                )
+            MessageBubble(
+                text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                isOwnMessage = false
             )
         }
 
-        logMessageChat("Is stanje posle : " + isReviewVisible)
+        Spacer(modifier = Modifier.weight(1f))
 
-        if (isReviewVisible) {
-            logMessageChat("Is stanje unutar IF-a : " + isReviewVisible)
-            ReviewOverlay(
-                reviewerName = producerName,
-                reviewerAvatar = producerAvatar,
-                onDismiss = { isReviewVisible = false },
-                onPostReview = { isReviewVisible = false }
+        TextField(
+            value = messageText,
+            onValueChange = { messageText = it },
+            placeholder = { Text("Message...", color = colorResource(R.color.grey)) },
+            trailingIcon = {
+                IconButton(onClick = { /* TODO: send message */ }) {
+                    Image(
+                        painter = painterResource(R.drawable.arrow),
+                        contentDescription = "Send",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            shape = RoundedCornerShape(30.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedTextColor = colorResource(R.color.black),
+                unfocusedTextColor = colorResource(R.color.black),
+                cursorColor = colorResource(R.color.black)
             )
-        }
+        )
+    }
+
+    if (isReviewVisible) {
+        ReviewOverlay(
+            reviewerName = user.name,
+            reviewerImageUrl = user.imageUrl,
+            onDismiss = { isReviewVisible = false },
+            onPostReview = { isReviewVisible = false }
+        )
+    }
     }
 }
 
 @Composable
 private fun ReviewOverlay(
     reviewerName: String,
-    @DrawableRes reviewerAvatar: Int,
+    reviewerImageUrl: String?,
     onDismiss: () -> Unit,
     onPostReview: (String) -> Unit
 ) {
@@ -372,13 +463,24 @@ private fun ReviewOverlay(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(reviewerAvatar),
-                        contentDescription = "Reviewer avatar",
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                    )
+                    if (!reviewerImageUrl.isNullOrBlank()) {
+                        AsyncImage(
+                            model = reviewerImageUrl,
+                            contentDescription = "Reviewer avatar",
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.user),
+                            contentDescription = "Reviewer avatar",
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                        )
+                    }
 
                     Spacer(modifier = Modifier.width(8.dp))
 
@@ -492,13 +594,4 @@ private fun MessageBubble(
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MessageChatPagePreview() {
-    MessageChatPage(
-        navController = rememberNavController(),
-        onBackClick = {}
-    )
 }
