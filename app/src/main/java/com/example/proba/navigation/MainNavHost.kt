@@ -1,6 +1,7 @@
 package com.example.proba.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -17,12 +18,18 @@ import com.example.proba.activity.profile.EditProductView
 import com.example.proba.activity.profile.ProfileCreateView
 import com.example.proba.activity.profile.ProfilePage
 import com.example.proba.activity.profile.ProfileProducerView
+import com.example.proba.util.TokenManager
 import com.example.proba.viewmodel.FavoritesViewModel
+import com.example.proba.viewmodel.ProfileViewModel
 
 @Composable
 fun MainNavHost(startDestination: String = MainRoutes.Home) {
     val navController = rememberNavController()
     val favoritesViewModel: FavoritesViewModel = viewModel()
+    val context = LocalContext.current
+    val profileViewModel: ProfileViewModel = viewModel(
+        factory = ProfileViewModel.Factory(TokenManager(context.applicationContext))
+    )
 
     NavHost(
         navController = navController,
@@ -55,7 +62,8 @@ fun MainNavHost(startDestination: String = MainRoutes.Home) {
         composable(MainRoutes.Profile) {
             ProfilePage(
                 navController = navController,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                profileViewModel = profileViewModel
             )
         }
         composable(MainRoutes.ProfileCreate) {
