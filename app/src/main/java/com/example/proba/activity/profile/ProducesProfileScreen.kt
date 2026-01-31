@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -45,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.example.proba.R
 import com.example.proba.activity.bottomBarView
 import androidx.navigation.NavController
@@ -95,18 +95,7 @@ fun EditProductView(
                             .padding(top = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(
-                            onClick = { navController.popBackStack() },
-                            modifier = Modifier
-                                .size(30.dp)
-                                .offset(x = (-16).dp, y = (-50).dp)
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.arrow),
-                                contentDescription = "Back",
-                                modifier = Modifier.rotate(180f)
-                            )
-                        }
+                        Spacer(modifier = Modifier.size(30.dp))
 
                         Box(
                             modifier = Modifier
@@ -246,6 +235,23 @@ fun EditProductView(
             }
 
             bottomBarView(navController)
+        }
+
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 16.dp, top = 16.dp)
+                .size(30.dp)
+                .zIndex(1f)
+        ) {
+            Image(
+                painter = painterResource(R.drawable.arrow),
+                contentDescription = "Back",
+                modifier = Modifier
+                    .size(24.dp)
+                    .rotate(180f)
+            )
         }
     }
 }

@@ -75,13 +75,14 @@ fun ProductPageView(
             onClick = onBackClick,
             modifier = Modifier
                 .align(Alignment.TopStart)
+                .size(30.dp)
         ) {
             Image(
                 painter = painterResource(R.drawable.arrow),
                 contentDescription = "Back",
                 modifier = Modifier
-                        .size(25.dp)
-                        .rotate(180f)
+                    .size(24.dp)
+                    .rotate(180f)
             )
         }
 

@@ -101,21 +101,24 @@ fun ProductAddView(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 20.dp)
-                    .padding(top = 8.dp)
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 4.dp, bottom = 12.dp),
+                        .padding(bottom = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(
+                        onClick = onBackClick,
+                        modifier = Modifier.size(30.dp)
+                    ) {
                         Image(
                             painter = painterResource(id = R.drawable.arrow),
                             contentDescription = "Back",
                             modifier = Modifier
-                                .size(22.dp)
+                                .size(24.dp)
                                 .rotate(180f)
                         )
                     }

@@ -71,7 +71,7 @@ fun FavoriteScreenView(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 100.dp)
         ) {
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(46.dp))
 
             Row(
                 modifier = Modifier
@@ -88,7 +88,9 @@ fun FavoriteScreenView(
                     Image(
                         painter = painterResource(R.drawable.arrow),
                         contentDescription = "Back",
-                        modifier = Modifier.rotate(180f)
+                        modifier = Modifier
+                            .size(24.dp)
+                            .rotate(180f)
                     )
                 }
                 Box(

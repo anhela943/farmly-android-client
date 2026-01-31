@@ -3,6 +3,7 @@ package com.example.proba
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.example.proba.activity.login.LoginPage
 import com.example.proba.data.remote.ApiClient
 import com.example.proba.navigation.MainNavHost
 import com.example.proba.ui.theme.ProbaTheme
@@ -17,8 +18,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ProbaTheme {
-                //LoginPage(tokenManager = tokenManager)
-                MainNavHost()
+                LoginPage(tokenManager = tokenManager)
+                //MainNavHost()
             }
         }
     }

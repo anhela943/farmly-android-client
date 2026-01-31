@@ -185,13 +185,14 @@ fun LoginScreen(
             onClick = onBackClick,
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(10.dp)
+                .padding(start = 16.dp, top = 16.dp)
+                .size(30.dp)
         ) {
             Image(
                 painter = painterResource(R.drawable.arrow),
                 contentDescription = "Back",
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(24.dp)
                     .rotate(180f)
             )
         }

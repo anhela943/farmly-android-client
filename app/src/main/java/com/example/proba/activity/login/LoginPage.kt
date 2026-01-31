@@ -12,6 +12,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.proba.data.repository.AuthRepository
+import com.example.proba.navigation.MainNavHost
+import com.example.proba.navigation.MainRoutes
 import com.example.proba.util.TokenManager
 import com.example.proba.viewmodel.LoginUiState
 import com.example.proba.viewmodel.LoginViewModel
@@ -31,10 +33,19 @@ fun LoginPage(tokenManager: TokenManager? = null) {
     val loginState by loginViewModel?.uiState?.collectAsState()
         ?: remember { androidx.compose.runtime.mutableStateOf(LoginUiState()) }
 
+    val navigateToHome = remember(navController) {
+        {
+            navController.navigate(MainRoutes.Home) {
+                popUpTo("welcome") { inclusive = true }
+                launchSingleTop = true
+            }
+        }
+    }
+
     LaunchedEffect(loginState.isLoginSuccessful) {
         if (loginState.isLoginSuccessful) {
             Log.d("LoginPage", "Login successful, navigating to main screen...")
-            // TODO: Navigate to main app screen after successful login
+            navigateToHome()
         }
     }
 
@@ -62,7 +73,13 @@ fun LoginPage(tokenManager: TokenManager? = null) {
                 errorMessage = loginState.errorMessage,
                 onEmailChange = { loginViewModel?.onEmailChange(it) },
                 onPasswordChange = { loginViewModel?.onPasswordChange(it) },
-                onLoginClick = { loginViewModel?.login() },
+                onLoginClick = {
+                    if (loginViewModel == null) {
+                        navigateToHome()
+                    } else {
+                        loginViewModel.login()
+                    }
+                },
                 onSignUpClick = { navController.navigate("signup") },
                 onBackClick = { navController.popBackStack() }
             )
@@ -70,10 +87,14 @@ fun LoginPage(tokenManager: TokenManager? = null) {
 
         composable("signup") {
             SignUpScreen(
-                onRegisterClick = { navController.navigate("login") },
+                onRegisterClick = { navigateToHome() },
                 onLoginClick = { navController.navigate("login") },
                 onBackClick = { navController.popBackStack() }
             )
+        }
+
+        composable(MainRoutes.Home) {
+            MainNavHost(startDestination = MainRoutes.Home)
         }
     }
 }

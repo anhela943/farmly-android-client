@@ -58,7 +58,9 @@ fun MessagePage(
 
                     IconButton(
                         onClick = onBackClick,
-                        modifier = Modifier.align(Alignment.CenterStart)
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .size(30.dp)
                     ) {
                         Image(
                             painter = painterResource(R.drawable.arrow),

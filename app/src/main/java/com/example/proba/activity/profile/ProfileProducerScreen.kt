@@ -72,7 +72,7 @@ fun ProfileProducerView(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 10.dp)
+                .padding(horizontal = 16.dp, vertical = 16.dp)
         ) {
             IconButton(
                 onClick = {
@@ -83,7 +83,9 @@ fun ProfileProducerView(
                 Image(
                     painter = painterResource(id = R.drawable.arrow),
                     contentDescription = "Back",
-                    modifier = Modifier.rotate(180f)
+                    modifier = Modifier
+                        .size(24.dp)
+                        .rotate(180f)
                 )
             }
 

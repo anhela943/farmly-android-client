@@ -69,7 +69,7 @@ fun ProducesScreenView(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 100.dp)
         ) {
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier
@@ -87,6 +87,7 @@ fun ProducesScreenView(
                         painter = painterResource(R.drawable.arrow),
                         contentDescription = "Back",
                         modifier = Modifier
+                            .size(24.dp)
                             .rotate(180f)
                     )
                 }

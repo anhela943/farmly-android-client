@@ -123,12 +123,15 @@ fun MessageChatPage(
                             .padding(horizontal = 12.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = onBackClick) {
+                        IconButton(
+                            onClick = onBackClick,
+                            modifier = Modifier.size(30.dp)
+                        ) {
                             Image(
                                 painter = painterResource(R.drawable.arrow),
                                 contentDescription = "Back",
                                 modifier = Modifier
-                                    .size(22.dp)
+                                    .size(24.dp)
                                     .rotate(180f)
                             )
                         }
