@@ -20,6 +20,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -34,9 +37,11 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,13 +65,19 @@ import com.example.proba.activity.bottomBarView
 import com.example.proba.data.model.response.ChatInfoResponse
 import com.example.proba.util.Resource
 import com.example.proba.viewmodel.ChatInfoViewModel
+import com.example.proba.viewmodel.ChatMessagesViewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 @Composable
 fun MessageChatPage(
     navController: NavController,
     onBackClick: () -> Unit,
-    chatInfoViewModel: ChatInfoViewModel
+    chatInfoViewModel: ChatInfoViewModel,
+    chatMessagesViewModel: ChatMessagesViewModel
 ) {
     Scaffold(
         bottomBar = { bottomBarView(navController) }
@@ -127,7 +138,8 @@ fun MessageChatPage(
                     ChatContent(
                         navController = navController,
                         onBackClick = onBackClick,
-                        chatInfo = state.data
+                        chatInfo = state.data,
+                        chatMessagesViewModel = chatMessagesViewModel
                     )
                 }
             }
@@ -139,7 +151,8 @@ fun MessageChatPage(
 private fun ChatContent(
     navController: NavController,
     onBackClick: () -> Unit,
-    chatInfo: ChatInfoResponse
+    chatInfo: ChatInfoResponse,
+    chatMessagesViewModel: ChatMessagesViewModel
 ) {
     val isPreview = LocalInspectionMode.current
     val logMessageChat: (String) -> Unit = { message ->
@@ -162,6 +175,22 @@ private fun ChatContent(
     val user = chatInfo.user
     val product = chatInfo.product
     val reviewAllowed = chatInfo.reviewAllowed == true
+
+    val messages = chatMessagesViewModel.messages
+    val currentUserId = chatMessagesViewModel.currentUserId
+    val isLoading = chatMessagesViewModel.isLoading
+    val isLoadingMore = chatMessagesViewModel.isLoadingMore
+    val hasMore = chatMessagesViewModel.hasMore
+    val errorMessage = chatMessagesViewModel.errorMessage
+
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(messages.size) {
+        if (messages.isNotEmpty() && listState.firstVisibleItemIndex <= 1) {
+            listState.animateScrollToItem(0)
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -366,30 +395,96 @@ private fun ChatContent(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            MessageBubble(
-                text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-                isOwnMessage = true
-            )
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = colorResource(R.color.darkGreenTxt)
+                )
+            }
+        } else if (errorMessage != null && messages.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = errorMessage,
+                        fontSize = 14.sp,
+                        color = colorResource(R.color.grey),
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = { chatMessagesViewModel.retry() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(R.color.darkGreenTxt)
+                        ),
+                        shape = RoundedCornerShape(13.dp)
+                    ) {
+                        Text("Retry", color = Color.White)
+                    }
+                }
+            }
+        } else {
+            LazyColumn(
+                state = listState,
+                reverseLayout = true,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                items(messages.asReversed(), key = { it.id }) { message ->
+                    MessageBubble(
+                        text = message.content,
+                        isOwnMessage = message.senderId == currentUserId,
+                        timestamp = formatMessageTime(message.sentAt)
+                    )
+                }
 
-            MessageBubble(
-                text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-                isOwnMessage = false
-            )
+                if (hasMore) {
+                    item(key = "load_more") {
+                        LaunchedEffect(Unit) {
+                            chatMessagesViewModel.loadMoreMessages()
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                                color = colorResource(R.color.darkGreenTxt)
+                            )
+                        }
+                    }
+                }
+            }
         }
-
-        Spacer(modifier = Modifier.weight(1f))
 
         TextField(
             value = messageText,
             onValueChange = { messageText = it },
             placeholder = { Text("Message...", color = colorResource(R.color.grey)) },
             trailingIcon = {
-                IconButton(onClick = { /* TODO: send message */ }) {
+                IconButton(onClick = {
+                    if (messageText.isNotBlank()) {
+                        chatMessagesViewModel.sendMessage(messageText)
+                        messageText = ""
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(0)
+                        }
+                    }
+                }) {
                     Image(
                         painter = painterResource(R.drawable.arrow),
                         contentDescription = "Send",
@@ -572,7 +667,8 @@ private fun ReviewOverlay(
 @Composable
 private fun MessageBubble(
     text: String,
-    isOwnMessage: Boolean
+    isOwnMessage: Boolean,
+    timestamp: String = ""
 ) {
     Row(
         modifier = Modifier
@@ -586,12 +682,35 @@ private fun MessageBubble(
             elevation = CardDefaults.cardElevation(6.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
-            Text(
-                text = text,
-                fontSize = 12.sp,
-                color = colorResource(R.color.black),
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
-            )
+            Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+                Text(
+                    text = text,
+                    fontSize = 12.sp,
+                    color = colorResource(R.color.black)
+                )
+                if (timestamp.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = timestamp,
+                        fontSize = 9.sp,
+                        color = colorResource(R.color.grey),
+                        modifier = Modifier.align(Alignment.End)
+                    )
+                }
+            }
         }
+    }
+}
+
+private fun formatMessageTime(isoTimestamp: String): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+        val date = inputFormat.parse(isoTimestamp) ?: return ""
+        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        outputFormat.timeZone = TimeZone.getDefault()
+        outputFormat.format(date)
+    } catch (e: Exception) {
+        ""
     }
 }

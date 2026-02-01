@@ -22,6 +22,7 @@ import com.example.proba.activity.profile.ProfilePage
 import com.example.proba.activity.profile.ProfileProducerView
 import com.example.proba.util.TokenManager
 import com.example.proba.viewmodel.ChatInfoViewModel
+import com.example.proba.viewmodel.ChatMessagesViewModel
 import com.example.proba.viewmodel.ChatsViewModel
 import com.example.proba.viewmodel.FavoritesViewModel
 import com.example.proba.viewmodel.ProfileViewModel
@@ -101,13 +102,19 @@ fun MainNavHost(startDestination: String = MainRoutes.Home) {
             arguments = listOf(navArgument("chatId") { type = NavType.StringType })
         ) { backStackEntry ->
             val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+            val tokenManager = TokenManager(context.applicationContext)
+            val token = tokenManager.getTokenSync() ?: ""
             val chatInfoViewModel: ChatInfoViewModel = viewModel(
                 factory = ChatInfoViewModel.Factory(chatId)
+            )
+            val chatMessagesViewModel: ChatMessagesViewModel = viewModel(
+                factory = ChatMessagesViewModel.Factory(chatId, token)
             )
             MessageChatPage(
                 navController = navController,
                 onBackClick = { navController.popBackStack() },
-                chatInfoViewModel = chatInfoViewModel
+                chatInfoViewModel = chatInfoViewModel,
+                chatMessagesViewModel = chatMessagesViewModel
             )
         }
         composable(MainRoutes.ProfileProducer) {

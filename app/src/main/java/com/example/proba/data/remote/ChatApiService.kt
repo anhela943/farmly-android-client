@@ -2,6 +2,7 @@ package com.example.proba.data.remote
 
 import com.example.proba.data.model.response.ChatInfoResponse
 import com.example.proba.data.model.response.ChatListResponse
+import com.example.proba.data.model.response.MessagesListResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -19,4 +20,11 @@ interface ChatApiService {
     suspend fun getChatInfo(
         @Path("chatId") chatId: String
     ): Response<ChatInfoResponse>
+
+    @GET("/api/chats/{chatId}/messages")
+    suspend fun getMessages(
+        @Path("chatId") chatId: String,
+        @Query("limit") limit: Int = 50,
+        @Query("offset") offset: Int = 0
+    ): Response<MessagesListResponse>
 }
