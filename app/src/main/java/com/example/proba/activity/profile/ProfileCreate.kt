@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
@@ -59,7 +60,7 @@ fun ProfileCreateView(
     navController: NavController,
     onBackClick: () -> Unit,
     profileName: String = "Petra Petrovic Pr",
-    profileEmail: String = "petra.petrovic@gmail.com",
+    profileStars: Double = 4.0,
     defaultFullName: String = "Petra Petrovic",
     defaultEmail: String = "petrapetrovic@gmail.com",
     defaultCity: String = "Niš",
@@ -162,12 +163,6 @@ fun ProfileCreateView(
                             )
 
                             Spacer(modifier = Modifier.height(4.dp))
-
-                            Text(
-                                text = profileEmail,
-                                fontSize = 18.sp,
-                                color = colorResource(R.color.grey)
-                            )
 
                             Spacer(modifier = Modifier.height(16.dp))
 

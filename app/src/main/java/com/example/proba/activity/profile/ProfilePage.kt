@@ -6,6 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,17 +30,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.proba.R
 import com.example.proba.activity.bottomBarView
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.proba.navigation.MainRoutes
 import com.example.proba.util.Resource
 import com.example.proba.viewmodel.ProfileViewModel
@@ -116,7 +121,7 @@ fun ProfilePage(
                         ProfileContent(
                             navController = navController,
                             profileName = profile.fullName,
-                            profileEmail = profile.email,
+                            profileStar = profile.review,
                             fullName = profile.fullName,
                             email = profile.email,
                             city = profile.city ?: "",
@@ -152,7 +157,7 @@ fun ProfilePage(
 private fun ProfileContent(
     navController: NavController,
     profileName: String,
-    profileEmail: String,
+    profileStar: String,
     fullName: String,
     email: String,
     city: String,
@@ -200,11 +205,19 @@ private fun ProfileContent(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                Text(
-                    text = profileEmail,
-                    fontSize = 18.sp,
-                    color = colorResource(R.color.grey)
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(R.drawable.star),
+                        contentDescription = "Rating",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = profileStar,
+                        fontSize = 20.sp,
+                        color = colorResource(R.color.black)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -332,4 +345,21 @@ private fun ProfileActionButton(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfilePagePreview() {
+    ProfileContent(
+        navController = rememberNavController(),
+        profileName = "Ana Markovic",
+        profileStar = "2.0",
+        fullName = "Ana Markovic",
+        email = "ana.markovic@example.com",
+        city = "Belgrade",
+        phoneNumber = "+381 64 123 4567",
+        description = "Enthusiastic home chef and small-batch seller.",
+        imageUrl = null,
+        onLogout = {}
+    )
 }

@@ -100,7 +100,6 @@ fun reviewView(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(colorResource(R.color.grey))
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.star),

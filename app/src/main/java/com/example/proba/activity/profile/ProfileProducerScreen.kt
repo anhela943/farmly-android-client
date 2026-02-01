@@ -135,10 +135,9 @@ fun ProfileProducerView(
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
-                                    painter = painterResource(R.drawable.favorite),
+                                    painter = painterResource(R.drawable.star),
                                     contentDescription = "Rating",
-                                    modifier = Modifier.size(14.dp),
-                                    colorFilter = ColorFilter.tint(Color(0xFFFFC107))
+                                    modifier = Modifier.size(14.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
@@ -319,7 +318,7 @@ private fun ReviewItem(
                         )
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
-                                painter = painterResource(R.drawable.favorite),
+                                painter = painterResource(R.drawable.star),
                                 contentDescription = "Rating",
                                 modifier = Modifier.size(11.dp),
                                 colorFilter = ColorFilter.tint(Color(0xFFFFC107))

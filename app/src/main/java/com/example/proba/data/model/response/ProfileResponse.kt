@@ -7,6 +7,8 @@ data class ProfileResponse(
     val id: String,
     @SerializedName("fullName")
     val fullName: String,
+    @SerializedName("review")
+    val review: String,
     @SerializedName("email")
     val email: String,
     @SerializedName("imageUrl")

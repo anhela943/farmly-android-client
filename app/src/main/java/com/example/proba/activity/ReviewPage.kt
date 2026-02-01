@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -52,7 +53,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.proba.navigation.MainRoutes
 
 @Composable
-fun EditProductView(
+fun ReviewPageView(
     navController: NavController
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -65,173 +66,63 @@ fun EditProductView(
             contentScale = ContentScale.Crop
         )
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
-
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
+                    .fillMaxSize()
+                    .padding(top = 32.dp)
                     .background(
                         colorResource(R.color.greenBackground),
                         RoundedCornerShape(topStart = 140.dp, topEnd = 140.dp)
                     )
-                    .padding(12.dp)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Spacer(modifier = Modifier.height(6.dp))
+            )
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Spacer(modifier = Modifier.size(30.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 30.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "Products",
-                                fontSize = 32.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = colorResource(R.color.darkGreenTxt)
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        EditProductCard(
-                            productName = "Tomatoes",
-                            price = "200 din",
-                            producer = "Proizvodjac",
-                            rating = "4.5",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        EditProductCard(
-                            productName = "Plum",
-                            price = "220 din",
-                            producer = "Proizvodjac",
-                            rating = "4.5",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        EditProductCard(
-                            productName = "Potatoes",
-                            price = "250 din",
-                            producer = "Proizvodjac",
-                            rating = "4.5",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        EditProductCard(
-                            productName = "Strawberry",
-                            price = "300 din",
-                            producer = "Proizvodjac",
-                            rating = "4.5",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        EditProductCard(
-                            productName = "Cabbage",
-                            price = "180 din",
-                            producer = "Proizvodjac",
-                            rating = "4.6",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        EditProductCard(
-                            productName = "Pepper",
-                            price = "260 din",
-                            producer = "Proizvodjac",
-                            rating = "4.4",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        EditProductCard(
-                            productName = "Onion",
-                            price = "120 din",
-                            producer = "Proizvodjac",
-                            rating = "4.7",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                    }
-
-                    Spacer(modifier = Modifier.height(150.dp))
-                }
-            }
-        }
-
-        Column(
-            modifier = Modifier.align(Alignment.BottomCenter)
-        ) {
-            Button(
-                onClick = { navController.navigate(MainRoutes.ProductAdd) },
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 14.dp)
-                    .height(48.dp)
-                    .shadow(18.dp, RoundedCornerShape(14.dp), clip = false),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.darkGreenTxt),
-                    contentColor = colorResource(R.color.white)
-                ),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(top = 32.dp)
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(text = "Add product", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(modifier = Modifier.size(30.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 30.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Reviews",
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colorResource(R.color.darkGreenTxt)
+                        )
+
+                    }
+                }
+                Spacer(modifier = Modifier.height(30.dp))
+                Column( modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.SpaceBetween) {
+                    ReviewItem("marija", "4.3", "Opid uzas bjkbfajklbfajbfjabfafjlbadjfad", R.drawable.user)
+                    Spacer(modifier = Modifier.height(10.dp))
+                    ReviewItem("Marko", "4.3", "Opid dsfsdgfvszdgvbdfhbdfghbndghbndfzgbdzgvbfszcbhdfblnh sflkockkcccccccccccccbhioasdhfdiosssssssssssvdnbhuzas bjkbfajklbfajbfjabfafjlbadjfad", R.drawable.user)
+                    Spacer(modifier = Modifier.height(10.dp))
+                    ReviewItem("Petra", "4.3", "Opid dsfsdgfvszdgvbdfhbdfghbndghbndfzgbdzgvbfszcbhdfblnh sflkockkcccccccccccccbhioasdhfdiosssssssssssvdnbhuzas bjkbfajklbfajbfjabfafjlbadjfad", R.drawable.user)
+                }
             }
         }
 
@@ -358,6 +249,77 @@ private fun EditProductCard(
 }
 
 @Composable
+private fun ReviewItem(
+    name: String,
+    rating: String,
+    text: String,
+    image: Int
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(image),
+                        contentDescription = name,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column {
+                        Text(
+                            text = name,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colorResource(R.color.black)
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(R.drawable.star),
+                                contentDescription = "Rating",
+                                modifier = Modifier.size(11.dp),
+                                colorFilter = ColorFilter.tint(Color(0xFFFFC107))
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = rating,
+                                fontSize = 11.sp,
+                                color = colorResource(R.color.black)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = text,
+                    fontSize = 10.sp,
+                    color = colorResource(R.color.black)
+                )
+            }
+        }
+    }
+}
+
+
+
+@Composable
 private fun EditIconButton(
     onClick: () -> Unit
 ) {
@@ -375,6 +337,8 @@ private fun EditIconButton(
 
 @Preview(showBackground = true)
 @Composable
-fun EditProductViewPreview() {
-    EditProductView(rememberNavController())
+fun ReviewPagePreview() {
+    ReviewPageView(
+        navController = rememberNavController()
+    )
 }
