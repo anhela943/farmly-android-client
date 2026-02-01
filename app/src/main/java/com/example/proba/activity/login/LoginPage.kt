@@ -25,6 +25,8 @@ import com.example.proba.navigation.MainRoutes
 import com.example.proba.util.TokenManager
 import com.example.proba.viewmodel.LoginUiState
 import com.example.proba.viewmodel.LoginViewModel
+import com.example.proba.viewmodel.RegisterUiState
+import com.example.proba.viewmodel.RegisterViewModel
 
 @Composable
 fun LoginPage(tokenManager: TokenManager? = null) {
@@ -39,8 +41,15 @@ fun LoginPage(tokenManager: TokenManager? = null) {
         authRepository?.let { LoginViewModel(it) }
     }
 
+    val registerViewModel = remember(authRepository) {
+        authRepository?.let { RegisterViewModel(it) }
+    }
+
     val loginState by loginViewModel?.uiState?.collectAsState()
         ?: remember { androidx.compose.runtime.mutableStateOf(LoginUiState()) }
+
+    val registerState by registerViewModel?.uiState?.collectAsState()
+        ?: remember { androidx.compose.runtime.mutableStateOf(RegisterUiState()) }
 
     val navigateToHome = remember(navController) {
         {
@@ -64,6 +73,13 @@ fun LoginPage(tokenManager: TokenManager? = null) {
     LaunchedEffect(loginState.isLoginSuccessful) {
         if (loginState.isLoginSuccessful) {
             Log.d("LoginPage", "Login successful, navigating to main screen...")
+            navigateToHome()
+        }
+    }
+
+    LaunchedEffect(registerState.isRegisterSuccessful) {
+        if (registerState.isRegisterSuccessful) {
+            Log.d("LoginPage", "Registration successful, navigating to main screen...")
             navigateToHome()
         }
     }
@@ -124,7 +140,25 @@ fun LoginPage(tokenManager: TokenManager? = null) {
 
         composable("signup") {
             SignUpScreen(
-                onRegisterClick = { navigateToHome() },
+                fullName = registerState.fullName,
+                email = registerState.email,
+                city = registerState.city,
+                phoneNumber = registerState.phoneNumber,
+                password = registerState.password,
+                isLoading = registerState.isLoading,
+                errorMessage = registerState.errorMessage,
+                onFullNameChange = { registerViewModel?.onFullNameChange(it) },
+                onEmailChange = { registerViewModel?.onEmailChange(it) },
+                onCityChange = { registerViewModel?.onCityChange(it) },
+                onPhoneNumberChange = { registerViewModel?.onPhoneNumberChange(it) },
+                onPasswordChange = { registerViewModel?.onPasswordChange(it) },
+                onRegisterClick = {
+                    if (registerViewModel == null) {
+                        navigateToHome()
+                    } else {
+                        registerViewModel.register()
+                    }
+                },
                 onLoginClick = { navController.navigate("login") },
                 onBackClick = { navController.popBackStack() }
             )

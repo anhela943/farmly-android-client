@@ -16,3 +16,8 @@ data class FieldError(
     @SerializedName("message")
     val message: String
 )
+
+data class RegisterErrorResponse(
+    @SerializedName("error")
+    val error: List<String>
+)

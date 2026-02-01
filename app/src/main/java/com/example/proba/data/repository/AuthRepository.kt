@@ -4,6 +4,7 @@ package com.example.proba.data.repository
 import com.example.proba.data.model.request.LoginRequest
 import com.example.proba.data.model.request.RegisterRequest
 import com.example.proba.data.model.response.ErrorResponse
+import com.example.proba.data.model.response.RegisterErrorResponse
 import com.example.proba.data.remote.ApiClient
 import com.example.proba.util.Resource
 import com.example.proba.util.TokenManager
@@ -59,10 +60,10 @@ class AuthRepository(private val tokenManager: TokenManager) {
             }
 
             val errorBody = response.errorBody()?.string()
-            val errorResponse = parseError(errorBody)
+            val registerError = parseRegisterError(errorBody)
             Resource.Error(
-                message = errorResponse?.message ?: "Registration failed",
-                errors = errorResponse?.errors?.map { "${it.field}: ${it.message}" }
+                message = registerError?.error?.joinToString("\n") ?: "Registration failed",
+                errors = registerError?.error
             )
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Network error occurred")
@@ -80,6 +81,14 @@ class AuthRepository(private val tokenManager: TokenManager) {
     private fun parseError(errorBody: String?): ErrorResponse? {
         return try {
             errorBody?.let { gson.fromJson(it, ErrorResponse::class.java) }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun parseRegisterError(errorBody: String?): RegisterErrorResponse? {
+        return try {
+            errorBody?.let { gson.fromJson(it, RegisterErrorResponse::class.java) }
         } catch (e: Exception) {
             null
         }

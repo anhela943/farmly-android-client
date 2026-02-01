@@ -44,6 +44,18 @@ import com.example.proba.R
 
 @Composable
 fun SignUpScreen(
+    fullName: String = "",
+    email: String = "",
+    city: String = "",
+    phoneNumber: String = "",
+    password: String = "",
+    isLoading: Boolean = false,
+    errorMessage: String? = null,
+    onFullNameChange: (String) -> Unit = {},
+    onEmailChange: (String) -> Unit = {},
+    onCityChange: (String) -> Unit = {},
+    onPhoneNumberChange: (String) -> Unit = {},
+    onPasswordChange: (String) -> Unit = {},
     onRegisterClick: () -> Unit = {},
     onLoginClick: () -> Unit = {},
     onBackClick: () -> Unit = {}
@@ -87,16 +99,27 @@ fun SignUpScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            SignUpInput(label = "Full Name", defaultValue = "Lois Becket")
-            SignUpInput(label = "Email", defaultValue = "Loisbecket@gmail.com")
-            SignUpInput(label = "City", defaultValue = "Niš")
-            PhoneInput()
-            SignUpInput(label = "Set Password", defaultValue = "", isPassword = true)
+            SignUpInput(label = "Full Name", value = fullName, onValueChange = onFullNameChange)
+            SignUpInput(label = "Email", value = email, onValueChange = onEmailChange)
+            SignUpInput(label = "City", value = city, onValueChange = onCityChange)
+            PhoneInput(value = phoneNumber, onValueChange = onPhoneNumberChange)
+            SignUpInput(label = "Set Password", value = password, onValueChange = onPasswordChange, isPassword = true)
+
+            if (errorMessage != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = errorMessage,
+                    color = Color.Red,
+                    fontSize = 14.sp,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = onRegisterClick,
+                enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
@@ -106,7 +129,14 @@ fun SignUpScreen(
                     contentColor = colorResource(R.color.white)
                 )
             ) {
-                Text("Register")
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                } else {
+                    Text("Register")
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -126,7 +156,6 @@ fun SignUpScreen(
                     color = colorResource(R.color.darkGreenTxt),
                     modifier = Modifier.clickable {
                         onLoginClick()
-                        print("LOG")
                     }
                 )
             }
@@ -153,10 +182,11 @@ fun SignUpScreen(
 @Composable
 fun SignUpInput(
     label: String,
-    defaultValue: String = "",
+    value: String = "",
+    onValueChange: (String) -> Unit = {},
     isPassword: Boolean = false
 ) {
-    var text by remember { mutableStateOf(defaultValue) }
+    var passwordVisible by remember { mutableStateOf(false) }
 
     Column {
         Text(
@@ -182,10 +212,24 @@ fun SignUpInput(
                 )
         ) {
             OutlinedTextField(
-                value = text,
-                onValueChange = { text = it },
+                value = value,
+                onValueChange = onValueChange,
                 singleLine = true,
-                visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+                visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+                trailingIcon = if (isPassword) {
+                    {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                painter = painterResource(
+                                    if (passwordVisible) R.drawable.ic_visibility
+                                    else R.drawable.ic_visibility_off
+                                ),
+                                contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                } else null,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -202,9 +246,10 @@ fun SignUpInput(
 }
 
 @Composable
-fun PhoneInput() {
-    var phone by remember { mutableStateOf("(+381) 60 1 245 678") }
-
+fun PhoneInput(
+    value: String = "",
+    onValueChange: (String) -> Unit = {}
+) {
     Column {
         Text(
             text = "Phone Number",
@@ -229,8 +274,8 @@ fun PhoneInput() {
                 )
         ) {
             OutlinedTextField(
-                value = phone,
-                onValueChange = { phone = it },
+                value = value,
+                onValueChange = onValueChange,
                 singleLine = true,
                 leadingIcon = {
                     Box(

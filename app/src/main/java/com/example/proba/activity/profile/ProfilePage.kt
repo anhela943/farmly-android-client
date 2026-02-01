@@ -290,7 +290,7 @@ private fun ProfileContent(
                 )
             } else {
                 Image(
-                    painter = painterResource(id = R.drawable.user),
+                    painter = painterResource(id = R.drawable.user_1),
                     contentDescription = "Profile image",
                     modifier = Modifier
                         .fillMaxSize()
