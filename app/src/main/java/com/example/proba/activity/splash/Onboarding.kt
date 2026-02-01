@@ -1,3 +1,5 @@
+package com.example.proba.activity.splash
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proba.R
 import com.example.proba.activity.domain.OnboardingPage
-import com.example.proba.activity.splash.OnboardingScreen
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 

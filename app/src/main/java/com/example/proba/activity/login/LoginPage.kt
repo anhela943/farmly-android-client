@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +28,8 @@ import com.example.proba.viewmodel.LoginUiState
 import com.example.proba.viewmodel.LoginViewModel
 import com.example.proba.viewmodel.RegisterUiState
 import com.example.proba.viewmodel.RegisterViewModel
+import com.example.proba.activity.splash.OnboardingPager
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginPage(tokenManager: TokenManager? = null) {
@@ -51,6 +54,8 @@ fun LoginPage(tokenManager: TokenManager? = null) {
     val registerState by registerViewModel?.uiState?.collectAsState()
         ?: remember { androidx.compose.runtime.mutableStateOf(RegisterUiState()) }
 
+    val coroutineScope = rememberCoroutineScope()
+
     val navigateToHome = remember(navController) {
         {
             navController.navigate(MainRoutes.Home) {
@@ -61,12 +66,17 @@ fun LoginPage(tokenManager: TokenManager? = null) {
     }
 
     LaunchedEffect(Unit) {
-        val valid = tokenManager?.isTokenValid() ?: false
-        if (valid) {
-            startDestination = MainRoutes.Home
+        val onboardingCompleted = tokenManager?.isOnboardingCompleted() ?: true
+        if (!onboardingCompleted) {
+            startDestination = "onboarding"
         } else {
-            tokenManager?.clearToken()
-            startDestination = "welcome"
+            val valid = tokenManager?.isTokenValid() ?: false
+            if (valid) {
+                startDestination = MainRoutes.Home
+            } else {
+                tokenManager?.clearToken()
+                startDestination = "welcome"
+            }
         }
     }
 
@@ -106,6 +116,19 @@ fun LoginPage(tokenManager: TokenManager? = null) {
         navController = navController,
         startDestination = startDestination!!
     ) {
+
+        composable("onboarding") {
+            OnboardingPager(
+                onGetStartedClick = {
+                    coroutineScope.launch {
+                        tokenManager?.setOnboardingCompleted()
+                    }
+                    navController.navigate("welcome") {
+                        popUpTo("onboarding") { inclusive = true }
+                    }
+                }
+            )
+        }
 
         composable("welcome") {
             LoginWelcome(
