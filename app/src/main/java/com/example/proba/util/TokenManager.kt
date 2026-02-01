@@ -5,6 +5,7 @@ import android.util.Base64
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +20,7 @@ class TokenManager(private val context: Context) {
 
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
+        private val ONBOARDING_COMPLETED_KEY = booleanPreferencesKey("onboarding_completed")
     }
 
     val accessToken: Flow<String?> = context.dataStore.data.map { preferences ->
@@ -43,6 +45,17 @@ class TokenManager(private val context: Context) {
 
     suspend fun hasToken(): Boolean {
         return accessToken.first() != null
+    }
+
+    suspend fun isOnboardingCompleted(): Boolean {
+        val prefs = context.dataStore.data.first()
+        return prefs[ONBOARDING_COMPLETED_KEY] ?: false
+    }
+
+    suspend fun setOnboardingCompleted() {
+        context.dataStore.edit { preferences ->
+            preferences[ONBOARDING_COMPLETED_KEY] = true
+        }
     }
 
     suspend fun isTokenValid(): Boolean {
