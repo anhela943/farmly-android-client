@@ -120,6 +120,7 @@ fun ProfilePage(
                             navController = navController,
                             profileName = profile.fullName,
                             profileStar = profile.overallReview,
+                            numberOfReviews = profile.numberOfReviews,
                             fullName = profile.fullName,
                             email = profile.email,
                             city = profile.city ?: "",
@@ -156,6 +157,7 @@ private fun ProfileContent(
     navController: NavController,
     profileName: String,
     profileStar: Double?,
+    numberOfReviews: Int?,
     fullName: String,
     email: String,
     city: String,
@@ -211,7 +213,13 @@ private fun ProfileContent(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = profileStar.toString(),
+                        text = "${profileStar ?: 0}",
+                        fontSize = 20.sp,
+                        color = colorResource(R.color.black)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "(${numberOfReviews ?: 0})",
                         fontSize = 20.sp,
                         color = colorResource(R.color.black)
                     )
@@ -351,7 +359,8 @@ fun ProfilePagePreview() {
     ProfileContent(
         navController = rememberNavController(),
         profileName = "Ana Markovic",
-        profileStar = 2.0,
+        profileStar = 4.3,
+        numberOfReviews = 100,
         fullName = "Ana Markovic",
         email = "ana.markovic@example.com",
         city = "Belgrade",

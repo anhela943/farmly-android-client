@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,10 +23,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -136,27 +130,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                var remember by remember { mutableStateOf(false) }
-                Checkbox(
-                    checked = remember,
-                    onCheckedChange = { remember = it },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Color(0xFF2F6B2F)
-                    )
-                )
-                Text("Remember me", fontSize = 12.sp)
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "Forgot Password?",
-                    fontSize = 12.sp,
-                    color = colorResource(R.color.darkGreenTxt),
-                    modifier = Modifier.clickable { }
-                )
-            }
+
 
             Spacer(modifier = Modifier.height(24.dp))
 
