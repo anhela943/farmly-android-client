@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -58,9 +59,9 @@ fun ProductView(
     Card(
         onClick = onProductClick,
         modifier = modifier.wrapContentHeight(),
-        shape = RoundedCornerShape(36.dp),
+        shape = RoundedCornerShape(20.dp),
         border = BorderStroke(
-            10.dp,
+            4.dp,
             Brush.verticalGradient(
                 listOf(
                     colorResource(R.color.greenStrokeLight),
@@ -71,107 +72,107 @@ fun ProductView(
         elevation = CardDefaults.cardElevation(6.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
+                    .size(110.dp)
                     .clip(RoundedCornerShape(16.dp))
             ) {
                 Image(
                     painter = painterResource(imageProduct),
                     contentDescription = null,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Column {
-                    Text(
-                        text = productName,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colorResource(R.color.darkGreenTxt)
-                    )
-                    Text(
-                        text = "${price} RSD",
-                        fontSize = 13.sp,
-                        color = colorResource(R.color.darkGreenTxt)
-                    )
-                }
-
-                IconButton(
-                    onClick = onFavoriteClick,
-                    modifier = Modifier.size(32.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(
-                            if (isFavorite) R.drawable.heart else R.drawable.favorite
-                        ),
-                        contentDescription = "Favorite",
-                        modifier = Modifier
-                            .size(if (isFavorite) 26.dp else 30.dp)
-                            .graphicsLayer(scaleX = scale, scaleY = scale)
-                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = productName,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colorResource(R.color.darkGreenTxt)
+                        )
+                        Text(
+                            text = "${price} RSD",
+                            fontSize = 13.sp,
+                            color = colorResource(R.color.darkGreenTxt)
+                        )
+                    }
+
+                    IconButton(
+                        onClick = onFavoriteClick,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(
+                                if (isFavorite) R.drawable.heart else R.drawable.favorite
+                            ),
+                            contentDescription = "Favorite",
+                            modifier = Modifier
+                                .size(if (isFavorite) 26.dp else 30.dp)
+                                .graphicsLayer(scaleX = scale, scaleY = scale)
+                        )
+                    }
                 }
 
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = onProducerClick,
-                    modifier = Modifier.size(30.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    IconButton(
+                        onClick = onProducerClick,
+                        modifier = Modifier.size(30.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(imageProducer),
+                            contentDescription = "Producer"
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = producer,
+                            fontSize = 13.sp,
+                            color = colorResource(R.color.darkGreenTxt)
+                        )
+                        Text(
+                            text = city,
+                            fontSize = 12.sp,
+                            color = colorResource(R.color.darkGreenTxt)
+                        )
+                    }
+
                     Image(
-                        painter = painterResource(imageProducer),
-                        contentDescription = "Producer"
+                        painter = painterResource(R.drawable.star),
+                        contentDescription = "Star",
+                        modifier = Modifier.size(15.dp)
                     )
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
+                    Spacer(modifier = Modifier.width(3.dp))
                     Text(
-                        text = producer,
-                        fontSize = 13.sp,
-                        color = colorResource(R.color.darkGreenTxt)
-                    )
-                    Text(
-                        text = city,
+                        text = "$producerReview",
                         fontSize = 12.sp,
                         color = colorResource(R.color.darkGreenTxt)
                     )
                 }
-                
-                Image(
-                    painter = painterResource(R.drawable.star),
-                    contentDescription = "Star",
-                    modifier = Modifier.size(15.dp)
-                )
-                Spacer(modifier = Modifier.width(3.dp))
-                Text(
-                    text = "$producerReview",
-                    fontSize = 12.sp,
-                    color = colorResource(R.color.darkGreenTxt)
-                )
             }
         }
     }
@@ -194,7 +195,7 @@ fun ProductViewPreview() {
         onProductClick = {},
         onProducerClick = {},
         modifier = Modifier
-            .width(200.dp)
+            .fillMaxWidth()
             .padding(16.dp)
     )
 }

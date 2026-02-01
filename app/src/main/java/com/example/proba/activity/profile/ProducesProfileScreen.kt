@@ -114,100 +114,76 @@ fun EditProductView(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        EditProductCard(
-                            productName = "Tomatoes",
-                            price = "200 din",
-                            producer = "Proizvodjac",
-                            rating = "4.5",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        EditProductCard(
-                            productName = "Plum",
-                            price = "220 din",
-                            producer = "Proizvodjac",
-                            rating = "4.5",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        EditProductCard(
-                            productName = "Potatoes",
-                            price = "250 din",
-                            producer = "Proizvodjac",
-                            rating = "4.5",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        EditProductCard(
-                            productName = "Strawberry",
-                            price = "300 din",
-                            producer = "Proizvodjac",
-                            rating = "4.5",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        EditProductCard(
-                            productName = "Cabbage",
-                            price = "180 din",
-                            producer = "Proizvodjac",
-                            rating = "4.6",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        EditProductCard(
-                            productName = "Pepper",
-                            price = "260 din",
-                            producer = "Proizvodjac",
-                            rating = "4.4",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        EditProductCard(
-                            productName = "Onion",
-                            price = "120 din",
-                            producer = "Proizvodjac",
-                            rating = "4.7",
-                            imageProduct = R.drawable.basket,
-                            imageProducer = R.drawable.user,
-                            onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                    }
+                    EditProductCard(
+                        productName = "Tomatoes",
+                        price = "200 din",
+                        producer = "Proizvodjac",
+                        rating = "4.5",
+                        imageProduct = R.drawable.basket,
+                        imageProducer = R.drawable.user,
+                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    EditProductCard(
+                        productName = "Plum",
+                        price = "220 din",
+                        producer = "Proizvodjac",
+                        rating = "4.5",
+                        imageProduct = R.drawable.basket,
+                        imageProducer = R.drawable.user,
+                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    EditProductCard(
+                        productName = "Potatoes",
+                        price = "250 din",
+                        producer = "Proizvodjac",
+                        rating = "4.5",
+                        imageProduct = R.drawable.basket,
+                        imageProducer = R.drawable.user,
+                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    EditProductCard(
+                        productName = "Strawberry",
+                        price = "300 din",
+                        producer = "Proizvodjac",
+                        rating = "4.5",
+                        imageProduct = R.drawable.basket,
+                        imageProducer = R.drawable.user,
+                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    EditProductCard(
+                        productName = "Cabbage",
+                        price = "180 din",
+                        producer = "Proizvodjac",
+                        rating = "4.6",
+                        imageProduct = R.drawable.basket,
+                        imageProducer = R.drawable.user,
+                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    EditProductCard(
+                        productName = "Pepper",
+                        price = "260 din",
+                        producer = "Proizvodjac",
+                        rating = "4.4",
+                        imageProduct = R.drawable.basket,
+                        imageProducer = R.drawable.user,
+                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    EditProductCard(
+                        productName = "Onion",
+                        price = "120 din",
+                        producer = "Proizvodjac",
+                        rating = "4.7",
+                        imageProduct = R.drawable.basket,
+                        imageProducer = R.drawable.user,
+                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
                     Spacer(modifier = Modifier.height(150.dp))
                 }
@@ -267,9 +243,9 @@ private fun EditProductCard(
 ) {
     Card(
         modifier = modifier.wrapContentHeight(),
-        shape = RoundedCornerShape(26.dp),
+        shape = RoundedCornerShape(20.dp),
         border = BorderStroke(
-            6.dp,
+            4.dp,
             Brush.verticalGradient(
                 listOf(
                     colorResource(R.color.greenStrokeLight),
@@ -280,13 +256,15 @@ private fun EditProductCard(
         elevation = CardDefaults.cardElevation(6.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
+                    .size(110.dp)
                     .clip(RoundedCornerShape(16.dp))
             ) {
                 Image(
@@ -297,61 +275,64 @@ private fun EditProductCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
-            Text(
-                text = productName,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(R.color.darkGreenTxt)
-            )
-            Text(
-                text = price,
-                fontSize = 15.sp,
-                color = colorResource(R.color.darkGreenTxt)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                Text(
+                    text = productName,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colorResource(R.color.darkGreenTxt)
+                )
+                Text(
+                    text = price,
+                    fontSize = 15.sp,
+                    color = colorResource(R.color.darkGreenTxt)
+                )
+
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(imageProducer),
-                        contentDescription = "Producer",
-                        modifier = Modifier
-                            .size(20.dp)
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Column {
-                        Text(
-                            text = producer,
-                            fontSize = 12.sp,
-                            color = colorResource(R.color.darkGreenTxt)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(imageProducer),
+                            contentDescription = "Producer",
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clip(CircleShape)
                         )
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(R.drawable.star),
-                                contentDescription = "Star",
-                                modifier = Modifier.size(12.dp)
-                            )
-                            Spacer(modifier = Modifier.width(2.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Column {
                             Text(
-                                text = rating,
+                                text = producer,
                                 fontSize = 12.sp,
                                 color = colorResource(R.color.darkGreenTxt)
                             )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(
+                                    painter = painterResource(R.drawable.star),
+                                    contentDescription = "Star",
+                                    modifier = Modifier.size(12.dp)
+                                )
+                                Spacer(modifier = Modifier.width(2.dp))
+                                Text(
+                                    text = rating,
+                                    fontSize = 12.sp,
+                                    color = colorResource(R.color.darkGreenTxt)
+                                )
+                            }
                         }
                     }
-                }
 
-                EditIconButton(onClick = onEdit)
+                    EditIconButton(onClick = onEdit)
+                }
             }
         }
     }

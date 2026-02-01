@@ -1,8 +1,6 @@
 package com.example.proba.activity.homePage
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -24,22 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.proba.R
-
-class Category {
-
-}
 
 @Composable
 fun CategoryView(
     name: String,
-    @DrawableRes imageCategory: Int,
+    imageUrl: String,
     onClick: () -> Unit = {}
 ) {
     Card(
@@ -62,7 +56,7 @@ fun CategoryView(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxHeight() // 👈 OVO JE KLJUČ
+                .fillMaxHeight()
                 .background(
                     Brush.verticalGradient(
                         listOf(
@@ -74,12 +68,13 @@ fun CategoryView(
                 .padding(horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(imageCategory),
-                contentDescription = null,
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = name,
                 modifier = Modifier
                     .size(30.dp)
-                    .clip(CircleShape)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -91,12 +86,5 @@ fun CategoryView(
                 color = Color.Black
             )
         }
-
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CategoryViewPreview() {
-    CategoryView(name = "Dairy",imageCategory = R.drawable.logo)
 }
