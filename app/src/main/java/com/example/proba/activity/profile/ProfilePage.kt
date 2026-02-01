@@ -48,7 +48,8 @@ import com.example.proba.viewmodel.ProfileViewModel
 fun ProfilePage(
     navController: NavController,
     onBackClick: () -> Unit,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    onLogout: () -> Unit = {}
 ) {
     Scaffold(
         bottomBar = { bottomBarView(navController) }
@@ -121,7 +122,8 @@ fun ProfilePage(
                             city = profile.city ?: "",
                             phoneNumber = profile.phoneNumber ?: "",
                             description = profile.description ?: "",
-                            imageUrl = profile.imageUrl
+                            imageUrl = profile.imageUrl,
+                            onLogout = { profileViewModel.logout { onLogout() } }
                         )
                     }
                 }
@@ -156,7 +158,8 @@ private fun ProfileContent(
     city: String,
     phoneNumber: String,
     description: String,
-    imageUrl: String?
+    imageUrl: String?,
+    onLogout: () -> Unit
 ) {
     val surfaceColor = colorResource(R.color.greenBackground)
     val actionButtonModifier = Modifier
@@ -233,6 +236,16 @@ private fun ProfileContent(
                     containerColor = colorResource(R.color.darkGreenTxt),
                     contentColor = colorResource(R.color.white),
                     onClick = { navController.navigate(MainRoutes.ProfileCreate) },
+                    modifier = actionButtonModifier
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                ProfileActionButton(
+                    text = "Log out",
+                    containerColor = androidx.compose.ui.graphics.Color(0xFFD32F2F),
+                    contentColor = colorResource(R.color.white),
+                    onClick = onLogout,
                     modifier = actionButtonModifier
                 )
                 Spacer(modifier = Modifier.height(20.dp))

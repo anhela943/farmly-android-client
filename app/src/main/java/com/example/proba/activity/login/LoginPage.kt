@@ -94,7 +94,14 @@ fun LoginPage(tokenManager: TokenManager? = null) {
         }
 
         composable(MainRoutes.Home) {
-            MainNavHost(startDestination = MainRoutes.Home)
+            MainNavHost(
+                startDestination = MainRoutes.Home,
+                onLogout = {
+                    navController.navigate("welcome") {
+                        popUpTo(MainRoutes.Home) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

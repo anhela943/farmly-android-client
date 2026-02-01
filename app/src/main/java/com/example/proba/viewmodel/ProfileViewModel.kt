@@ -49,6 +49,13 @@ class ProfileViewModel(
         }
     }
 
+    fun logout(onComplete: () -> Unit) {
+        viewModelScope.launch {
+            tokenManager.clearToken()
+            onComplete()
+        }
+    }
+
     private fun extractUserIdFromToken(token: String): String? {
         return try {
             val parts = token.split(".")

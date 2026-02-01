@@ -28,7 +28,7 @@ import com.example.proba.viewmodel.FavoritesViewModel
 import com.example.proba.viewmodel.ProfileViewModel
 
 @Composable
-fun MainNavHost(startDestination: String = MainRoutes.Home) {
+fun MainNavHost(startDestination: String = MainRoutes.Home, onLogout: () -> Unit = {}) {
     val navController = rememberNavController()
     val favoritesViewModel: FavoritesViewModel = viewModel()
     val context = LocalContext.current
@@ -70,7 +70,8 @@ fun MainNavHost(startDestination: String = MainRoutes.Home) {
             ProfilePage(
                 navController = navController,
                 onBackClick = { navController.popBackStack() },
-                profileViewModel = profileViewModel
+                profileViewModel = profileViewModel,
+                onLogout = onLogout
             )
         }
         composable(MainRoutes.ProfileCreate) {
