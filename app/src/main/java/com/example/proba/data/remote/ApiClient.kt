@@ -1,6 +1,10 @@
 package com.example.proba.data.remote
 
 import com.example.proba.util.TokenManager
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -13,6 +17,9 @@ object ApiClient {
     private const val TIMEOUT_SECONDS = 30L
 
     private var tokenManager: TokenManager? = null
+
+    private val _authFailureEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val authFailureEvent: SharedFlow<Unit> = _authFailureEvent.asSharedFlow()
 
     fun init(tokenManager: TokenManager) {
         this.tokenManager = tokenManager
@@ -37,10 +44,22 @@ object ApiClient {
         chain.proceed(request)
     }
 
+    private val unauthorizedInterceptor = Interceptor { chain ->
+        val response = chain.proceed(chain.request())
+        if (response.code == 401) {
+            tokenManager?.let { tm ->
+                runBlocking { tm.clearToken() }
+            }
+            _authFailureEvent.tryEmit(Unit)
+        }
+        response
+    }
+
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor(authInterceptor)
+            .addInterceptor(unauthorizedInterceptor)
             .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
