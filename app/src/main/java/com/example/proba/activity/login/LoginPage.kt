@@ -1,9 +1,6 @@
 package com.example.proba.activity.login
 
 import android.util.Log
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,9 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,12 +23,12 @@ import com.example.proba.viewmodel.LoginViewModel
 import com.example.proba.viewmodel.RegisterUiState
 import com.example.proba.viewmodel.RegisterViewModel
 import com.example.proba.activity.splash.OnboardingPager
+import com.example.proba.activity.splash.SplashScreen
 import kotlinx.coroutines.launch
 
 @Composable
 fun LoginPage(tokenManager: TokenManager? = null) {
     val navController = rememberNavController()
-    var startDestination by remember { mutableStateOf<String?>(null) }
 
     val authRepository = remember(tokenManager) {
         tokenManager?.let { AuthRepository(it) }
@@ -65,21 +59,6 @@ fun LoginPage(tokenManager: TokenManager? = null) {
         }
     }
 
-    LaunchedEffect(Unit) {
-        val onboardingCompleted = tokenManager?.isOnboardingCompleted() ?: true
-        if (!onboardingCompleted) {
-            startDestination = "onboarding"
-        } else {
-            val valid = tokenManager?.isTokenValid() ?: false
-            if (valid) {
-                startDestination = MainRoutes.Home
-            } else {
-                tokenManager?.clearToken()
-                startDestination = "welcome"
-            }
-        }
-    }
-
     LaunchedEffect(loginState.isLoginSuccessful) {
         if (loginState.isLoginSuccessful) {
             Log.d("LoginPage", "Login successful, navigating to main screen...")
@@ -102,20 +81,34 @@ fun LoginPage(tokenManager: TokenManager? = null) {
         }
     }
 
-    if (startDestination == null) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
-        return
-    }
-
     NavHost(
         navController = navController,
-        startDestination = startDestination!!
+        startDestination = "splash"
     ) {
+
+        composable("splash") {
+            SplashScreen(
+                onTimeout = {
+                    coroutineScope.launch {
+                        val onboardingCompleted = tokenManager?.isOnboardingCompleted() ?: true
+                        val destination = if (!onboardingCompleted) {
+                            "onboarding"
+                        } else {
+                            val valid = tokenManager?.isTokenValid() ?: false
+                            if (valid) {
+                                MainRoutes.Home
+                            } else {
+                                tokenManager?.clearToken()
+                                "welcome"
+                            }
+                        }
+                        navController.navigate(destination) {
+                            popUpTo("splash") { inclusive = true }
+                        }
+                    }
+                }
+            )
+        }
 
         composable("onboarding") {
             OnboardingPager(

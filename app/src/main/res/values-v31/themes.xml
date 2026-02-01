@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Proba" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowSplashScreenBackground">@color/greenBackground</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/logosp</item>
-    </style>
-
+    <style name="Theme.Proba" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
