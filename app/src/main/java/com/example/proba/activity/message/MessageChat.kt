@@ -79,9 +79,7 @@ fun MessageChatPage(
     chatInfoViewModel: ChatInfoViewModel,
     chatMessagesViewModel: ChatMessagesViewModel
 ) {
-    Scaffold(
-        bottomBar = { bottomBarView(navController) }
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -670,6 +668,8 @@ private fun MessageBubble(
     isOwnMessage: Boolean,
     timestamp: String = ""
 ) {
+    var showTimestamp by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -677,7 +677,12 @@ private fun MessageBubble(
         horizontalArrangement = if (isOwnMessage) Arrangement.End else Arrangement.Start
     ) {
         Card(
-            modifier = Modifier.widthIn(max = 260.dp),
+            modifier = Modifier
+                .widthIn(max = 260.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { showTimestamp = !showTimestamp },
             shape = RoundedCornerShape(14.dp),
             elevation = CardDefaults.cardElevation(6.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -688,14 +693,16 @@ private fun MessageBubble(
                     fontSize = 12.sp,
                     color = colorResource(R.color.black)
                 )
-                if (timestamp.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = timestamp,
-                        fontSize = 9.sp,
-                        color = colorResource(R.color.grey),
-                        modifier = Modifier.align(Alignment.End)
-                    )
+                AnimatedVisibility(visible = showTimestamp && timestamp.isNotEmpty()) {
+                    Column {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = timestamp,
+                            fontSize = 9.sp,
+                            color = colorResource(R.color.grey),
+                            modifier = Modifier.align(Alignment.End)
+                        )
+                    }
                 }
             }
         }
@@ -707,7 +714,7 @@ private fun formatMessageTime(isoTimestamp: String): String {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
         inputFormat.timeZone = TimeZone.getTimeZone("UTC")
         val date = inputFormat.parse(isoTimestamp) ?: return ""
-        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("'Sent' d. MMM yyyy. 'at' HH:mm", Locale.getDefault())
         outputFormat.timeZone = TimeZone.getDefault()
         outputFormat.format(date)
     } catch (e: Exception) {

@@ -37,7 +37,7 @@ class ChatMessagesViewModel(
 
     private var total = 0
     private var offset = 0
-    private val limit = 50
+    private val limit = 20
 
     val currentUserId: String? = getUserIdFromToken(token)
 
