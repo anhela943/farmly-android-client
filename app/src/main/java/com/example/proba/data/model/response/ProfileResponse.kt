@@ -7,8 +7,6 @@ data class ProfileResponse(
     val id: String,
     @SerializedName("fullName")
     val fullName: String,
-    @SerializedName("review")
-    val review: String,
     @SerializedName("email")
     val email: String,
     @SerializedName("imageUrl")
@@ -20,7 +18,7 @@ data class ProfileResponse(
     @SerializedName("description")
     val description: String?,
     @SerializedName("overallReview")
-    val overallReview: String?,
+    val overallReview: Double?,
     @SerializedName("numberOfReviews")
-    val numberOfReviews: String?
+    val numberOfReviews: Int?
 )

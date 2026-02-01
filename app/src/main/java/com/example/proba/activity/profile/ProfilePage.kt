@@ -30,8 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -121,7 +119,7 @@ fun ProfilePage(
                         ProfileContent(
                             navController = navController,
                             profileName = profile.fullName,
-                            profileStar = profile.review,
+                            profileStar = profile.overallReview,
                             fullName = profile.fullName,
                             email = profile.email,
                             city = profile.city ?: "",
@@ -157,7 +155,7 @@ fun ProfilePage(
 private fun ProfileContent(
     navController: NavController,
     profileName: String,
-    profileStar: String,
+    profileStar: Double?,
     fullName: String,
     email: String,
     city: String,
@@ -213,7 +211,7 @@ private fun ProfileContent(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = profileStar,
+                        text = profileStar.toString(),
                         fontSize = 20.sp,
                         color = colorResource(R.color.black)
                     )
@@ -353,7 +351,7 @@ fun ProfilePagePreview() {
     ProfileContent(
         navController = rememberNavController(),
         profileName = "Ana Markovic",
-        profileStar = "2.0",
+        profileStar = 2.0,
         fullName = "Ana Markovic",
         email = "ana.markovic@example.com",
         city = "Belgrade",
