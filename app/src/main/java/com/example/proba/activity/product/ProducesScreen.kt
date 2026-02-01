@@ -119,14 +119,10 @@ fun ProducesScreenView(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                val product1 = ProductUi.from(
-                    name = "Tomatoes",
-                    price = 200.0,
-                    producer = "Proizvodjac",
-                    producerReview = 4.5,
-                    city = "Niš",
-                    imageProducer = R.drawable.user,
-                    imageProduct = R.drawable.basket
+                val product1 = ProductUi(
+                    id = "1", name = "Tomatoes", price = 200.0,
+                    producer = "Proizvodjac", producerReview = 4.5,
+                    city = "Niš", imageUrl = ""
                 )
                 ProductView(
                     productName = product1.name,
@@ -134,8 +130,7 @@ fun ProducesScreenView(
                     producer = product1.producer,
                     producerReview = product1.producerReview,
                     city = product1.city,
-                    imageProducer = product1.imageProducer,
-                    imageProduct = product1.imageProduct,
+                    imageUrl = product1.imageUrl,
                     isFavorite = favoritesViewModel.isFavorite(product1),
                     onProductClick = { navController.navigate(MainRoutes.Product) },
                     onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
@@ -143,14 +138,10 @@ fun ProducesScreenView(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                val product2 = ProductUi.from(
-                    name = "Potatoes",
-                    price = 220.0,
-                    producer = "Proizvodjac",
-                    producerReview = 4.5,
-                    city = "Niš",
-                    imageProducer = R.drawable.user,
-                    imageProduct = R.drawable.basket
+                val product2 = ProductUi(
+                    id = "2", name = "Potatoes", price = 220.0,
+                    producer = "Proizvodjac", producerReview = 4.5,
+                    city = "Niš", imageUrl = ""
                 )
                 ProductView(
                     productName = product2.name,
@@ -158,8 +149,7 @@ fun ProducesScreenView(
                     producer = product2.producer,
                     producerReview = product2.producerReview,
                     city = product2.city,
-                    imageProducer = product2.imageProducer,
-                    imageProduct = product2.imageProduct,
+                    imageUrl = product2.imageUrl,
                     isFavorite = favoritesViewModel.isFavorite(product2),
                     onProductClick = { navController.navigate(MainRoutes.Product) },
                     onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
@@ -167,14 +157,10 @@ fun ProducesScreenView(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                val product3 = ProductUi.from(
-                    name = "Strawberry",
-                    price = 250.0,
-                    producer = "Proizvodjac",
-                    producerReview = 4.5,
-                    city = "Niš",
-                    imageProducer = R.drawable.user,
-                    imageProduct = R.drawable.basket
+                val product3 = ProductUi(
+                    id = "3", name = "Strawberry", price = 250.0,
+                    producer = "Proizvodjac", producerReview = 4.5,
+                    city = "Niš", imageUrl = ""
                 )
                 ProductView(
                     productName = product3.name,
@@ -182,8 +168,7 @@ fun ProducesScreenView(
                     producer = product3.producer,
                     producerReview = product3.producerReview,
                     city = product3.city,
-                    imageProducer = product3.imageProducer,
-                    imageProduct = product3.imageProduct,
+                    imageUrl = product3.imageUrl,
                     isFavorite = favoritesViewModel.isFavorite(product3),
                     onProductClick = { navController.navigate(MainRoutes.Product) },
                     onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
@@ -191,14 +176,10 @@ fun ProducesScreenView(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                val product4 = ProductUi.from(
-                    name = "Plum",
-                    price = 300.0,
-                    producer = "Proizvodjac",
-                    producerReview = 4.5,
-                    city = "Niš",
-                    imageProducer = R.drawable.user,
-                    imageProduct = R.drawable.basket
+                val product4 = ProductUi(
+                    id = "4", name = "Plum", price = 300.0,
+                    producer = "Proizvodjac", producerReview = 4.5,
+                    city = "Niš", imageUrl = ""
                 )
                 ProductView(
                     productName = product4.name,
@@ -206,8 +187,7 @@ fun ProducesScreenView(
                     producer = product4.producer,
                     producerReview = product4.producerReview,
                     city = product4.city,
-                    imageProducer = product4.imageProducer,
-                    imageProduct = product4.imageProduct,
+                    imageUrl = product4.imageUrl,
                     isFavorite = favoritesViewModel.isFavorite(product4),
                     onProductClick = { navController.navigate(MainRoutes.Product) },
                     onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
@@ -215,14 +195,10 @@ fun ProducesScreenView(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                val product5 = ProductUi.from(
-                    name = "Potatoes",
-                    price = 220.0,
-                    producer = "Proizvodjac",
-                    producerReview = 4.5,
-                    city = "Niš",
-                    imageProducer = R.drawable.user,
-                    imageProduct = R.drawable.basket
+                val product5 = ProductUi(
+                    id = "5", name = "Potatoes", price = 220.0,
+                    producer = "Proizvodjac", producerReview = 4.5,
+                    city = "Niš", imageUrl = ""
                 )
                 ProductView(
                     productName = product5.name,
@@ -230,8 +206,7 @@ fun ProducesScreenView(
                     producer = product5.producer,
                     producerReview = product5.producerReview,
                     city = product5.city,
-                    imageProducer = product5.imageProducer,
-                    imageProduct = product5.imageProduct,
+                    imageUrl = product5.imageUrl,
                     isFavorite = favoritesViewModel.isFavorite(product5),
                     onProductClick = { navController.navigate(MainRoutes.Product) },
                     onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
@@ -239,14 +214,10 @@ fun ProducesScreenView(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                val product6 = ProductUi.from(
-                    name = "Strawberry",
-                    price = 250.0,
-                    producer = "Proizvodjac",
-                    producerReview = 4.5,
-                    city = "Niš",
-                    imageProducer = R.drawable.user,
-                    imageProduct = R.drawable.basket
+                val product6 = ProductUi(
+                    id = "6", name = "Strawberry", price = 250.0,
+                    producer = "Proizvodjac", producerReview = 4.5,
+                    city = "Niš", imageUrl = ""
                 )
                 ProductView(
                     productName = product6.name,
@@ -254,8 +225,7 @@ fun ProducesScreenView(
                     producer = product6.producer,
                     producerReview = product6.producerReview,
                     city = product6.city,
-                    imageProducer = product6.imageProducer,
-                    imageProduct = product6.imageProduct,
+                    imageUrl = product6.imageUrl,
                     isFavorite = favoritesViewModel.isFavorite(product6),
                     onProductClick = { navController.navigate(MainRoutes.Product) },
                     onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },

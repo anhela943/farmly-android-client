@@ -21,14 +21,10 @@ fun ProductPageScreen(
     navController: NavController,
     favoritesViewModel: FavoritesViewModel = viewModel()
 ) {
-    val product = ProductUi.from(
-        name = "Sljive",
-        price = 230.0,
-        producer = "Milena Petrovic",
-        producerReview = 2.3,
-        city = "Nis",
-        imageProduct = R.drawable.basket,
-        imageProducer = R.drawable.user
+    val product = ProductUi(
+        id = "0", name = "Sljive", price = 230.0,
+        producer = "Milena Petrovic", producerReview = 2.3,
+        city = "Nis", imageUrl = ""
     )
 
     Scaffold(
@@ -46,10 +42,10 @@ fun ProductPageScreen(
                 productName = product.name,
                 price = product.price,
                 producerName = product.producer,
-                review = product.producerReview,
+                review = product.producerReview ?: 0.0,
                 city = product.city,
-                imageProduct = product.imageProduct,
-                imageProducer = product.imageProducer,
+                imageProduct = R.drawable.basket,
+                imageProducer = R.drawable.user,
                 isFavorite = favoritesViewModel.isFavorite(product),
                 onBackClick = { navController.popBackStack() },
                 onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },

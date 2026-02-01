@@ -47,6 +47,7 @@ import com.example.proba.activity.SearchView
 import com.example.proba.activity.bottomBarView
 import com.example.proba.viewmodel.FavoritesViewModel
 import com.example.proba.navigation.MainRoutes
+import coil.compose.AsyncImage
 
 @Composable
 fun FavoriteScreenView(
@@ -145,9 +146,9 @@ fun FavoriteScreenView(
                     favorites.forEach { item ->
                         FavoriteItem(
                             title = item.name,
-                            rating = item.producerReview,
+                            rating = item.producerReview ?: 0.0,
                             owner = item.producer,
-                            image = item.imageProduct,
+                            imageUrl = item.imageUrl,
                             onCardClick = {
                                 navController.navigate(MainRoutes.Product)
                             },
@@ -175,7 +176,7 @@ private fun FavoriteItem(
     title: String,
     rating: Double,
     owner: String,
-    image: Int,
+    imageUrl: String,
     onCardClick: () -> Unit,
     onHeartClick: () -> Unit
 ) {
@@ -206,8 +207,8 @@ private fun FavoriteItem(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxSize()
             ) {
-                Image(
-                    painter = painterResource(image),
+                AsyncImage(
+                    model = imageUrl,
                     contentDescription = title,
                     modifier = Modifier
                         .size(60.dp)

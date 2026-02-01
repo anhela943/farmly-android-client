@@ -2,6 +2,7 @@ package com.example.proba.data.repository
 
 import com.example.proba.data.model.response.ErrorResponse
 import com.example.proba.data.model.response.ProductResponse
+import com.example.proba.data.model.response.ProductsListResponse
 import com.example.proba.data.remote.ApiClient
 import com.example.proba.util.Resource
 import com.google.gson.Gson
@@ -54,6 +55,23 @@ class ProductRepository {
                 message = errorResponse?.message ?: "Failed to create product",
                 errors = errorResponse?.errors?.map { "${it.field}: ${it.message}" }
             )
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Network error occurred")
+        }
+    }
+
+    suspend fun getProducts(offset: Int, limit: Int): Resource<ProductsListResponse> = withContext(Dispatchers.IO) {
+        try {
+            val response = productApi.getProducts(offset, limit)
+
+            if (response.isSuccessful) {
+                response.body()?.let { productsResponse ->
+                    return@withContext Resource.Success(productsResponse)
+                }
+                return@withContext Resource.Error("Empty response body")
+            }
+
+            Resource.Error("Failed to load products")
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Network error occurred")
         }

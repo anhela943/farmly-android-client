@@ -1,37 +1,28 @@
 package com.example.proba.model
 
-import androidx.annotation.DrawableRes
+import com.example.proba.data.model.response.ProductListItem
 
 data class ProductUi(
     val id: String,
     val name: String,
     val price: Double,
     val producer: String,
-    val producerReview: Double,
+    val producerReview: Double?,
     val city: String,
-    @DrawableRes val imageProducer: Int,
-    @DrawableRes val imageProduct: Int
+    val imageUrl: String,
+    val producerImageUrl: String? = null
 ) {
     companion object {
-        fun from(
-            name: String,
-            price: Double,
-            producer: String,
-            producerReview: Double,
-            city: String,
-            @DrawableRes imageProducer: Int,
-            @DrawableRes imageProduct: Int
-        ): ProductUi {
-            val id = listOf(name, producer, price.toString(), city).joinToString("|")
+        fun fromApi(item: ProductListItem): ProductUi {
             return ProductUi(
-                id = id,
-                name = name,
-                price = price,
-                producer = producer,
-                producerReview = producerReview,
-                city = city,
-                imageProducer = imageProducer,
-                imageProduct = imageProduct
+                id = item.id,
+                name = item.name,
+                price = item.price,
+                producer = item.producer.fullName,
+                producerReview = item.producer.overallReview.overallReview,
+                city = item.producer.city,
+                imageUrl = item.imageUrl,
+                producerImageUrl = item.producer.imageUrl
             )
         }
     }

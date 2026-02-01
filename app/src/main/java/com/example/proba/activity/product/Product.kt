@@ -1,6 +1,5 @@
 package com.example.proba.activity.product
 
-import androidx.annotation.DrawableRes
 import com.example.proba.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -9,10 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.Brush
@@ -38,16 +36,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.graphicsLayer
+import coil.compose.AsyncImage
 
 @Composable
 fun ProductView(
     productName: String,
     price: Double,
     producer: String,
-    producerReview: Double,
+    producerReview: Double?,
     city: String,
-    @DrawableRes imageProducer: Int,
-    @DrawableRes imageProduct: Int,
+    imageUrl: String,
+    producerImageUrl: String? = null,
     isFavorite: Boolean,
     onProductClick: () -> Unit,
     onProducerClick: () -> Unit,
@@ -83,9 +82,9 @@ fun ProductView(
                     .size(110.dp)
                     .clip(RoundedCornerShape(16.dp))
             ) {
-                Image(
-                    painter = painterResource(imageProduct),
-                    contentDescription = null,
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = productName,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
@@ -110,7 +109,7 @@ fun ProductView(
                             color = colorResource(R.color.darkGreenTxt)
                         )
                         Text(
-                            text = "${price} RSD",
+                            text = String.format("%.2f RSD", price),
                             fontSize = 13.sp,
                             color = colorResource(R.color.darkGreenTxt)
                         )
@@ -140,10 +139,21 @@ fun ProductView(
                         onClick = onProducerClick,
                         modifier = Modifier.size(30.dp)
                     ) {
-                        Image(
-                            painter = painterResource(imageProducer),
-                            contentDescription = "Producer"
-                        )
+                        if (producerImageUrl != null) {
+                            AsyncImage(
+                                model = producerImageUrl,
+                                contentDescription = "Producer",
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(R.drawable.user),
+                                contentDescription = "Producer"
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.width(8.dp))
@@ -161,17 +171,19 @@ fun ProductView(
                         )
                     }
 
-                    Image(
-                        painter = painterResource(R.drawable.star),
-                        contentDescription = "Star",
-                        modifier = Modifier.size(15.dp)
-                    )
-                    Spacer(modifier = Modifier.width(3.dp))
-                    Text(
-                        text = "$producerReview",
-                        fontSize = 12.sp,
-                        color = colorResource(R.color.darkGreenTxt)
-                    )
+                    if (producerReview != null) {
+                        Image(
+                            painter = painterResource(R.drawable.star),
+                            contentDescription = "Star",
+                            modifier = Modifier.size(15.dp)
+                        )
+                        Spacer(modifier = Modifier.width(3.dp))
+                        Text(
+                            text = "$producerReview",
+                            fontSize = 12.sp,
+                            color = colorResource(R.color.darkGreenTxt)
+                        )
+                    }
                 }
             }
         }
@@ -188,8 +200,7 @@ fun ProductViewPreview() {
         producer = "Marko",
         producerReview = 4.5,
         city = "Novi Sad",
-        imageProducer = R.drawable.user,
-        imageProduct = R.drawable.basket,
+        imageUrl = "",
         isFavorite = false,
         onFavoriteClick = {},
         onProductClick = {},
