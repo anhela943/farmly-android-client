@@ -239,7 +239,7 @@ fun EditProductView(
             onClick = { navController.popBackStack() },
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = 16.dp, top = 16.dp)
+                .padding(start = 26.dp, top = 74.dp)
                 .size(30.dp)
                 .zIndex(1f)
         ) {

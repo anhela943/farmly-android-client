@@ -13,6 +13,7 @@ object MainRoutes {
     const val ProfileCreate = "profile_create"
     const val ProductAdd = "product_add"
     const val ProductEdit = "product_edit"
+    const val ReviewPage = "review_page"
 
     fun messageChatRoute(chatId: String) = "message_chat/$chatId"
 }

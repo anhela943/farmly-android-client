@@ -1,4 +1,4 @@
-package com.example.proba.activity
+package com.example.proba.activity.review
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image

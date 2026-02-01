@@ -57,16 +57,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.proba.R
 import com.example.proba.activity.bottomBarView
 import com.example.proba.data.model.response.ChatInfoResponse
+import com.example.proba.data.model.response.MessageResponse
+import com.example.proba.data.model.response.MessageSenderResponse
 import com.example.proba.util.Resource
 import com.example.proba.viewmodel.ChatInfoViewModel
 import com.example.proba.viewmodel.ChatMessagesViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -133,11 +137,21 @@ fun MessageChatPage(
                 }
 
                 is Resource.Success -> {
+                    val messagesState = ChatMessagesUiState(
+                        messages = chatMessagesViewModel.messages,
+                        currentUserId = chatMessagesViewModel.currentUserId,
+                        isLoading = chatMessagesViewModel.isLoading,
+                        hasMore = chatMessagesViewModel.hasMore,
+                        errorMessage = chatMessagesViewModel.errorMessage
+                    )
                     ChatContent(
                         navController = navController,
                         onBackClick = onBackClick,
                         chatInfo = state.data,
-                        chatMessagesViewModel = chatMessagesViewModel
+                        chatMessagesState = messagesState,
+                        onSendMessage = chatMessagesViewModel::sendMessage,
+                        onLoadMore = chatMessagesViewModel::loadMoreMessages,
+                        onRetry = chatMessagesViewModel::retry
                     )
                 }
             }
@@ -145,12 +159,23 @@ fun MessageChatPage(
     }
 }
 
+private data class ChatMessagesUiState(
+    val messages: List<MessageResponse>,
+    val currentUserId: String?,
+    val isLoading: Boolean,
+    val hasMore: Boolean,
+    val errorMessage: String?
+)
+
 @Composable
 private fun ChatContent(
     navController: NavController,
     onBackClick: () -> Unit,
     chatInfo: ChatInfoResponse,
-    chatMessagesViewModel: ChatMessagesViewModel
+    chatMessagesState: ChatMessagesUiState,
+    onSendMessage: (String) -> Unit,
+    onLoadMore: () -> Unit,
+    onRetry: () -> Unit
 ) {
     val isPreview = LocalInspectionMode.current
     val logMessageChat: (String) -> Unit = { message ->
@@ -174,12 +199,11 @@ private fun ChatContent(
     val product = chatInfo.product
     val reviewAllowed = chatInfo.reviewAllowed == true
 
-    val messages = chatMessagesViewModel.messages
-    val currentUserId = chatMessagesViewModel.currentUserId
-    val isLoading = chatMessagesViewModel.isLoading
-    val isLoadingMore = chatMessagesViewModel.isLoadingMore
-    val hasMore = chatMessagesViewModel.hasMore
-    val errorMessage = chatMessagesViewModel.errorMessage
+    val messages = chatMessagesState.messages
+    val currentUserId = chatMessagesState.currentUserId
+    val isLoading = chatMessagesState.isLoading
+    val hasMore = chatMessagesState.hasMore
+    val errorMessage = chatMessagesState.errorMessage
 
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -420,7 +444,7 @@ private fun ChatContent(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(
-                        onClick = { chatMessagesViewModel.retry() },
+                        onClick = onRetry,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(R.color.darkGreenTxt)
                         ),
@@ -450,7 +474,7 @@ private fun ChatContent(
                 if (hasMore) {
                     item(key = "load_more") {
                         LaunchedEffect(Unit) {
-                            chatMessagesViewModel.loadMoreMessages()
+                            onLoadMore()
                         }
                         Box(
                             modifier = Modifier
@@ -476,18 +500,30 @@ private fun ChatContent(
             trailingIcon = {
                 IconButton(onClick = {
                     if (messageText.isNotBlank()) {
-                        chatMessagesViewModel.sendMessage(messageText)
+                        onSendMessage(messageText)
                         messageText = ""
                         coroutineScope.launch {
                             listState.animateScrollToItem(0)
                         }
                     }
                 }) {
-                    Image(
-                        painter = painterResource(R.drawable.arrow),
-                        contentDescription = "Send",
-                        modifier = Modifier.size(20.dp)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(
+                                color = colorResource(R.color.grey).copy(alpha = 0.2f),
+                                shape = CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.send),
+                            contentDescription = "Send",
+                            modifier = Modifier
+                                .size(18.dp)
+                                .rotate(-30f)
+                        )
+                    }
                 }
             },
             modifier = Modifier
@@ -719,5 +755,86 @@ private fun formatMessageTime(isoTimestamp: String): String {
         outputFormat.format(date)
     } catch (e: Exception) {
         ""
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MessageChatPreview() {
+    val sampleMessages = listOf(
+        MessageResponse(
+            id = "m1",
+            sentAt = "2025-01-12T10:15:30.000Z",
+            content = "Hi Petra! Do you have fresh tomatoes today?",
+            chatId = "chat-1",
+            senderId = "user-me",
+            sender = MessageSenderResponse(id = "user-me", fullName = "Me")
+        ),
+        MessageResponse(
+            id = "m2",
+            sentAt = "2025-01-12T10:18:10.000Z",
+            content = "Yes, I can deliver this afternoon. How many kilos?",
+            chatId = "chat-1",
+            senderId = "user-petra",
+            sender = MessageSenderResponse(id = "user-petra", fullName = "Petra Petrovic")
+        ),
+        MessageResponse(
+            id = "m3",
+            sentAt = "2025-01-12T10:20:45.000Z",
+            content = "Great! I need 3 kg.",
+            chatId = "chat-1",
+            senderId = "user-me",
+            sender = MessageSenderResponse(id = "user-me", fullName = "Me")
+        )
+    )
+
+    val chatInfo = ChatInfoResponse(
+        id = "chat-1",
+        user = com.example.proba.data.model.response.ChatUserInfo(
+            id = "user-petra",
+            name = "Petra Petrovic",
+            overallRating = 4.6,
+            imageUrl = null
+        ),
+        product = com.example.proba.data.model.response.ChatProductInfo(
+            id = "product-1",
+            imageUrl = null,
+            price = 220.0,
+            name = "Tomatoes"
+        ),
+        reviewAllowed = true
+    )
+
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            colorResource(R.color.greenBackground),
+                            colorResource(R.color.greenSrDark),
+                            colorResource(R.color.greenStrokeDark)
+                        )
+                    )
+                )
+                .padding(paddingValues)
+        ) {
+            ChatContent(
+                navController = rememberNavController(),
+                onBackClick = {},
+                chatInfo = chatInfo,
+                chatMessagesState = ChatMessagesUiState(
+                    messages = sampleMessages,
+                    currentUserId = "user-me",
+                    isLoading = false,
+                    hasMore = false,
+                    errorMessage = null
+                ),
+                onSendMessage = {},
+                onLoadMore = {},
+                onRetry = {}
+            )
+        }
     }
 }

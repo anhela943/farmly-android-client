@@ -22,8 +22,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
@@ -33,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -47,10 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.proba.R
-import com.example.proba.activity.bottomBarView
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.proba.navigation.MainRoutes
 
 @Composable
 fun ReviewPageView(
@@ -141,109 +136,6 @@ fun ReviewPageView(
                     .size(24.dp)
                     .rotate(180f)
             )
-        }
-    }
-}
-
-@Composable
-private fun EditProductCard(
-    productName: String,
-    price: String,
-    producer: String,
-    rating: String,
-    @DrawableRes imageProduct: Int,
-    @DrawableRes imageProducer: Int,
-    onEdit: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier.wrapContentHeight(),
-        shape = RoundedCornerShape(26.dp),
-        border = BorderStroke(
-            6.dp,
-            Brush.verticalGradient(
-                listOf(
-                    colorResource(R.color.greenStrokeLight),
-                    colorResource(R.color.greenStrokeDark)
-                )
-            )
-        ),
-        elevation = CardDefaults.cardElevation(6.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(RoundedCornerShape(16.dp))
-            ) {
-                Image(
-                    painter = painterResource(imageProduct),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = productName,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(R.color.darkGreenTxt)
-            )
-            Text(
-                text = price,
-                fontSize = 15.sp,
-                color = colorResource(R.color.darkGreenTxt)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(imageProducer),
-                        contentDescription = "Producer",
-                        modifier = Modifier
-                            .size(20.dp)
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Column {
-                        Text(
-                            text = producer,
-                            fontSize = 12.sp,
-                            color = colorResource(R.color.darkGreenTxt)
-                        )
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(R.drawable.star),
-                                contentDescription = "Star",
-                                modifier = Modifier.size(12.dp)
-                            )
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Text(
-                                text = rating,
-                                fontSize = 12.sp,
-                                color = colorResource(R.color.darkGreenTxt)
-                            )
-                        }
-                    }
-                }
-
-                EditIconButton(onClick = onEdit)
-            }
         }
     }
 }

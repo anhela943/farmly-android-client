@@ -20,6 +20,7 @@ import com.example.proba.activity.profile.EditProductView
 import com.example.proba.activity.profile.ProfileCreateView
 import com.example.proba.activity.profile.ProfilePage
 import com.example.proba.activity.profile.ProfileProducerView
+import com.example.proba.activity.profile.ReviewPageView
 import com.example.proba.util.TokenManager
 import com.example.proba.viewmodel.ChatInfoViewModel
 import com.example.proba.viewmodel.ChatMessagesViewModel
@@ -126,6 +127,9 @@ fun MainNavHost(startDestination: String = MainRoutes.Home, onLogout: () -> Unit
         }
         composable(MainRoutes.EditProduct) {
             EditProductView(navController)
+        }
+        composable(MainRoutes.ReviewPage) {
+            ReviewPageView(navController = navController)
         }
     }
 }

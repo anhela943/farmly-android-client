@@ -1,6 +1,7 @@
 package com.example.proba.activity.profile
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -133,7 +134,12 @@ fun ProfileProducerView(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                modifier = Modifier.clickable {
+                                    navController.navigate(MainRoutes.ReviewPage)
+                                },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 Image(
                                     painter = painterResource(R.drawable.star),
                                     contentDescription = "Rating",
