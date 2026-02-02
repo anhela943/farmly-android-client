@@ -199,7 +199,7 @@ fun HomePage(
                                 imageUrl = product.imageUrl,
                                 producerImageUrl = product.producerImageUrl,
                                 isFavorite = favoritesViewModel.isFavorite(product),
-                                onProductClick = { navController.navigate(MainRoutes.Product) },
+                                onProductClick = { navController.navigate(MainRoutes.productRoute(product.id)) },
                                 onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                                 onFavoriteClick = { favoritesViewModel.toggleFavorite(product) },
                                 modifier = Modifier.fillMaxWidth()

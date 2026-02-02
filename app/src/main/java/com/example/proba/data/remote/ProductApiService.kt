@@ -1,5 +1,6 @@
 package com.example.proba.data.remote
 
+import com.example.proba.data.model.response.ProductDetailResponse
 import com.example.proba.data.model.response.ProductResponse
 import com.example.proba.data.model.response.ProductsListResponse
 import okhttp3.MultipartBody
@@ -9,6 +10,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ProductApiService {
@@ -18,6 +20,11 @@ interface ProductApiService {
         @Query("offset") offset: Int,
         @Query("limit") limit: Int
     ): Response<ProductsListResponse>
+
+    @GET("/api/users/products/{productId}")
+    suspend fun getProductById(
+        @Path("productId") productId: String
+    ): Response<ProductDetailResponse>
 
     @Multipart
     @POST("api/products/")

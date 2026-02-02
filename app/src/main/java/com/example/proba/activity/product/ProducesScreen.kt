@@ -35,21 +35,27 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proba.R
 import com.example.proba.activity.FilterView
 import com.example.proba.activity.SearchView
 import com.example.proba.activity.bottomBarView
 import com.example.proba.model.ProductUi
+import com.example.proba.util.Resource
 import com.example.proba.viewmodel.FavoritesViewModel
+import com.example.proba.viewmodel.ProductViewModel
 import com.example.proba.navigation.MainRoutes
 
 @Composable
 fun ProducesScreenView(
     navController: NavController,
-    favoritesViewModel: FavoritesViewModel = viewModel()
+    favoritesViewModel: FavoritesViewModel = viewModel(),
+    productViewModel: ProductViewModel = viewModel()
 ) {
     var showFilter by remember { mutableStateOf(false) }
+    val productsState by productViewModel.products.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -119,119 +125,41 @@ fun ProducesScreenView(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                val product1 = ProductUi(
-                    id = "1", name = "Tomatoes", price = 200.0,
-                    producer = "Proizvodjac", producerReview = 4.5,
-                    city = "Niš", imageUrl = ""
-                )
-                ProductView(
-                    productName = product1.name,
-                    price = product1.price,
-                    producer = product1.producer,
-                    producerReview = product1.producerReview,
-                    city = product1.city,
-                    imageUrl = product1.imageUrl,
-                    isFavorite = favoritesViewModel.isFavorite(product1),
-                    onProductClick = { navController.navigate(MainRoutes.Product) },
-                    onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
-                    onFavoriteClick = { favoritesViewModel.toggleFavorite(product1) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                val product2 = ProductUi(
-                    id = "2", name = "Potatoes", price = 220.0,
-                    producer = "Proizvodjac", producerReview = 4.5,
-                    city = "Niš", imageUrl = ""
-                )
-                ProductView(
-                    productName = product2.name,
-                    price = product2.price,
-                    producer = product2.producer,
-                    producerReview = product2.producerReview,
-                    city = product2.city,
-                    imageUrl = product2.imageUrl,
-                    isFavorite = favoritesViewModel.isFavorite(product2),
-                    onProductClick = { navController.navigate(MainRoutes.Product) },
-                    onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
-                    onFavoriteClick = { favoritesViewModel.toggleFavorite(product2) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                val product3 = ProductUi(
-                    id = "3", name = "Strawberry", price = 250.0,
-                    producer = "Proizvodjac", producerReview = 4.5,
-                    city = "Niš", imageUrl = ""
-                )
-                ProductView(
-                    productName = product3.name,
-                    price = product3.price,
-                    producer = product3.producer,
-                    producerReview = product3.producerReview,
-                    city = product3.city,
-                    imageUrl = product3.imageUrl,
-                    isFavorite = favoritesViewModel.isFavorite(product3),
-                    onProductClick = { navController.navigate(MainRoutes.Product) },
-                    onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
-                    onFavoriteClick = { favoritesViewModel.toggleFavorite(product3) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                val product4 = ProductUi(
-                    id = "4", name = "Plum", price = 300.0,
-                    producer = "Proizvodjac", producerReview = 4.5,
-                    city = "Niš", imageUrl = ""
-                )
-                ProductView(
-                    productName = product4.name,
-                    price = product4.price,
-                    producer = product4.producer,
-                    producerReview = product4.producerReview,
-                    city = product4.city,
-                    imageUrl = product4.imageUrl,
-                    isFavorite = favoritesViewModel.isFavorite(product4),
-                    onProductClick = { navController.navigate(MainRoutes.Product) },
-                    onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
-                    onFavoriteClick = { favoritesViewModel.toggleFavorite(product4) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                val product5 = ProductUi(
-                    id = "5", name = "Potatoes", price = 220.0,
-                    producer = "Proizvodjac", producerReview = 4.5,
-                    city = "Niš", imageUrl = ""
-                )
-                ProductView(
-                    productName = product5.name,
-                    price = product5.price,
-                    producer = product5.producer,
-                    producerReview = product5.producerReview,
-                    city = product5.city,
-                    imageUrl = product5.imageUrl,
-                    isFavorite = favoritesViewModel.isFavorite(product5),
-                    onProductClick = { navController.navigate(MainRoutes.Product) },
-                    onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
-                    onFavoriteClick = { favoritesViewModel.toggleFavorite(product5) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                val product6 = ProductUi(
-                    id = "6", name = "Strawberry", price = 250.0,
-                    producer = "Proizvodjac", producerReview = 4.5,
-                    city = "Niš", imageUrl = ""
-                )
-                ProductView(
-                    productName = product6.name,
-                    price = product6.price,
-                    producer = product6.producer,
-                    producerReview = product6.producerReview,
-                    city = product6.city,
-                    imageUrl = product6.imageUrl,
-                    isFavorite = favoritesViewModel.isFavorite(product6),
-                    onProductClick = { navController.navigate(MainRoutes.Product) },
-                    onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
-                    onFavoriteClick = { favoritesViewModel.toggleFavorite(product6) },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                when (productsState) {
+                    is Resource.Success -> {
+                        (productsState as Resource.Success).data.forEach { item ->
+                            val product = ProductUi.fromApi(item)
+                            ProductView(
+                                productName = product.name,
+                                price = product.price,
+                                producer = product.producer,
+                                producerReview = product.producerReview,
+                                city = product.city,
+                                imageUrl = product.imageUrl,
+                                producerImageUrl = product.producerImageUrl,
+                                isFavorite = favoritesViewModel.isFavorite(product),
+                                onProductClick = { navController.navigate(MainRoutes.productRoute(product.id)) },
+                                onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
+                                onFavoriteClick = { favoritesViewModel.toggleFavorite(product) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                    is Resource.Error -> {
+                        Text(
+                            text = "Failed to load products",
+                            color = Color.Red,
+                            fontSize = 14.sp
+                        )
+                    }
+                    is Resource.Loading -> {
+                        Text(
+                            text = "Loading...",
+                            fontSize = 14.sp,
+                            color = colorResource(R.color.darkGreenTxt)
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))

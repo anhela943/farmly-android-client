@@ -118,7 +118,7 @@ fun ProductsPageView(
                         city = product1.city,
                         imageUrl = product1.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product1),
-                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProductClick = { /* TODO: pass real product ID */ },
                         onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product1) },
                         modifier = Modifier.fillMaxWidth()
@@ -137,7 +137,7 @@ fun ProductsPageView(
                         city = product2.city,
                         imageUrl = product2.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product2),
-                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProductClick = { /* TODO: pass real product ID */ },
                         onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product2) },
                         modifier = Modifier.fillMaxWidth()
@@ -156,7 +156,7 @@ fun ProductsPageView(
                         city = product3.city,
                         imageUrl = product3.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product3),
-                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProductClick = { /* TODO: pass real product ID */ },
                         onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product3) },
                         modifier = Modifier.fillMaxWidth()
@@ -175,7 +175,7 @@ fun ProductsPageView(
                         city = product4.city,
                         imageUrl = product4.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product4),
-                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProductClick = { /* TODO: pass real product ID */ },
                         onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product4) },
                         modifier = Modifier.fillMaxWidth()
@@ -194,7 +194,7 @@ fun ProductsPageView(
                         city = product5.city,
                         imageUrl = product5.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product5),
-                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProductClick = { /* TODO: pass real product ID */ },
                         onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product5) },
                         modifier = Modifier.fillMaxWidth()
@@ -213,7 +213,7 @@ fun ProductsPageView(
                         city = product6.city,
                         imageUrl = product6.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product6),
-                        onProductClick = { navController.navigate(MainRoutes.Product) },
+                        onProductClick = { /* TODO: pass real product ID */ },
                         onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product6) },
                         modifier = Modifier.fillMaxWidth()

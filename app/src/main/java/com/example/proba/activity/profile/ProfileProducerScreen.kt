@@ -195,7 +195,7 @@ fun ProfileProducerView(
                             city = productLeft.city,
                             imageUrl = productLeft.imageUrl,
                             isFavorite = favoritesViewModel.isFavorite(productLeft),
-                            onProductClick = { navController.navigate(MainRoutes.Product) },
+                            onProductClick = { /* TODO: pass real product ID */ },
                             onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                             onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
                             modifier = Modifier.fillMaxWidth()
@@ -213,7 +213,7 @@ fun ProfileProducerView(
                             city = productRight.city,
                             imageUrl = productRight.imageUrl,
                             isFavorite = favoritesViewModel.isFavorite(productRight),
-                            onProductClick = { navController.navigate(MainRoutes.Product) },
+                            onProductClick = { /* TODO: pass real product ID */ },
                             onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
                             onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
                             modifier = Modifier.fillMaxWidth()

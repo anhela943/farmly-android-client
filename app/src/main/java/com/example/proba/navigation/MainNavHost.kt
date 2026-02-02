@@ -28,6 +28,7 @@ import com.example.proba.viewmodel.ChatsViewModel
 import com.example.proba.viewmodel.FavoritesViewModel
 import com.example.proba.viewmodel.MyProductsViewModel
 import com.example.proba.viewmodel.ProductAddViewModel
+import com.example.proba.viewmodel.ProductDetailViewModel
 import com.example.proba.viewmodel.ProfileViewModel
 
 @Composable
@@ -84,10 +85,18 @@ fun MainNavHost(startDestination: String = MainRoutes.Home, onLogout: () -> Unit
                 profileViewModel = profileViewModel
             )
         }
-        composable(MainRoutes.Product) {
+        composable(
+            MainRoutes.Product,
+            arguments = listOf(navArgument("productId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
+            val productDetailViewModel: ProductDetailViewModel = viewModel(
+                factory = ProductDetailViewModel.Factory(productId)
+            )
             ProductPageScreen(
                 navController = navController,
-                favoritesViewModel = favoritesViewModel
+                favoritesViewModel = favoritesViewModel,
+                productDetailViewModel = productDetailViewModel
             )
         }
         composable(MainRoutes.ProductAdd) {

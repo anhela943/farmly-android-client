@@ -1,6 +1,7 @@
 package com.example.proba.data.repository
 
 import com.example.proba.data.model.response.ErrorResponse
+import com.example.proba.data.model.response.ProductDetailResponse
 import com.example.proba.data.model.response.ProductResponse
 import com.example.proba.data.model.response.ProductsListResponse
 import com.example.proba.data.remote.ApiClient
@@ -61,6 +62,23 @@ class ProductRepository {
                 message = errorResponse?.message ?: "Failed to create product",
                 errors = errorResponse?.errors?.map { "${it.field}: ${it.message}" }
             )
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Network error occurred")
+        }
+    }
+
+    suspend fun getProductById(productId: String): Resource<ProductDetailResponse> = withContext(Dispatchers.IO) {
+        try {
+            val response = productApi.getProductById(productId)
+
+            if (response.isSuccessful) {
+                response.body()?.let { productResponse ->
+                    return@withContext Resource.Success(productResponse)
+                }
+                return@withContext Resource.Error("Empty response body")
+            }
+
+            Resource.Error("Failed to load product")
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Network error occurred")
         }

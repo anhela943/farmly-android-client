@@ -1,6 +1,5 @@
 package com.example.proba.activity.product
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.proba.R
 
 @Composable
@@ -47,8 +46,9 @@ fun ProductPageView(
     producerName: String,
     review: Double,
     city: String,
-    @DrawableRes imageProduct: Int,
-    @DrawableRes imageProducer: Int,
+    description: String,
+    imageUrl: String,
+    producerImageUrl: String?,
     isFavorite: Boolean,
     onBackClick: () -> Unit,
     onProducerClick: () -> Unit,
@@ -151,11 +151,20 @@ fun ProductPageView(
                         .clip(RoundedCornerShape(50.dp))
                         .border(3.dp, colorResource(R.color.grey), CircleShape)
                 ) {
-                    Image(
-                        painter = painterResource(imageProducer),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    if (producerImageUrl != null) {
+                        AsyncImage(
+                            model = producerImageUrl,
+                            contentDescription = producerName,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.user),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -184,7 +193,7 @@ fun ProductPageView(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.width(110.dp))
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = city,
                     fontSize = 20.sp,
@@ -201,8 +210,7 @@ fun ProductPageView(
             ) {
 
                 Text(
-                    text = "citysaxfvdcsgbfdvhbngvhnghbsfvhsfhbnsgvfdnhbgdvnadnavb" +
-                            "n dsvfgnsdgfvhbadf bdf bfd esdfrb hasdfghbn rf bferbh",
+                    text = description,
                     fontSize = 20.sp,
                     color = colorResource(R.color.grey)
                 )
@@ -245,10 +253,11 @@ fun ProductPageView(
                 )
                 .align(Alignment.TopCenter)
         ) {
-            Image(
-                painter = painterResource(imageProduct),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize()
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = productName,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
         }
     }
@@ -264,8 +273,9 @@ fun ProductPageViewReview(){
         producerName = "Milena Petrovic",
         review = 2.3,
         city = "Nis",
-        imageProduct = R.drawable.basket,
-        imageProducer = R.drawable.user,
+        description = "Organic plums from local farm",
+        imageUrl = "",
+        producerImageUrl = null,
         isFavorite = false,
         onBackClick = { },
         onProducerClick = { },

@@ -6,7 +6,7 @@ object MainRoutes {
     const val Favorite = "favorite"
     const val Message = "message"
     const val Profile = "profile"
-    const val Product = "product"
+    const val Product = "product/{productId}"
     const val MessageChat = "message_chat/{chatId}"
     const val ProfileProducer = "profile_producer"
     const val EditProduct = "edit_product"
@@ -15,5 +15,6 @@ object MainRoutes {
     const val ProductEdit = "product_edit"
     const val ReviewPage = "review_page"
 
+    fun productRoute(productId: String) = "product/$productId"
     fun messageChatRoute(chatId: String) = "message_chat/$chatId"
 }

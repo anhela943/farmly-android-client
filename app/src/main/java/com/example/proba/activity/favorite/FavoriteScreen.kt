@@ -150,7 +150,7 @@ fun FavoriteScreenView(
                             owner = item.producer,
                             imageUrl = item.imageUrl,
                             onCardClick = {
-                                navController.navigate(MainRoutes.Product)
+                                navController.navigate(MainRoutes.productRoute(item.id))
                             },
                             onHeartClick = {
                                 favoritesViewModel.removeFavorite(item)
