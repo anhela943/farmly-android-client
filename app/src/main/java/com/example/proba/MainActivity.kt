@@ -3,6 +3,10 @@ package com.example.proba
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.ui.Modifier
 import com.example.proba.activity.login.LoginPage
 import com.example.proba.data.remote.ApiClient
 import com.example.proba.navigation.MainNavHost
@@ -18,8 +22,14 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ProbaTheme {
-                LoginPage(tokenManager = tokenManager)
-                //MainNavHost()
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .systemBarsPadding()
+                ) {
+                    LoginPage(tokenManager = tokenManager)
+                    //MainNavHost()
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ package com.example.proba.activity
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -53,7 +54,8 @@ fun bottomBarView(navController: NavController) {
         shadowElevation = 6.dp
     ) {
         NavigationBar(
-            containerColor = Color.White
+            containerColor = Color.White,
+            windowInsets = WindowInsets(0, 0, 0, 0)
         ) {
             items.forEach { item ->
 

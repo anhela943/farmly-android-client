@@ -48,7 +48,8 @@ fun MessagePage(
     }
 
     Scaffold(
-        bottomBar = { bottomBarView(navController) }
+        bottomBar = { bottomBarView(navController) },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
 
         Box(modifier = Modifier.fillMaxSize()) {
