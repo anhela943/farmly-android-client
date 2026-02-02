@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -86,137 +88,147 @@ fun ProductPageView(
             )
         }
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.85f)
                 .align(Alignment.BottomCenter)
                 .clip(RoundedCornerShape(topStart = 100.dp, topEnd = 100.dp))
-                .background(colorResource(R.color.greenBackground)),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(colorResource(R.color.greenBackground))
         ) {
-            Spacer(modifier = Modifier.height(110.dp))
-
-            Text(
-                text = productName,
-                fontSize = 35.sp,
-                fontWeight = FontWeight.Medium,
-                color = colorResource(R.color.black)
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 96.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(modifier = Modifier.height(120.dp))
+
                 Text(
-                    text = price.toString() + " din",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
+                    text = productName,
+                    fontSize = 35.sp,
+                    fontWeight = FontWeight.Medium,
                     color = colorResource(R.color.black)
                 )
 
-                IconButton(
-                    onClick = onFavoriteClick,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                ) {
-                    Image(
-                        painter = painterResource(
-                            if (isFavorite) R.drawable.heart else R.drawable.favorite
-                        ),
-                        contentDescription = "Favorite",
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = onProducerClick,
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clip(RoundedCornerShape(50.dp))
-                        .border(3.dp, colorResource(R.color.grey), CircleShape)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    if (producerImageUrl != null) {
-                        AsyncImage(
-                            model = producerImageUrl,
-                            contentDescription = producerName,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
+                    Text(
+                        text = price.toString() + " din",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.black)
+                    )
+
+                    IconButton(
+                        onClick = onFavoriteClick,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                    ) {
                         Image(
-                            painter = painterResource(R.drawable.user),
-                            contentDescription = null,
+                            painter = painterResource(
+                                if (isFavorite) R.drawable.heart else R.drawable.favorite
+                            ),
+                            contentDescription = "Favorite",
                             modifier = Modifier.fillMaxSize()
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(10.dp))
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(
+                        onClick = onProducerClick,
+                        modifier = Modifier
+                            .size(60.dp)
+                            .clip(RoundedCornerShape(50.dp))
+                            .border(3.dp, colorResource(R.color.grey), CircleShape)
+                    ) {
+                        if (producerImageUrl != null) {
+                            AsyncImage(
+                                model = producerImageUrl,
+                                contentDescription = producerName,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(R.drawable.user),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    }
 
-                Column {
-                    Text(
-                        text = producerName,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colorResource(R.color.black)
-                    )
-                    Spacer(modifier = Modifier.height(7.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                    Row{
-                        Image(
-                            painter = painterResource(R.drawable.star),
-                            contentDescription = "Star",
-                            modifier = Modifier.size(15.dp)
-                        )
-                        Spacer(modifier = Modifier.width(3.dp))
+                    Column {
                         Text(
-                            text = "$review",
-                            fontSize = 12.sp,
+                            text = producerName,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             color = colorResource(R.color.black)
                         )
+                        Spacer(modifier = Modifier.height(7.dp))
+
+                        Row {
+                            Image(
+                                painter = painterResource(R.drawable.star),
+                                contentDescription = "Star",
+                                modifier = Modifier.size(15.dp)
+                            )
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Text(
+                                text = "$review",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colorResource(R.color.black)
+                            )
+                        }
                     }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = city,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.black)
+                    )
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = city,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(R.color.black)
-                )
+
+                Column(
+                    modifier = Modifier
+                        .padding(top = 16.dp, bottom = 12.dp)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = description,
+                        fontSize = 20.sp,
+                        color = colorResource(R.color.grey)
+                    )
+                }
             }
 
-            Column(modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                Text(
-                    text = description,
-                    fontSize = 20.sp,
-                    color = colorResource(R.color.grey)
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
                 Text(
                     text = "Orders are delivered every day",
                     fontSize = 15.sp,

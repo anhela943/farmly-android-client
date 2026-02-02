@@ -68,6 +68,7 @@ import com.example.proba.activity.bottomBarView
 import com.example.proba.data.model.response.ChatInfoResponse
 import com.example.proba.data.model.response.MessageResponse
 import com.example.proba.data.model.response.MessageSenderResponse
+import com.example.proba.navigation.MainRoutes
 import com.example.proba.util.Resource
 import com.example.proba.viewmodel.ChatInfoViewModel
 import com.example.proba.viewmodel.ChatMessagesViewModel
@@ -334,58 +335,70 @@ private fun ChatContent(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    if (!product.imageUrl.isNullOrBlank()) {
-                                        AsyncImage(
-                                            model = product.imageUrl,
-                                            contentDescription = "Product image",
-                                            modifier = Modifier
-                                                .size(48.dp)
-                                                .clip(RoundedCornerShape(12.dp)),
-                                            contentScale = ContentScale.Crop
-                                        )
-                                    } else {
-                                        Image(
-                                            painter = painterResource(R.drawable.basket),
-                                            contentDescription = "Product image",
-                                            modifier = Modifier
-                                                .size(48.dp)
-                                                .clip(RoundedCornerShape(12.dp))
-                                        )
-                                    }
-
-                                    Spacer(modifier = Modifier.width(10.dp))
-
-                                    Column(
-                                        modifier = Modifier.weight(1f)
+                                    Row(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickable {
+                                                navController.navigate(
+                                                    MainRoutes.productRoute(product.id)
+                                                )
+                                                isDropdownExpanded = false
+                                            },
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text(
-                                            text = product.name,
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = colorResource(R.color.black)
-                                        )
-                                        Spacer(modifier = Modifier.height(2.dp))
-                                        Text(
-                                            text = "${"%.2f".format(product.price)} din",
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.Medium,
-                                            color = colorResource(R.color.grey)
-                                        )
-                                        if (user.overallRating != null) {
+                                        if (!product.imageUrl.isNullOrBlank()) {
+                                            AsyncImage(
+                                                model = product.imageUrl,
+                                                contentDescription = "Product image",
+                                                modifier = Modifier
+                                                    .size(48.dp)
+                                                    .clip(RoundedCornerShape(12.dp)),
+                                                contentScale = ContentScale.Crop
+                                            )
+                                        } else {
+                                            Image(
+                                                painter = painterResource(R.drawable.basket),
+                                                contentDescription = "Product image",
+                                                modifier = Modifier
+                                                    .size(48.dp)
+                                                    .clip(RoundedCornerShape(12.dp))
+                                            )
+                                        }
+
+                                        Spacer(modifier = Modifier.width(10.dp))
+
+                                        Column(
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = product.name,
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = colorResource(R.color.black)
+                                            )
                                             Spacer(modifier = Modifier.height(2.dp))
-                                            Row {
-                                                Image(
-                                                    painter = painterResource(R.drawable.star),
-                                                    contentDescription = "Rating",
-                                                    modifier = Modifier.size(15.dp)
-                                                )
-                                                Spacer(modifier = Modifier.width(3.dp))
-                                                Text(
-                                                    text = user.overallRating.toString(),
-                                                    fontSize = 12.sp,
-                                                    fontWeight = FontWeight.Medium,
-                                                    color = colorResource(R.color.grey)
-                                                )
+                                            Text(
+                                                text = "${"%.2f".format(product.price)} din",
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.Medium,
+                                                color = colorResource(R.color.grey)
+                                            )
+                                            if (user.overallRating != null) {
+                                                Spacer(modifier = Modifier.height(2.dp))
+                                                Row {
+                                                    Image(
+                                                        painter = painterResource(R.drawable.star),
+                                                        contentDescription = "Rating",
+                                                        modifier = Modifier.size(15.dp)
+                                                    )
+                                                    Spacer(modifier = Modifier.width(3.dp))
+                                                    Text(
+                                                        text = user.overallRating.toString(),
+                                                        fontSize = 12.sp,
+                                                        fontWeight = FontWeight.Medium,
+                                                        color = colorResource(R.color.grey)
+                                                    )
+                                                }
                                             }
                                         }
                                     }
