@@ -1,6 +1,7 @@
 package com.example.proba.data.repository
 
 import com.example.proba.data.model.response.ErrorResponse
+import com.example.proba.data.model.response.ProductsListResponse
 import com.example.proba.data.model.response.ProfileResponse
 import com.example.proba.data.remote.ApiClient
 import com.example.proba.util.Resource
@@ -86,6 +87,27 @@ class UserRepository {
             Resource.Error(
                 message = errorResponse?.message ?: "Failed to update profile",
                 errors = errorResponse?.errors?.map { "${it.field}: ${it.message}" }
+            )
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Network error occurred")
+        }
+    }
+
+    suspend fun getUserProducts(userId: String): Resource<ProductsListResponse> = withContext(Dispatchers.IO) {
+        try {
+            val response = userApi.getUserProducts(userId)
+
+            if (response.isSuccessful) {
+                response.body()?.let { productsResponse ->
+                    return@withContext Resource.Success(productsResponse)
+                }
+                return@withContext Resource.Error("Empty response body")
+            }
+
+            val errorBody = response.errorBody()?.string()
+            val errorResponse = parseError(errorBody)
+            Resource.Error(
+                message = errorResponse?.message ?: "Failed to load user products"
             )
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Network error occurred")

@@ -1,5 +1,6 @@
 package com.example.proba.data.remote
 
+import com.example.proba.data.model.response.ProductsListResponse
 import com.example.proba.data.model.response.ProfileResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -16,6 +17,11 @@ interface UserApiService {
     suspend fun getUserProfile(
         @Path("userId") userId: String
     ): Response<ProfileResponse>
+
+    @GET("/api/users/{userId}/products")
+    suspend fun getUserProducts(
+        @Path("userId") userId: String
+    ): Response<ProductsListResponse>
 
     @Multipart
     @PATCH("/api/users/profile")

@@ -26,6 +26,7 @@ import com.example.proba.viewmodel.ChatInfoViewModel
 import com.example.proba.viewmodel.ChatMessagesViewModel
 import com.example.proba.viewmodel.ChatsViewModel
 import com.example.proba.viewmodel.FavoritesViewModel
+import com.example.proba.viewmodel.MyProductsViewModel
 import com.example.proba.viewmodel.ProfileViewModel
 
 @Composable
@@ -127,7 +128,13 @@ fun MainNavHost(startDestination: String = MainRoutes.Home, onLogout: () -> Unit
             )
         }
         composable(MainRoutes.EditProduct) {
-            EditProductView(navController)
+            val myProductsViewModel: MyProductsViewModel = viewModel(
+                factory = MyProductsViewModel.Factory(TokenManager(context.applicationContext))
+            )
+            EditProductView(
+                navController = navController,
+                myProductsViewModel = myProductsViewModel
+            )
         }
         composable(MainRoutes.ReviewPage) {
             ReviewPageView(navController = navController)

@@ -1,6 +1,5 @@
 package com.example.proba.activity.profile
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,9 +24,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,20 +42,25 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.example.proba.R
-import com.example.proba.activity.bottomBarView
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import com.example.proba.R
+import com.example.proba.model.ProductUi
 import com.example.proba.navigation.MainRoutes
+import com.example.proba.util.Resource
+import com.example.proba.viewmodel.MyProductsViewModel
 
 @Composable
 fun EditProductView(
-    navController: NavController
+    navController: NavController,
+    myProductsViewModel: MyProductsViewModel
 ) {
+    val productsState by myProductsViewModel.products.collectAsState()
+
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.backgorund),
@@ -104,7 +110,7 @@ fun EditProductView(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "Products",
+                                text = "My Products",
                                 fontSize = 32.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = colorResource(R.color.darkGreenTxt)
@@ -114,76 +120,70 @@ fun EditProductView(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    EditProductCard(
-                        productName = "Tomatoes",
-                        price = "200 din",
-                        producer = "Proizvodjac",
-                        rating = "4.5",
-                        imageProduct = R.drawable.basket,
-                        imageProducer = R.drawable.user,
-                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    EditProductCard(
-                        productName = "Plum",
-                        price = "220 din",
-                        producer = "Proizvodjac",
-                        rating = "4.5",
-                        imageProduct = R.drawable.basket,
-                        imageProducer = R.drawable.user,
-                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    EditProductCard(
-                        productName = "Potatoes",
-                        price = "250 din",
-                        producer = "Proizvodjac",
-                        rating = "4.5",
-                        imageProduct = R.drawable.basket,
-                        imageProducer = R.drawable.user,
-                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    EditProductCard(
-                        productName = "Strawberry",
-                        price = "300 din",
-                        producer = "Proizvodjac",
-                        rating = "4.5",
-                        imageProduct = R.drawable.basket,
-                        imageProducer = R.drawable.user,
-                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    EditProductCard(
-                        productName = "Cabbage",
-                        price = "180 din",
-                        producer = "Proizvodjac",
-                        rating = "4.6",
-                        imageProduct = R.drawable.basket,
-                        imageProducer = R.drawable.user,
-                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    EditProductCard(
-                        productName = "Pepper",
-                        price = "260 din",
-                        producer = "Proizvodjac",
-                        rating = "4.4",
-                        imageProduct = R.drawable.basket,
-                        imageProducer = R.drawable.user,
-                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    EditProductCard(
-                        productName = "Onion",
-                        price = "120 din",
-                        producer = "Proizvodjac",
-                        rating = "4.7",
-                        imageProduct = R.drawable.basket,
-                        imageProducer = R.drawable.user,
-                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    when (val state = productsState) {
+                        is Resource.Loading -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 32.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    color = colorResource(R.color.darkGreenTxt)
+                                )
+                            }
+                        }
+                        is Resource.Error -> {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 32.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Text(
+                                    text = state.message,
+                                    color = Color.Red,
+                                    fontSize = 14.sp
+                                )
+                                Button(
+                                    onClick = { myProductsViewModel.loadMyProducts() },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = colorResource(R.color.darkGreenTxt)
+                                    )
+                                ) {
+                                    Text("Retry")
+                                }
+                            }
+                        }
+                        is Resource.Success -> {
+                            if (state.data.isEmpty()) {
+                                Text(
+                                    text = "No products yet. Add your first product!",
+                                    fontSize = 16.sp,
+                                    color = colorResource(R.color.darkGreenTxt),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 32.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            } else {
+                                state.data.forEach { item ->
+                                    val product = ProductUi.fromApi(item)
+                                    EditProductCard(
+                                        productName = product.name,
+                                        price = String.format("%.2f RSD", product.price),
+                                        producer = product.producer,
+                                        rating = product.producerReview?.toString() ?: "-",
+                                        imageProductUrl = product.imageUrl,
+                                        imageProducerUrl = product.producerImageUrl,
+                                        onEdit = { navController.navigate(MainRoutes.ProductEdit) },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                            }
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(150.dp))
                 }
@@ -236,8 +236,8 @@ private fun EditProductCard(
     price: String,
     producer: String,
     rating: String,
-    @DrawableRes imageProduct: Int,
-    @DrawableRes imageProducer: Int,
+    imageProductUrl: String,
+    imageProducerUrl: String?,
     onEdit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -267,9 +267,9 @@ private fun EditProductCard(
                     .size(110.dp)
                     .clip(RoundedCornerShape(16.dp))
             ) {
-                Image(
-                    painter = painterResource(imageProduct),
-                    contentDescription = null,
+                AsyncImage(
+                    model = imageProductUrl,
+                    contentDescription = productName,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
@@ -301,13 +301,24 @@ private fun EditProductCard(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = painterResource(imageProducer),
-                            contentDescription = "Producer",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clip(CircleShape)
-                        )
+                        if (imageProducerUrl != null) {
+                            AsyncImage(
+                                model = imageProducerUrl,
+                                contentDescription = "Producer",
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(R.drawable.user),
+                                contentDescription = "Producer",
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clip(CircleShape)
+                            )
+                        }
                         Spacer(modifier = Modifier.width(6.dp))
                         Column {
                             Text(
@@ -354,8 +365,3 @@ private fun EditIconButton(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun EditProductViewPreview() {
-    EditProductView(rememberNavController())
-}
