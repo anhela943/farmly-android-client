@@ -747,7 +747,7 @@ private fun ReviewOverlay(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(158.dp))
 
                 Button(
                     onClick = { submitReview() },
