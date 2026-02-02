@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.proba.R
+import java.util.Locale
 
 @Composable
 fun ProductPageView(
@@ -124,7 +125,7 @@ fun ProductPageView(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = price.toString() + " din",
+                        text = formatPrice(price) + " din",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = colorResource(R.color.black)
@@ -306,4 +307,8 @@ fun ProductPageViewReview(){
         onFavoriteClick = { },
         onContactProducerClick = { }
     )
+}
+
+private fun formatPrice(price: Double): String {
+    return String.format(Locale("sr", "RS"), "%.2f", price)
 }

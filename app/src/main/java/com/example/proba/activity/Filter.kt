@@ -225,7 +225,7 @@ private fun FilterPanel(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(24.dp),
+                            .padding(4.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
@@ -243,19 +243,24 @@ private fun FilterPanel(
                 is Resource.Success -> {
                     val categories = (categoriesState as Resource.Success<List<CategoryItem>>).data
 
-                    // "All Categories" option to clear selection
-                    CategoryRadioItem(
-                        name = "All Categories",
-                        isSelected = selectedCategoryId == null,
-                        onClick = { selectedCategoryId = null }
-                    )
-
-                    categories.forEach { category ->
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        // "All Categories" option to clear selection
                         CategoryRadioItem(
-                            name = category.name,
-                            isSelected = selectedCategoryId == category.id,
-                            onClick = { selectedCategoryId = category.id }
+                            name = "All Categories",
+                            isSelected = selectedCategoryId == null,
+                            onClick = { selectedCategoryId = null }
                         )
+
+                        categories.forEach { category ->
+                            CategoryRadioItem(
+                                name = category.name,
+                                isSelected = selectedCategoryId == category.id,
+                                onClick = { selectedCategoryId = category.id }
+                            )
+                        }
                     }
                 }
             }
@@ -289,7 +294,7 @@ private fun CategoryRadioItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(vertical = 8.dp, horizontal = 4.dp),
+            .padding(vertical = 2.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         RadioButton(

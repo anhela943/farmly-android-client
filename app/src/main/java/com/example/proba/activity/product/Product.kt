@@ -180,7 +180,7 @@ fun ProductView(
                         Spacer(modifier = Modifier.width(3.dp))
                         Text(
                             text = "$producerReview",
-                            fontSize = 12.sp,
+                            fontSize = 15.sp,
                             color = colorResource(R.color.darkGreenTxt)
                         )
                     }

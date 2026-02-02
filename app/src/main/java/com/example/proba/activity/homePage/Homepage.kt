@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -94,12 +96,18 @@ fun HomePage(
                 elevation = CardDefaults.cardElevation(6.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.Transparent)
             ) {
-                Image(
-                    painter = painterResource(id = adImages[adIndex]),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
+                Crossfade(
+                    targetState = adImages[adIndex],
+                    animationSpec = tween(durationMillis = 650),
+                    label = "AdImageCrossfade"
+                ) { imageRes ->
+                    Image(
+                        painter = painterResource(id = imageRes),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -161,15 +169,6 @@ fun HomePage(
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = colorResource(R.color.darkGreenTxt)
-                )
-                Text(
-                    text = "See all →",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(R.color.darkGreenTxt),
-                    modifier = Modifier.clickable {
-                        navController.navigate(MainRoutes.Explore)
-                    }
                 )
             }
 
