@@ -78,7 +78,8 @@ fun MainNavHost(startDestination: String = MainRoutes.Home, onLogout: () -> Unit
         composable(MainRoutes.ProfileCreate) {
             ProfileCreateView(
                 navController = navController,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                profileViewModel = profileViewModel
             )
         }
         composable(MainRoutes.Product) {

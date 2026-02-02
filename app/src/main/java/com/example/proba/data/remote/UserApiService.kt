@@ -1,8 +1,13 @@
 package com.example.proba.data.remote
 
 import com.example.proba.data.model.response.ProfileResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.PATCH
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface UserApiService {
@@ -10,5 +15,17 @@ interface UserApiService {
     @GET("/api/users/{userId}/profile")
     suspend fun getUserProfile(
         @Path("userId") userId: String
+    ): Response<ProfileResponse>
+
+    @Multipart
+    @PATCH("/api/users/profile")
+    suspend fun updateProfile(
+        @Part("fullName") fullName: RequestBody? = null,
+        @Part("email") email: RequestBody? = null,
+        @Part("password") password: RequestBody? = null,
+        @Part("phoneNumber") phoneNumber: RequestBody? = null,
+        @Part("city") city: RequestBody? = null,
+        @Part("description") description: RequestBody? = null,
+        @Part image: MultipartBody.Part? = null
     ): Response<ProfileResponse>
 }

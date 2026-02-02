@@ -15,6 +15,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.io.File
 
 class ProfileViewModel(
     private val tokenManager: TokenManager
@@ -23,6 +24,9 @@ class ProfileViewModel(
     private val userRepository = UserRepository()
 
     var profileState: Resource<ProfileResponse> by mutableStateOf(Resource.Loading)
+        private set
+
+    var updateProfileState: Resource<ProfileResponse>? by mutableStateOf(null)
         private set
 
     init {
@@ -47,6 +51,45 @@ class ProfileViewModel(
 
             profileState = userRepository.getProfile(userId)
         }
+    }
+
+    fun updateProfile(
+        fullName: String? = null,
+        email: String? = null,
+        password: String? = null,
+        phoneNumber: String? = null,
+        city: String? = null,
+        description: String? = null,
+        imageFile: File? = null,
+        imageMimeType: String? = null
+    ) {
+        if (fullName == null && email == null && password == null &&
+            phoneNumber == null && city == null && description == null &&
+            imageFile == null) {
+            return
+        }
+
+        viewModelScope.launch {
+            updateProfileState = Resource.Loading
+            val result = userRepository.updateProfile(
+                fullName = fullName,
+                email = email,
+                password = password,
+                phoneNumber = phoneNumber,
+                city = city,
+                description = description,
+                imageFile = imageFile,
+                imageMimeType = imageMimeType
+            )
+            updateProfileState = result
+            if (result is Resource.Success) {
+                loadProfile()
+            }
+        }
+    }
+
+    fun clearUpdateState() {
+        updateProfileState = null
     }
 
     fun logout(onComplete: () -> Unit) {
