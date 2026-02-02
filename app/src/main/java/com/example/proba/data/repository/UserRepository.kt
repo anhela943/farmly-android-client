@@ -1,7 +1,9 @@
 package com.example.proba.data.repository
 
+import com.example.proba.data.model.request.CreateReviewRequest
 import com.example.proba.data.model.response.ErrorResponse
 import com.example.proba.data.model.response.ProductsListResponse
+import com.example.proba.data.model.response.RegisterErrorResponse
 import com.example.proba.data.model.response.ProfileResponse
 import com.example.proba.data.model.response.ReviewsResponse
 import com.example.proba.data.remote.ApiClient
@@ -130,6 +132,44 @@ class UserRepository {
             val errorResponse = parseError(errorBody)
             Resource.Error(
                 message = errorResponse?.message ?: "Failed to load reviews"
+            )
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Network error occurred")
+        }
+    }
+
+    suspend fun createReview(producerId: Int, rating: Int, comment: String): Resource<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val request = CreateReviewRequest(
+                producerId = producerId,
+                rating = rating,
+                comment = comment
+            )
+            val response = userApi.createReview(request)
+
+            if (response.isSuccessful) {
+                return@withContext Resource.Success(Unit)
+            }
+
+            val errorBody = response.errorBody()?.string()
+            // Try to parse as RegisterErrorResponse (array of error messages)
+            val arrayErrorResponse = try {
+                errorBody?.let { gson.fromJson(it, RegisterErrorResponse::class.java) }
+            } catch (e: Exception) {
+                null
+            }
+            if (arrayErrorResponse != null && arrayErrorResponse.error.isNotEmpty()) {
+                return@withContext Resource.Error(
+                    message = arrayErrorResponse.error.first(),
+                    errors = arrayErrorResponse.error
+                )
+            }
+
+            // Fall back to standard ErrorResponse
+            val errorResponse = parseError(errorBody)
+            Resource.Error(
+                message = errorResponse?.message ?: "Failed to create review",
+                errors = errorResponse?.errors?.map { it.message }
             )
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Network error occurred")

@@ -17,11 +17,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -68,6 +70,7 @@ import com.example.proba.activity.bottomBarView
 import com.example.proba.data.model.response.ChatInfoResponse
 import com.example.proba.data.model.response.MessageResponse
 import com.example.proba.data.model.response.MessageSenderResponse
+import com.example.proba.data.repository.UserRepository
 import com.example.proba.navigation.MainRoutes
 import com.example.proba.util.Resource
 import com.example.proba.viewmodel.ChatInfoViewModel
@@ -569,9 +572,11 @@ private fun ChatContent(
     }
 
     if (isReviewVisible) {
+        val producerId = remember { chatInfo.user.id.toIntOrNull() }
         ReviewOverlay(
             reviewerName = user.name,
             reviewerImageUrl = user.imageUrl,
+            producerId = producerId,
             onDismiss = { isReviewVisible = false },
             onPostReview = { isReviewVisible = false }
         )
@@ -583,10 +588,41 @@ private fun ChatContent(
 private fun ReviewOverlay(
     reviewerName: String,
     reviewerImageUrl: String?,
+    producerId: Int?,
     onDismiss: () -> Unit,
-    onPostReview: (String) -> Unit
+    onPostReview: () -> Unit
 ) {
     var reviewText by remember { mutableStateOf("") }
+    var selectedRating by remember { mutableStateOf(5) }
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val userRepository = remember { UserRepository() }
+    val coroutineScope = rememberCoroutineScope()
+
+    fun submitReview() {
+        if (producerId == null) {
+            errorMessage = "Invalid producer ID"
+            return
+        }
+        isLoading = true
+        errorMessage = null
+        coroutineScope.launch {
+            when (val result = userRepository.createReview(
+                producerId = producerId,
+                rating = selectedRating,
+                comment = reviewText
+            )) {
+                is Resource.Success -> {
+                    onPostReview()
+                }
+                is Resource.Error -> {
+                    errorMessage = result.message
+                    isLoading = false
+                }
+                is Resource.Loading -> {}
+            }
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -597,13 +633,14 @@ private fun ReviewOverlay(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
                 ) {
-                    onDismiss()
+                    if (!isLoading) onDismiss()
                 }
         )
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.55f)
+                .wrapContentHeight()
+                .heightIn(max = 500.dp)
                 .padding(horizontal = 16.dp)
                 .align(Alignment.Center),
             shape = RoundedCornerShape(26.dp),
@@ -651,23 +688,43 @@ private fun ReviewOverlay(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                // Star rating selector
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    (1..5).forEach { star ->
+                        Image(
+                            painter = painterResource(R.drawable.star),
+                            contentDescription = "Star $star",
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clickable { selectedRating = star }
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Text(
-                    text = "*****",
-                    fontSize = 28.sp,
-                    letterSpacing = 6.sp,
-                    color = colorResource(R.color.grey),
-                    fontFamily = FontFamily.Monospace
+                    text = "Rating: $selectedRating/5",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = colorResource(R.color.black)
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
                 TextField(
                     value = reviewText,
-                    onValueChange = { reviewText = it },
+                    onValueChange = {
+                        reviewText = it
+                        errorMessage = null
+                    },
                     placeholder = { Text("Add a review...", color = colorResource(R.color.grey)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f),
+                        .heightIn(min = 100.dp),
                     shape = RoundedCornerShape(18.dp),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
@@ -677,27 +734,46 @@ private fun ReviewOverlay(
                         focusedTextColor = colorResource(R.color.black),
                         unfocusedTextColor = colorResource(R.color.black),
                         cursorColor = colorResource(R.color.black)
-                    )
+                    ),
+                    enabled = !isLoading
                 )
+
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage ?: "",
+                        fontSize = 12.sp,
+                        color = Color.Red,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { onPostReview(reviewText) },
+                    onClick = { submitReview() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(44.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(R.color.darkGreenTxt)
                     ),
-                    shape = RoundedCornerShape(22.dp)
+                    shape = RoundedCornerShape(22.dp),
+                    enabled = !isLoading
                 ) {
-                    Text(
-                        text = "Post the review",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = "Post the review",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -710,7 +786,8 @@ private fun ReviewOverlay(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(R.color.grey)
                     ),
-                    shape = RoundedCornerShape(22.dp)
+                    shape = RoundedCornerShape(22.dp),
+                    enabled = !isLoading
                 ) {
                     Text(
                         text = "Close",

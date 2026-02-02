@@ -1,15 +1,18 @@
 package com.example.proba.data.remote
 
+import com.example.proba.data.model.request.CreateReviewRequest
 import com.example.proba.data.model.response.ProductsListResponse
 import com.example.proba.data.model.response.ProfileResponse
 import com.example.proba.data.model.response.ReviewsResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.Part
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface UserApiService {
@@ -40,4 +43,9 @@ interface UserApiService {
     suspend fun getUserReviews(
         @Path("userId") userId: String
     ): Response<ReviewsResponse>
+
+    @POST("/api/reviews/")
+    suspend fun createReview(
+        @Body request: CreateReviewRequest
+    ): Response<Unit>
 }
