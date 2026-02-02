@@ -140,9 +140,16 @@ fun MainNavHost(startDestination: String = MainRoutes.Home, onLogout: () -> Unit
                 initialMessage = initialMessage
             )
         }
-        composable(MainRoutes.ProfileProducer) {
+        composable(
+            route = MainRoutes.ProfileProducerRoute,
+            arguments = listOf(
+                navArgument("userId") { type = NavType.StringType; nullable = true }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")
             ProfileProducerView(
                 navController = navController,
+                userId = userId,
                 favoritesViewModel = favoritesViewModel
             )
         }

@@ -9,6 +9,7 @@ object MainRoutes {
     const val Product = "product/{productId}"
     const val MessageChat = "message_chat/{chatId}?initialMessage={initialMessage}"
     const val ProfileProducer = "profile_producer"
+    const val ProfileProducerRoute = "profile_producer?userId={userId}"
     const val EditProduct = "edit_product"
     const val ProfileCreate = "profile_create"
     const val ProductAdd = "product_add"
@@ -16,6 +17,7 @@ object MainRoutes {
     const val ReviewPage = "review_page"
 
     fun productRoute(productId: String) = "product/$productId"
+    fun profileProducerRoute(userId: String) = "profile_producer?userId=$userId"
     fun messageChatRoute(chatId: String, initialMessage: String? = null): String {
         return if (initialMessage != null) {
             "message_chat/$chatId?initialMessage=${java.net.URLEncoder.encode(initialMessage, "UTF-8")}"

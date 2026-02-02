@@ -1,7 +1,6 @@
 package com.example.proba.activity.profile
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +22,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,15 +50,40 @@ import com.example.proba.activity.product.ProductView
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.proba.model.ProductUi
 import com.example.proba.viewmodel.FavoritesViewModel
 import com.example.proba.navigation.MainRoutes
+import com.example.proba.util.Resource
+import com.example.proba.viewmodel.ProducerProfileViewModel
 
 @Composable
 fun ProfileProducerView(
     navController: NavController,
+    userId: String?,
     favoritesViewModel: FavoritesViewModel = viewModel()
 ) {
+    if (userId == null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Missing producer ID",
+                fontSize = 16.sp,
+                color = colorResource(R.color.grey)
+            )
+        }
+        return
+    }
+
+    val producerProfileViewModel: ProducerProfileViewModel = viewModel(
+        factory = ProducerProfileViewModel.Factory(userId)
+    )
+    val profileState = producerProfileViewModel.profileState
+    val productsState = producerProfileViewModel.productsState
+    val reviewsState = producerProfileViewModel.reviewsState
+
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.backgorund),
@@ -116,125 +143,273 @@ fun ProfileProducerView(
                             .padding(top = 60.dp, bottom = 120.dp, start = 16.dp, end = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = "Petra Petrovic Pr",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colorResource(R.color.darkGreenTxt)
-                        )
-                        Text(
-                            text = "petra.petrovic@gmail.com",
-                            fontSize = 12.sp,
-                            color = colorResource(R.color.grey)
-                        )
+                        when (val state = profileState) {
+                            is Resource.Loading -> {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 60.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(
+                                        color = colorResource(R.color.darkGreenTxt)
+                                    )
+                                }
+                            }
+                            is Resource.Error -> {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 24.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = state.message,
+                                        fontSize = 14.sp,
+                                        color = colorResource(R.color.grey),
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Button(
+                                        onClick = { producerProfileViewModel.loadAll() },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = colorResource(R.color.darkGreenTxt),
+                                            contentColor = colorResource(R.color.white)
+                                        )
+                                    ) {
+                                        Text(text = "Retry")
+                                    }
+                                }
+                            }
+                            is Resource.Success -> {
+                                val profile = state.data
+                                val ratingValue = profile.overallReview ?: 0.0
+                                val ratingText = String.format("%.1f", ratingValue)
 
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(14.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.clickable {
-                                    navController.navigate(MainRoutes.ReviewPage)
-                                },
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Image(
-                                    painter = painterResource(R.drawable.star),
-                                    contentDescription = "Rating",
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = "4.5 (130)",
+                                    text = profile.fullName,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colorResource(R.color.darkGreenTxt)
+                                )
+                                Text(
+                                    text = profile.email,
                                     fontSize = 12.sp,
+                                    color = colorResource(R.color.grey)
+                                )
+
+                                Spacer(modifier = Modifier.height(6.dp))
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Image(
+                                            painter = painterResource(R.drawable.star),
+                                            contentDescription = "Rating",
+                                            modifier = Modifier.size(14.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(
+                                            text = "$ratingText (${profile.numberOfReviews ?: 0})",
+                                            fontSize = 12.sp,
+                                            color = colorResource(R.color.black)
+                                        )
+                                    }
+                                    Text(
+                                        text = profile.city ?: "",
+                                        fontSize = 12.sp,
+                                        color = colorResource(R.color.black)
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.height(18.dp))
+
+                                Text(
+                                    text = profile.description ?: "",
+                                    fontSize = 13.sp,
+                                    textAlign = TextAlign.Center,
                                     color = colorResource(R.color.black)
                                 )
+
+                                Spacer(modifier = Modifier.height(32.dp))
+
+                                Text(
+                                    text = "Products",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colorResource(R.color.darkGreenTxt),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 4.dp, bottom = 6.dp)
+                                )
+
+                                when (val products = productsState) {
+                                    is Resource.Loading -> {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 16.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            CircularProgressIndicator(
+                                                color = colorResource(R.color.darkGreenTxt)
+                                            )
+                                        }
+                                    }
+                                    is Resource.Error -> {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 12.dp),
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text(
+                                                text = products.message,
+                                                fontSize = 13.sp,
+                                                color = colorResource(R.color.grey),
+                                                textAlign = TextAlign.Center
+                                            )
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            Button(
+                                                onClick = { producerProfileViewModel.loadProducts() },
+                                                colors = ButtonDefaults.buttonColors(
+                                                    containerColor = colorResource(R.color.darkGreenTxt),
+                                                    contentColor = colorResource(R.color.white)
+                                                )
+                                            ) {
+                                                Text(text = "Retry")
+                                            }
+                                        }
+                                    }
+                                    is Resource.Success -> {
+                                        if (products.data.isEmpty()) {
+                                            Text(
+                                                text = "No products yet",
+                                                fontSize = 14.sp,
+                                                color = colorResource(R.color.grey),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 12.dp),
+                                                textAlign = TextAlign.Center
+                                            )
+                                        } else {
+                                            products.data.forEach { item ->
+                                                val product = ProductUi.fromApi(item)
+                                                ProductView(
+                                                    productName = product.name,
+                                                    price = product.price,
+                                                    producer = product.producer,
+                                                    producerReview = product.producerReview,
+                                                    city = product.city,
+                                                    imageUrl = product.imageUrl,
+                                                    producerImageUrl = product.producerImageUrl,
+                                                    isFavorite = favoritesViewModel.isFavorite(product),
+                                                    onProductClick = {
+                                                        navController.navigate(MainRoutes.productRoute(product.id))
+                                                    },
+                                                    onProducerClick = {
+                                                        val targetId = product.producerId ?: userId
+                                                        navController.navigate(
+                                                            MainRoutes.profileProducerRoute(targetId)
+                                                        )
+                                                    },
+                                                    onFavoriteClick = {
+                                                        favoritesViewModel.toggleFavorite(product)
+                                                    },
+                                                    modifier = Modifier.fillMaxWidth()
+                                                )
+                                                Spacer(modifier = Modifier.height(12.dp))
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(32.dp))
+
+                                Text(
+                                    text = "Reviews",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colorResource(R.color.darkGreenTxt),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 4.dp, bottom = 6.dp)
+                                )
+
+                                when (val reviews = reviewsState) {
+                                    is Resource.Loading -> {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 16.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            CircularProgressIndicator(
+                                                color = colorResource(R.color.darkGreenTxt)
+                                            )
+                                        }
+                                    }
+                                    is Resource.Error -> {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 12.dp),
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text(
+                                                text = reviews.message,
+                                                fontSize = 13.sp,
+                                                color = colorResource(R.color.grey),
+                                                textAlign = TextAlign.Center
+                                            )
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            Button(
+                                                onClick = { producerProfileViewModel.loadReviews() },
+                                                colors = ButtonDefaults.buttonColors(
+                                                    containerColor = colorResource(R.color.darkGreenTxt),
+                                                    contentColor = colorResource(R.color.white)
+                                                )
+                                            ) {
+                                                Text(text = "Retry")
+                                            }
+                                        }
+                                    }
+                                    is Resource.Success -> {
+                                        if (reviews.data.isEmpty()) {
+                                            Text(
+                                                text = "No reviews yet",
+                                                fontSize = 14.sp,
+                                                color = colorResource(R.color.grey),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 12.dp),
+                                                textAlign = TextAlign.Center
+                                            )
+                                        } else {
+                                            Column(
+                                                modifier = Modifier.fillMaxHeight(),
+                                                verticalArrangement = Arrangement.SpaceBetween
+                                            ) {
+                                                reviews.data.forEachIndexed { index, review ->
+                                                    ReviewItem(
+                                                        name = review.user.fullName,
+                                                        rating = review.user.rating.toString(),
+                                                        text = review.content,
+                                                        imageUrl = review.user.imageUrl
+                                                    )
+                                                    if (index != reviews.data.lastIndex) {
+                                                        Spacer(modifier = Modifier.height(10.dp))
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                            Text(
-                                text = "Niš",
-                                fontSize = 12.sp,
-                                color = colorResource(R.color.black)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(18.dp))
-
-                        Text(
-                            text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. " +
-                                "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, " +
-                                "when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-                            fontSize = 13.sp,
-                            textAlign = TextAlign.Center,
-                            color = colorResource(R.color.black)
-                        )
-
-                        Spacer(modifier = Modifier.height(32.dp))
-
-                        Text(
-                            text = "Products",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colorResource(R.color.darkGreenTxt),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 4.dp, bottom = 6.dp)
-                        )
-
-                        val productLeft = ProductUi(
-                            id = "1", name = "Tomatoes", price = 200.0,
-                            producer = "Milena", producerReview = 4.5,
-                            city = "Niš", imageUrl = ""
-                        )
-                        ProductView(
-                            productName = productLeft.name,
-                            price = productLeft.price,
-                            producer = productLeft.producer,
-                            producerReview = productLeft.producerReview,
-                            city = productLeft.city,
-                            imageUrl = productLeft.imageUrl,
-                            isFavorite = favoritesViewModel.isFavorite(productLeft),
-                            onProductClick = { /* TODO: pass real product ID */ },
-                            onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
-                            onFavoriteClick = { favoritesViewModel.toggleFavorite(productLeft) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        val productRight = ProductUi(
-                            id = "2", name = "Petra", price = 220.0,
-                            producer = "Petra", producerReview = 4.5,
-                            city = "Niš", imageUrl = ""
-                        )
-                        ProductView(
-                            productName = productRight.name,
-                            price = productRight.price,
-                            producer = productRight.producer,
-                            producerReview = productRight.producerReview,
-                            city = productRight.city,
-                            imageUrl = productRight.imageUrl,
-                            isFavorite = favoritesViewModel.isFavorite(productRight),
-                            onProductClick = { /* TODO: pass real product ID */ },
-                            onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
-                            onFavoriteClick = { favoritesViewModel.toggleFavorite(productRight) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(modifier = Modifier.height(32.dp))
-                        Text(
-                            text = "Reviews",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colorResource(R.color.darkGreenTxt),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 4.dp, bottom = 6.dp)
-                        )
-                        Column( modifier = Modifier.fillMaxHeight(),
-                            verticalArrangement = Arrangement.SpaceBetween) {
-                            ReviewItem("marija", "4.3", "Opid uzas bjkbfajklbfajbfjabfafjlbadjfad", R.drawable.user)
-                            Spacer(modifier = Modifier.height(10.dp))
-                            ReviewItem("Marko", "4.3", "Opid dsfsdgfvszdgvbdfhbdfghbndghbndfzgbdzgvbfszcbhdfblnh sflkockkcccccccccccccbhioasdhfdiosssssssssssvdnbhuzas bjkbfajklbfajbfjabfafjlbadjfad", R.drawable.user)
-                            Spacer(modifier = Modifier.height(10.dp))
-                            ReviewItem("Petra", "4.3", "Opid dsfsdgfvszdgvbdfhbdfghbndghbndfzgbdzgvbfszcbhdfblnh sflkockkcccccccccccccbhioasdhfdiosssssssssssvdnbhuzas bjkbfajklbfajbfjabfafjlbadjfad", R.drawable.user)
                         }
                     }
                 }
@@ -247,14 +422,26 @@ fun ProfileProducerView(
                     elevation = CardDefaults.cardElevation(6.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.user),
-                        contentDescription = "Producer photo",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
+                    val imageUrl = (profileState as? Resource.Success)?.data?.imageUrl
+                    if (imageUrl != null) {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = "Producer photo",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.user),
+                            contentDescription = "Producer photo",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             }
         }
@@ -272,7 +459,7 @@ private fun ReviewItem(
     name: String,
     rating: String,
     text: String,
-    image: Int
+    imageUrl: String?
 ) {
     Card(
         modifier = Modifier
@@ -291,14 +478,25 @@ private fun ReviewItem(
                 modifier = Modifier.fillMaxSize()
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(image),
-                        contentDescription = name,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
+                    if (imageUrl != null) {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = name,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.user),
+                            contentDescription = name,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         Text(
@@ -340,6 +538,7 @@ private fun ReviewItem(
 @Composable
 fun ProfileProducerViewPreview() {
     ProfileProducerView(
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        userId = "1"
     )
 }

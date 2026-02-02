@@ -68,7 +68,8 @@ fun ProductPageScreen(
                         producer = data.producer.fullName,
                         producerReview = data.producer.overallReview.overallReview,
                         city = data.producer.city,
-                        imageUrl = data.imageUrl
+                        imageUrl = data.imageUrl,
+                        producerId = data.producer.id
                     )
                     ProductPageView(
                         productName = data.name,
@@ -81,7 +82,9 @@ fun ProductPageScreen(
                         producerImageUrl = data.producer.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product),
                         onBackClick = { navController.popBackStack() },
-                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
+                        onProducerClick = {
+                            navController.navigate(MainRoutes.profileProducerRoute(data.producer.id))
+                        },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product) },
                         isContactLoading = isCreatingChat,
                         onContactProducerClick = {

@@ -108,7 +108,8 @@ fun ProductsPageView(
                     val product1 = ProductUi(
                         id = "1", name = "Tomatoes", price = 200.0,
                         producer = "Proizvodjac", producerReview = 4.5,
-                        city = "Niš", imageUrl = ""
+                        city = "Niš", imageUrl = "",
+                        producerId = "1"
                     )
                     ProductView(
                         productName = product1.name,
@@ -119,7 +120,11 @@ fun ProductsPageView(
                         imageUrl = product1.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product1),
                         onProductClick = { /* TODO: pass real product ID */ },
-                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
+                        onProducerClick = {
+                            product1.producerId?.let {
+                                navController.navigate(MainRoutes.profileProducerRoute(it))
+                            }
+                        },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product1) },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -127,7 +132,8 @@ fun ProductsPageView(
                     val product2 = ProductUi(
                         id = "2", name = "Potatoes", price = 220.0,
                         producer = "Proizvodjac", producerReview = 4.5,
-                        city = "Niš", imageUrl = ""
+                        city = "Niš", imageUrl = "",
+                        producerId = "1"
                     )
                     ProductView(
                         productName = product2.name,
@@ -138,7 +144,11 @@ fun ProductsPageView(
                         imageUrl = product2.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product2),
                         onProductClick = { /* TODO: pass real product ID */ },
-                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
+                        onProducerClick = {
+                            product2.producerId?.let {
+                                navController.navigate(MainRoutes.profileProducerRoute(it))
+                            }
+                        },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product2) },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -146,7 +156,8 @@ fun ProductsPageView(
                     val product3 = ProductUi(
                         id = "3", name = "Strawberry", price = 250.0,
                         producer = "Proizvodjac", producerReview = 4.5,
-                        city = "Niš", imageUrl = ""
+                        city = "Niš", imageUrl = "",
+                        producerId = "1"
                     )
                     ProductView(
                         productName = product3.name,
@@ -157,7 +168,11 @@ fun ProductsPageView(
                         imageUrl = product3.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product3),
                         onProductClick = { /* TODO: pass real product ID */ },
-                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
+                        onProducerClick = {
+                            product3.producerId?.let {
+                                navController.navigate(MainRoutes.profileProducerRoute(it))
+                            }
+                        },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product3) },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -165,7 +180,8 @@ fun ProductsPageView(
                     val product4 = ProductUi(
                         id = "4", name = "Plum", price = 300.0,
                         producer = "Proizvodjac", producerReview = 4.5,
-                        city = "Niš", imageUrl = ""
+                        city = "Niš", imageUrl = "",
+                        producerId = "1"
                     )
                     ProductView(
                         productName = product4.name,
@@ -176,7 +192,11 @@ fun ProductsPageView(
                         imageUrl = product4.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product4),
                         onProductClick = { /* TODO: pass real product ID */ },
-                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
+                        onProducerClick = {
+                            product4.producerId?.let {
+                                navController.navigate(MainRoutes.profileProducerRoute(it))
+                            }
+                        },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product4) },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -184,7 +204,8 @@ fun ProductsPageView(
                     val product5 = ProductUi(
                         id = "5", name = "Potatoes", price = 220.0,
                         producer = "Proizvodjac", producerReview = 4.5,
-                        city = "Niš", imageUrl = ""
+                        city = "Niš", imageUrl = "",
+                        producerId = "1"
                     )
                     ProductView(
                         productName = product5.name,
@@ -195,7 +216,11 @@ fun ProductsPageView(
                         imageUrl = product5.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product5),
                         onProductClick = { /* TODO: pass real product ID */ },
-                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
+                        onProducerClick = {
+                            product5.producerId?.let {
+                                navController.navigate(MainRoutes.profileProducerRoute(it))
+                            }
+                        },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product5) },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -203,7 +228,8 @@ fun ProductsPageView(
                     val product6 = ProductUi(
                         id = "6", name = "Strawberry", price = 250.0,
                         producer = "Proizvodjac", producerReview = 4.5,
-                        city = "Niš", imageUrl = ""
+                        city = "Niš", imageUrl = "",
+                        producerId = "1"
                     )
                     ProductView(
                         productName = product6.name,
@@ -214,7 +240,11 @@ fun ProductsPageView(
                         imageUrl = product6.imageUrl,
                         isFavorite = favoritesViewModel.isFavorite(product6),
                         onProductClick = { /* TODO: pass real product ID */ },
-                        onProducerClick = { navController.navigate(MainRoutes.ProfileProducer) },
+                        onProducerClick = {
+                            product6.producerId?.let {
+                                navController.navigate(MainRoutes.profileProducerRoute(it))
+                            }
+                        },
                         onFavoriteClick = { favoritesViewModel.toggleFavorite(product6) },
                         modifier = Modifier.fillMaxWidth()
                     )

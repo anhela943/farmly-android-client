@@ -10,7 +10,8 @@ data class ProductUi(
     val producerReview: Double?,
     val city: String,
     val imageUrl: String,
-    val producerImageUrl: String? = null
+    val producerImageUrl: String? = null,
+    val producerId: String? = null
 ) {
     companion object {
         fun fromApi(item: ProductListItem): ProductUi {
@@ -22,7 +23,8 @@ data class ProductUi(
                 producerReview = item.producer.overallReview.overallReview,
                 city = item.producer.city,
                 imageUrl = item.imageUrl,
-                producerImageUrl = item.producer.imageUrl
+                producerImageUrl = item.producer.imageUrl,
+                producerId = item.producer.id
             )
         }
     }
