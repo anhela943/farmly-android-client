@@ -3,6 +3,7 @@ package com.example.proba.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.proba.data.model.response.ProductListItem
+import com.example.proba.data.repository.ProductFilters
 import com.example.proba.data.repository.ProductRepository
 import com.example.proba.util.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,9 +22,21 @@ class ProductViewModel : ViewModel() {
     }
 
     private fun fetchProducts() {
+        fetchProducts(filters = null)
+    }
+
+    fun applyFilters(filters: ProductFilters) {
+        fetchProducts(filters = filters)
+    }
+
+    fun clearFilters() {
+        fetchProducts(filters = null)
+    }
+
+    private fun fetchProducts(filters: ProductFilters?) {
         viewModelScope.launch {
             _products.value = Resource.Loading
-            when (val result = repository.getProducts(offset = 0, limit = 5)) {
+            when (val result = repository.getProducts(offset = 0, limit = 50, filters = filters)) {
                 is Resource.Success -> {
                     _products.value = Resource.Success(result.data.products)
                 }

@@ -32,26 +32,26 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -59,13 +59,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proba.R
+import com.example.proba.data.model.response.CategoryItem
+import com.example.proba.data.repository.ProductFilters
+import com.example.proba.util.Resource
+import com.example.proba.viewmodel.CategoryViewModel
 
 @Composable
 fun FilterView(
     isOpen: Boolean,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    categoryViewModel: CategoryViewModel = viewModel(),
+    initialCategoryId: String? = null,
+    onFilterApply: (ProductFilters) -> Unit = {}
 ) {
     val outsideInteraction = remember { MutableInteractionSource() }
 
@@ -89,7 +97,10 @@ fun FilterView(
             FilterPanel(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(start = 12.dp, top = 36.dp, bottom = 90.dp)
+                    .padding(start = 12.dp, top = 36.dp, bottom = 90.dp),
+                categoryViewModel = categoryViewModel,
+                initialCategoryId = initialCategoryId,
+                onFilterApply = onFilterApply
             )
         }
     }
@@ -97,26 +108,18 @@ fun FilterView(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun FilterPanel(modifier: Modifier = Modifier) {
+private fun FilterPanel(
+    modifier: Modifier = Modifier,
+    categoryViewModel: CategoryViewModel,
+    initialCategoryId: String?,
+    onFilterApply: (ProductFilters) -> Unit
+) {
     val scrollState = rememberScrollState()
-    val expanded = remember { mutableStateMapOf<String, Boolean>() }
-    val selected = remember { mutableStateMapOf<String, Boolean>() }
-    var priceRange by remember { mutableStateOf(0f..5000f) }
-    var city by remember { mutableStateOf("") }
+    val categoriesState by categoryViewModel.categories.collectAsState()
 
-    val categories = remember {
-        listOf(
-            "Meat" to listOf("Beef", "Chicken", "Pork", "Fish"),
-            "Dairy" to listOf("Milk", "Cheese", "Yogurt"),
-            "Fruit" to listOf(
-                "Apple", "Pear", "Plum", "Strawberry",
-                "Raspberry", "Blueberry", "Cherry", "Peach",
-                "Grape", "Watermelon", "Melon", "Apricot"
-            ),
-            "Vegetable" to listOf("Tomato", "Potato", "Pepper", "Onion"),
-            "Homemade Goods" to listOf("Jam", "Honey", "Ajvar", "Pickles")
-        )
-    }
+    var priceRange by remember { mutableStateOf(0f..5000f) }
+    var selectedCategoryId by remember { mutableStateOf<String?>(initialCategoryId) }
+    var city by remember { mutableStateOf("") }
 
     BoxWithConstraints(
         modifier = modifier
@@ -146,7 +149,17 @@ private fun FilterPanel(modifier: Modifier = Modifier) {
                     color = colorResource(R.color.darkGreenTxt)
                 )
 
-                IconButton(onClick = { }) {
+                IconButton(onClick = {
+                    onFilterApply(
+                        ProductFilters(
+                            city = city.ifBlank { null },
+                            priceFrom = priceRange.start,
+                            priceTo = priceRange.endInclusive,
+                            value = null,
+                            categoryId = selectedCategoryId
+                        )
+                    )
+                }) {
                     Card(
                         shape = CircleShape,
                         colors = CardDefaults.cardColors(containerColor = colorResource(R.color.greenStrokeLight)),
@@ -160,7 +173,7 @@ private fun FilterPanel(modifier: Modifier = Modifier) {
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.search),
-                                contentDescription = "Search",
+                                contentDescription = "Apply Filter",
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -204,75 +217,50 @@ private fun FilterPanel(modifier: Modifier = Modifier) {
                 color = colorResource(R.color.darkGreenTxt)
             )
 
-            categories.forEach { (category, options) ->
-                val isExpanded = expanded[category] == true
+            HorizontalDivider(color = colorResource(R.color.greenStrokeDark), thickness = 1.dp)
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 2.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = category,
-                        fontSize = 18.sp,
-                        color = colorResource(R.color.darkGreenTxt)
-                    )
-
-                    IconButton(
-                        onClick = { expanded[category] = !isExpanded },
-                        modifier = Modifier.size(28.dp)
+            // Categories from API - Single selection
+            when (categoriesState) {
+                is Resource.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Image(
-                            painter = painterResource(R.drawable.arrow),
-                            contentDescription = "Expand",
-                            modifier = Modifier
-                                .size(18.dp)
-                                .rotate(if (isExpanded) 90f else 0f)
+                        CircularProgressIndicator(
+                            color = colorResource(R.color.darkGreenTxt)
                         )
                     }
                 }
+                is Resource.Error -> {
+                    Text(
+                        text = "Failed to load categories",
+                        fontSize = 14.sp,
+                        color = colorResource(R.color.darkGreenTxt)
+                    )
+                }
+                is Resource.Success -> {
+                    val categories = (categoriesState as Resource.Success<List<CategoryItem>>).data
 
-                HorizontalDivider(color = colorResource(R.color.greenStrokeDark), thickness = 1.dp)
+                    // "All Categories" option to clear selection
+                    CategoryRadioItem(
+                        name = "All Categories",
+                        isSelected = selectedCategoryId == null,
+                        onClick = { selectedCategoryId = null }
+                    )
 
-                if (isExpanded) {
-                    FlowRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 6.dp, top = 6.dp, bottom = 6.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(2.dp),
-                        maxItemsInEachRow = 2
-                    ) {
-                        options.forEach { option ->
-                            val key = "$category:$option"
-                            val checked = selected[key] == true
-
-                            Row(
-                                modifier = Modifier.wrapContentHeight(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Checkbox(
-                                    checked = checked,
-                                    onCheckedChange = { selected[key] = it },
-                                    colors = CheckboxDefaults.colors(
-                                        checkedColor = colorResource(R.color.darkGreenTxt),
-                                        checkmarkColor = colorResource(R.color.greenBackground),
-                                        uncheckedColor = colorResource(R.color.greenStrokeDark)
-                                    )
-                                )
-                                //Spacer(modifier = Modifier.width(1.dp))
-                                Text(
-                                    text = option,
-                                    fontSize = 14.sp,
-                                    color = colorResource(R.color.darkGreenTxt)
-                                )
-                            }
-                        }
+                    categories.forEach { category ->
+                        CategoryRadioItem(
+                            name = category.name,
+                            isSelected = selectedCategoryId == category.id,
+                            onClick = { selectedCategoryId = category.id }
+                        )
                     }
                 }
             }
+
+            HorizontalDivider(color = colorResource(R.color.greenStrokeDark), thickness = 1.dp)
 
             Text(
                 text = "City",
@@ -288,6 +276,36 @@ private fun FilterPanel(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(90.dp))
         }
+    }
+}
+
+@Composable
+private fun CategoryRadioItem(
+    name: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 8.dp, horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(
+            selected = isSelected,
+            onClick = onClick,
+            colors = RadioButtonDefaults.colors(
+                selectedColor = colorResource(R.color.darkGreenTxt),
+                unselectedColor = colorResource(R.color.greenStrokeDark)
+            )
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = name,
+            fontSize = 16.sp,
+            color = colorResource(R.color.darkGreenTxt)
+        )
     }
 }
 
@@ -344,5 +362,9 @@ private fun CityField(
 @Preview(showBackground = true)
 @Composable
 private fun FilterViewPreview() {
-    FilterView(isOpen = true, onDismiss = {})
+    FilterView(
+        isOpen = true,
+        onDismiss = {},
+        onFilterApply = {}
+    )
 }

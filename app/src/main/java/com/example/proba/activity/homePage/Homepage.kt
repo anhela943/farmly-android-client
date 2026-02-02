@@ -41,6 +41,7 @@ import com.example.proba.viewmodel.CategoryViewModel
 import com.example.proba.viewmodel.FavoritesViewModel
 import com.example.proba.viewmodel.ProductViewModel
 import com.example.proba.navigation.MainRoutes
+import com.example.proba.data.repository.ProductFilters
 import kotlinx.coroutines.delay
 
 @Composable
@@ -53,6 +54,10 @@ fun HomePage(
     val categoriesState by categoryViewModel.categories.collectAsState()
     val productsState by productViewModel.products.collectAsState()
     var showFilter by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+    var selectedCategoryId by remember { mutableStateOf<String?>(null) }
+    var priceRange by remember { mutableStateOf(0f..5000f) }
+    var cityFilter by remember { mutableStateOf("") }
     val adImages = remember {
         listOf(R.drawable.onboarding1, R.drawable.onboarding2, R.drawable.onboarding3)
     }
@@ -63,6 +68,20 @@ fun HomePage(
             delay(3500)
             adIndex = (adIndex + 1) % adImages.size
         }
+    }
+
+    // Debounce search and apply filters
+    LaunchedEffect(searchQuery, selectedCategoryId, cityFilter, priceRange) {
+        delay(500)
+        productViewModel.applyFilters(
+            ProductFilters(
+                city = cityFilter.ifBlank { null },
+                priceFrom = if (priceRange.start > 0) priceRange.start else null,
+                priceTo = if (priceRange.endInclusive < 5000f) priceRange.endInclusive else null,
+                value = searchQuery.ifBlank { null },
+                categoryId = selectedCategoryId
+            )
+        )
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -86,8 +105,8 @@ fun HomePage(
             Spacer(modifier = Modifier.height(12.dp))
             SearchView(
                 onMenuClick = { showFilter = true },
-                onSearchClick = { /* TODO */ },
-                onSearchChange = { query -> /* TODO */ }
+                onSearchClick = { },
+                onSearchChange = { query -> searchQuery = query }
             )
             //reklama
             Card(
@@ -242,7 +261,16 @@ fun HomePage(
             onDismiss = { showFilter = false },
             modifier = Modifier
                 .fillMaxSize()
-                .zIndex(2f)
+                .zIndex(2f),
+            categoryViewModel = categoryViewModel,
+            initialCategoryId = selectedCategoryId,
+            onFilterApply = { filters ->
+                selectedCategoryId = filters.categoryId
+                filters.priceFrom?.let { priceRange = it..(priceRange.endInclusive) }
+                filters.priceTo?.let { priceRange = (priceRange.start)..it }
+                cityFilter = filters.city ?: ""
+                showFilter = false
+            }
         )
     }
 }

@@ -18,7 +18,12 @@ interface ProductApiService {
     @GET("api/products")
     suspend fun getProducts(
         @Query("offset") offset: Int,
-        @Query("limit") limit: Int
+        @Query("limit") limit: Int,
+        @Query("city") city: String? = null,
+        @Query("priceFrom") priceFrom: Float? = null,
+        @Query("priceTo") priceTo: Float? = null,
+        @Query("value") value: String? = null,
+        @Query("categoryId") categoryId: String? = null
     ): Response<ProductsListResponse>
 
     @GET("/api/users/products/{productId}")

@@ -15,6 +15,14 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
+data class ProductFilters(
+    val city: String? = null,
+    val priceFrom: Float? = null,
+    val priceTo: Float? = null,
+    val value: String? = null,
+    val categoryId: String? = null
+)
+
 class ProductRepository {
     private val productApi = ApiClient.productApiService
     private val gson = Gson()
@@ -84,9 +92,21 @@ class ProductRepository {
         }
     }
 
-    suspend fun getProducts(offset: Int, limit: Int): Resource<ProductsListResponse> = withContext(Dispatchers.IO) {
+    suspend fun getProducts(
+        offset: Int,
+        limit: Int,
+        filters: ProductFilters? = null
+    ): Resource<ProductsListResponse> = withContext(Dispatchers.IO) {
         try {
-            val response = productApi.getProducts(offset, limit)
+            val response = productApi.getProducts(
+                offset = offset,
+                limit = limit,
+                city = filters?.city,
+                priceFrom = filters?.priceFrom,
+                priceTo = filters?.priceTo,
+                value = filters?.value,
+                categoryId = filters?.categoryId
+            )
 
             if (response.isSuccessful) {
                 response.body()?.let { productsResponse ->

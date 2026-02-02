@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,16 +47,38 @@ import com.example.proba.model.ProductUi
 import com.example.proba.util.Resource
 import com.example.proba.viewmodel.FavoritesViewModel
 import com.example.proba.viewmodel.ProductViewModel
+import com.example.proba.viewmodel.CategoryViewModel
 import com.example.proba.navigation.MainRoutes
+import com.example.proba.data.repository.ProductFilters
+import kotlinx.coroutines.delay
 
 @Composable
 fun ProducesScreenView(
     navController: NavController,
     favoritesViewModel: FavoritesViewModel = viewModel(),
-    productViewModel: ProductViewModel = viewModel()
+    productViewModel: ProductViewModel = viewModel(),
+    categoryViewModel: CategoryViewModel = viewModel()
 ) {
     var showFilter by remember { mutableStateOf(false) }
     val productsState by productViewModel.products.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
+    var selectedCategoryId by remember { mutableStateOf<String?>(null) }
+    var priceRange by remember { mutableStateOf(0f..5000f) }
+    var cityFilter by remember { mutableStateOf("") }
+
+    // Debounce search to avoid excessive API calls
+    LaunchedEffect(searchQuery, selectedCategoryId, cityFilter, priceRange) {
+        delay(500)
+        productViewModel.applyFilters(
+            ProductFilters(
+                city = cityFilter.ifBlank { null },
+                priceFrom = if (priceRange.start > 0) priceRange.start else null,
+                priceTo = if (priceRange.endInclusive < 5000f) priceRange.endInclusive else null,
+                value = searchQuery.ifBlank { null },
+                categoryId = selectedCategoryId
+            )
+        )
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -103,8 +126,8 @@ fun ProducesScreenView(
                 Box(modifier = Modifier.weight(1f)) {
                     SearchView(
                         onMenuClick = { showFilter = true },
-                        onSearchClick = { /* TODO */ },
-                        onSearchChange = { query -> /* TODO */ }
+                        onSearchClick = { },
+                        onSearchChange = { query -> searchQuery = query }
                     )
                 }
             }
@@ -180,7 +203,15 @@ fun ProducesScreenView(
             onDismiss = { showFilter = false },
             modifier = Modifier
                 .fillMaxSize()
-                .zIndex(2f)
+                .zIndex(2f),
+            categoryViewModel = categoryViewModel,
+            initialCategoryId = selectedCategoryId,
+            onFilterApply = { filters ->
+                selectedCategoryId = filters.categoryId
+                filters.priceFrom?.let { priceRange = it..(priceRange.endInclusive) }
+                filters.priceTo?.let { priceRange = (priceRange.start)..it }
+                cityFilter = filters.city ?: ""
+            }
         )
     }
 }
