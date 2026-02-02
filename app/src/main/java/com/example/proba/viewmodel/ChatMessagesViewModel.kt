@@ -105,6 +105,24 @@ class ChatMessagesViewModel(
         socketManager.sendMessage(chatId, trimmed)
     }
 
+    fun sendInitialMessage(content: String) {
+        val trimmed = content.trim()
+        if (trimmed.isEmpty()) return
+        viewModelScope.launch {
+            when (val result = chatRepository.sendMessage(chatId, trimmed)) {
+                is Resource.Success -> {
+                    if (_messages.none { it.id == result.data.id }) {
+                        _messages.add(result.data)
+                    }
+                }
+                is Resource.Error -> {
+                    errorMessage = result.message
+                }
+                is Resource.Loading -> {}
+            }
+        }
+    }
+
     fun retry() {
         loadMessages()
     }

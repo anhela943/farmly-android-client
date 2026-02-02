@@ -84,7 +84,8 @@ fun MessageChatPage(
     navController: NavController,
     onBackClick: () -> Unit,
     chatInfoViewModel: ChatInfoViewModel,
-    chatMessagesViewModel: ChatMessagesViewModel
+    chatMessagesViewModel: ChatMessagesViewModel,
+    initialMessage: String? = null
 ) {
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
@@ -150,6 +151,13 @@ fun MessageChatPage(
                         hasMore = chatMessagesViewModel.hasMore,
                         errorMessage = chatMessagesViewModel.errorMessage
                     )
+
+                    initialMessage?.let { message ->
+                        LaunchedEffect(message) {
+                            chatMessagesViewModel.sendInitialMessage(message)
+                        }
+                    }
+
                     ChatContent(
                         navController = navController,
                         onBackClick = onBackClick,

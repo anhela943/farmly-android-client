@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -52,6 +53,7 @@ fun ProductPageView(
     imageUrl: String,
     producerImageUrl: String?,
     isFavorite: Boolean,
+    isContactLoading: Boolean = false,
     onBackClick: () -> Unit,
     onProducerClick: () -> Unit,
     onFavoriteClick: () -> Unit,
@@ -237,6 +239,7 @@ fun ProductPageView(
                 )
                 Button(
                     onClick = onContactProducerClick,
+                    enabled = !isContactLoading,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
@@ -245,11 +248,19 @@ fun ProductPageView(
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(
-                        text = "Contact producer",
-                        color = Color.White,
-                        fontSize = 18.sp
-                    )
+                    if (isContactLoading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = "Contact producer",
+                            color = Color.White,
+                            fontSize = 18.sp
+                        )
+                    }
                 }
             }
         }
@@ -289,6 +300,7 @@ fun ProductPageViewReview(){
         imageUrl = "",
         producerImageUrl = null,
         isFavorite = false,
+        isContactLoading = false,
         onBackClick = { },
         onProducerClick = { },
         onFavoriteClick = { },

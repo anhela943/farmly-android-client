@@ -116,9 +116,14 @@ fun MainNavHost(startDestination: String = MainRoutes.Home, onLogout: () -> Unit
         }
         composable(
             MainRoutes.MessageChat,
-            arguments = listOf(navArgument("chatId") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("chatId") { type = NavType.StringType },
+                navArgument("initialMessage") { type = NavType.StringType; nullable = true }
+            )
         ) { backStackEntry ->
             val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+            val encodedMessage = backStackEntry.arguments?.getString("initialMessage")
+            val initialMessage = encodedMessage?.let { java.net.URLDecoder.decode(it, "UTF-8") }
             val tokenManager = TokenManager(context.applicationContext)
             val token = tokenManager.getTokenSync() ?: ""
             val chatInfoViewModel: ChatInfoViewModel = viewModel(
@@ -131,7 +136,8 @@ fun MainNavHost(startDestination: String = MainRoutes.Home, onLogout: () -> Unit
                 navController = navController,
                 onBackClick = { navController.popBackStack() },
                 chatInfoViewModel = chatInfoViewModel,
-                chatMessagesViewModel = chatMessagesViewModel
+                chatMessagesViewModel = chatMessagesViewModel,
+                initialMessage = initialMessage
             )
         }
         composable(MainRoutes.ProfileProducer) {
