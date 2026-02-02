@@ -27,6 +27,7 @@ import com.example.proba.viewmodel.ChatMessagesViewModel
 import com.example.proba.viewmodel.ChatsViewModel
 import com.example.proba.viewmodel.FavoritesViewModel
 import com.example.proba.viewmodel.MyProductsViewModel
+import com.example.proba.viewmodel.ProductAddViewModel
 import com.example.proba.viewmodel.ProfileViewModel
 
 @Composable
@@ -90,9 +91,11 @@ fun MainNavHost(startDestination: String = MainRoutes.Home, onLogout: () -> Unit
             )
         }
         composable(MainRoutes.ProductAdd) {
+            val productAddViewModel: ProductAddViewModel = viewModel()
             ProductAddView(
                 navController = navController,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                productAddViewModel = productAddViewModel
             )
         }
         composable(MainRoutes.ProductEdit) {

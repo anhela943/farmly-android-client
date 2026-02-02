@@ -31,7 +31,13 @@ class ProductRepository {
             val priceBody = price.toString().toRequestBody("text/plain".toMediaTypeOrNull())
             val categoryIdBody = categoryId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
-            val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+            val mimeType = when (imageFile.extension.lowercase()) {
+                "jpg", "jpeg" -> "image/jpeg"
+                "png" -> "image/png"
+                "webp" -> "image/webp"
+                else -> "image/jpeg"
+            }
+            val requestFile = imageFile.asRequestBody(mimeType.toMediaTypeOrNull())
             val imagePart = MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
 
             val response = productApi.createProduct(

@@ -4,6 +4,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -26,6 +27,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -33,6 +39,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,26 +66,49 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.proba.R
 import com.example.proba.activity.bottomBarView
+import com.example.proba.data.model.response.CategoryItem
+import com.example.proba.util.Resource
+import com.example.proba.viewmodel.ProductAddViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductAddView(
     navController: NavController,
     onBackClick: () -> Unit,
-    defaultProductName: String = "Tomatoes",
-    defaultPrice: String = "200",
-    defaultCity: String = "Niš",
-    defaultDescription: String = ""
+    productAddViewModel: ProductAddViewModel
 ) {
-    var productName by rememberSaveable { mutableStateOf(defaultProductName) }
-    var price by rememberSaveable { mutableStateOf(defaultPrice) }
-    var city by rememberSaveable { mutableStateOf(defaultCity) }
-    var description by rememberSaveable { mutableStateOf(defaultDescription) }
+    val context = LocalContext.current
+    var productName by rememberSaveable { mutableStateOf("") }
+    var price by rememberSaveable { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
     var selectedImageUri by rememberSaveable { mutableStateOf<String?>(null) }
+
+    var selectedCategory by rememberSaveable { mutableStateOf<String?>(null) }
+    var selectedCategoryName by rememberSaveable { mutableStateOf("") }
+
+    val categoriesState by productAddViewModel.categories.collectAsState()
+    val createState by productAddViewModel.createProductState.collectAsState()
+
+    val isLoading = createState is Resource.Loading
+
     val imagePickerLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri ->
         if (uri != null) {
             selectedImageUri = uri.toString()
+        }
+    }
+
+    LaunchedEffect(createState) {
+        when (val state = createState) {
+            is Resource.Success -> {
+                Toast.makeText(context, "Product added successfully", Toast.LENGTH_SHORT).show()
+                onBackClick()
+            }
+            is Resource.Error -> {
+                Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+            }
+            else -> {}
         }
     }
 
@@ -147,6 +178,7 @@ fun ProductAddView(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .verticalScroll(rememberScrollState())
                                 .padding(start = 20.dp, end = 20.dp, top = 38.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
@@ -155,7 +187,8 @@ fun ProductAddView(
                             ProductAddField(
                                 label = "Product Name",
                                 value = productName,
-                                onValueChange = { productName = it }
+                                onValueChange = { productName = it },
+                                placeholder = "Enter product name"
                             )
 
                             ProductPriceField(
@@ -163,10 +196,13 @@ fun ProductAddView(
                                 onValueChange = { price = it }
                             )
 
-                            ProductAddField(
-                                label = "City",
-                                value = city,
-                                onValueChange = { city = it }
+                            ProductCategoryField(
+                                categoriesState = categoriesState,
+                                selectedCategoryName = selectedCategoryName,
+                                onCategorySelected = { category ->
+                                    selectedCategory = category.id
+                                    selectedCategoryName = category.name
+                                }
                             )
 
                             ProductAddField(
@@ -186,16 +222,133 @@ fun ProductAddView(
                             Spacer(modifier = Modifier.height(3.dp))
 
                             ProductPrimaryButton(
-                                text = "Add product",
+                                text = if (isLoading) "" else "Add product",
                                 containerColor = colorResource(R.color.darkGreenTxt),
                                 contentColor = colorResource(R.color.white),
-                                onClick = { },
+                                enabled = !isLoading,
+                                onClick = {
+                                    val priceValue = price.toDoubleOrNull()
+                                    val categoryIdValue = selectedCategory?.toIntOrNull()
+                                    val imageUri = selectedImageUri?.let { Uri.parse(it) }
+
+                                    if (productName.isBlank()) {
+                                        Toast.makeText(context, "Please enter a product name", Toast.LENGTH_SHORT).show()
+                                        return@ProductPrimaryButton
+                                    }
+                                    if (priceValue == null || priceValue <= 0) {
+                                        Toast.makeText(context, "Please enter a valid price", Toast.LENGTH_SHORT).show()
+                                        return@ProductPrimaryButton
+                                    }
+                                    if (categoryIdValue == null) {
+                                        Toast.makeText(context, "Please select a category", Toast.LENGTH_SHORT).show()
+                                        return@ProductPrimaryButton
+                                    }
+                                    if (imageUri == null) {
+                                        Toast.makeText(context, "Please select an image", Toast.LENGTH_SHORT).show()
+                                        return@ProductPrimaryButton
+                                    }
+
+                                    productAddViewModel.createProduct(
+                                        name = productName,
+                                        description = description,
+                                        price = priceValue,
+                                        categoryId = categoryIdValue,
+                                        imageUri = imageUri,
+                                        context = context
+                                    )
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(48.dp)
+                                    .height(48.dp),
+                                isLoading = isLoading
                             )
+
+                            Spacer(modifier = Modifier.height(12.dp))
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ProductCategoryField(
+    categoriesState: Resource<List<CategoryItem>>,
+    selectedCategoryName: String,
+    onCategorySelected: (CategoryItem) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val categories = when (categoriesState) {
+        is Resource.Success -> categoriesState.data
+        else -> emptyList()
+    }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "Category",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            color = colorResource(R.color.darkGreenTxt)
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(
+                        elevation = 6.dp,
+                        shape = RoundedCornerShape(12.dp),
+                        clip = false
+                    )
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+            ) {
+                OutlinedTextField(
+                    value = selectedCategoryName,
+                    onValueChange = {},
+                    readOnly = true,
+                    placeholder = {
+                        Text(
+                            text = if (categoriesState is Resource.Loading) "Loading categories..." else "Select a category",
+                            fontSize = 13.sp,
+                            color = colorResource(R.color.grey)
+                        )
+                    },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedTextColor = colorResource(R.color.black),
+                        unfocusedTextColor = colorResource(R.color.black),
+                        cursorColor = colorResource(R.color.darkGreenTxt)
+                    )
+                )
+            }
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                categories.forEach { category ->
+                    DropdownMenuItem(
+                        text = { Text(category.name) },
+                        onClick = {
+                            onCategorySelected(category)
+                            expanded = false
+                        }
+                    )
                 }
             }
         }
@@ -406,24 +559,35 @@ private fun ProductPrimaryButton(
     containerColor: Color,
     contentColor: Color,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isLoading: Boolean = false
 ) {
     Surface(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(13.dp),
-        color = containerColor
+        color = if (enabled) containerColor else containerColor.copy(alpha = 0.6f),
+        enabled = enabled
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = text,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = contentColor
-            )
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = contentColor,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    text = text,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = contentColor
+                )
+            }
         }
     }
 }
@@ -433,6 +597,7 @@ private fun ProductPrimaryButton(
 fun ProductAddPreview() {
     ProductAddView(
         navController = rememberNavController(),
-        onBackClick = {}
+        onBackClick = {},
+        productAddViewModel = ProductAddViewModel()
     )
 }
