@@ -20,7 +20,7 @@ import com.example.proba.activity.profile.EditProductView
 import com.example.proba.activity.profile.ProfileCreateView
 import com.example.proba.activity.profile.ProfilePage
 import com.example.proba.activity.profile.ProfileProducerView
-import com.example.proba.activity.profile.ReviewPageView
+import com.example.proba.activity.review.ReviewPageView
 import com.example.proba.util.TokenManager
 import com.example.proba.viewmodel.ChatInfoViewModel
 import com.example.proba.viewmodel.ChatMessagesViewModel
@@ -30,6 +30,7 @@ import com.example.proba.viewmodel.MyProductsViewModel
 import com.example.proba.viewmodel.ProductAddViewModel
 import com.example.proba.viewmodel.ProductDetailViewModel
 import com.example.proba.viewmodel.ProfileViewModel
+import com.example.proba.viewmodel.UserReviewsViewModel
 
 @Composable
 fun MainNavHost(startDestination: String = MainRoutes.Home, onLogout: () -> Unit = {}) {
@@ -149,7 +150,13 @@ fun MainNavHost(startDestination: String = MainRoutes.Home, onLogout: () -> Unit
             )
         }
         composable(MainRoutes.ReviewPage) {
-            ReviewPageView(navController = navController)
+            val userReviewsViewModel: UserReviewsViewModel = viewModel(
+                factory = UserReviewsViewModel.Factory(TokenManager(context.applicationContext))
+            )
+            ReviewPageView(
+                navController = navController,
+                userReviewsViewModel = userReviewsViewModel
+            )
         }
     }
 }

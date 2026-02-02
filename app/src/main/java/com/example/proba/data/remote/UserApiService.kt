@@ -2,6 +2,7 @@ package com.example.proba.data.remote
 
 import com.example.proba.data.model.response.ProductsListResponse
 import com.example.proba.data.model.response.ProfileResponse
+import com.example.proba.data.model.response.ReviewsResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -34,4 +35,9 @@ interface UserApiService {
         @Part("description") description: RequestBody? = null,
         @Part image: MultipartBody.Part? = null
     ): Response<ProfileResponse>
+
+    @GET("/api/users/{userId}/reviews")
+    suspend fun getUserReviews(
+        @Path("userId") userId: String
+    ): Response<ReviewsResponse>
 }

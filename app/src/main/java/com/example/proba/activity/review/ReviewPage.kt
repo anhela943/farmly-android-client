@@ -1,7 +1,5 @@
-package com.example.proba.activity.profile
+package com.example.proba.activity.review
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,8 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
@@ -43,13 +39,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.example.proba.R
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import com.example.proba.R
+import com.example.proba.data.model.response.Review
+import com.example.proba.util.Resource
+import com.example.proba.viewmodel.UserReviewsViewModel
 
 @Composable
 fun ReviewPageView(
-    navController: NavController
+    navController: NavController,
+    userReviewsViewModel: UserReviewsViewModel
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -106,17 +107,88 @@ fun ReviewPageView(
                             fontWeight = FontWeight.Bold,
                             color = colorResource(R.color.darkGreenTxt)
                         )
-
                     }
                 }
                 Spacer(modifier = Modifier.height(30.dp))
-                Column( modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.SpaceBetween) {
-                    ReviewItem("marija", "4.3", "Opid uzas bjkbfajklbfajbfjabfafjlbadjfad", R.drawable.user)
-                    Spacer(modifier = Modifier.height(10.dp))
-                    ReviewItem("Marko", "4.3", "Opid dsfsdgfvszdgvbdfhbdfghbndghbndfzgbdzgvbfszcbhdfblnh sflkockkcccccccccccccbhioasdhfdiosssssssssssvdnbhuzas bjkbfajklbfajbfjabfafjlbadjfad", R.drawable.user)
-                    Spacer(modifier = Modifier.height(10.dp))
-                    ReviewItem("Petra", "4.3", "Opid dsfsdgfvszdgvbdfhbdfghbndghbndfzgbdzgvbfszcbhdfblnh sflkockkcccccccccccccbhioasdhfdiosssssssssssvdnbhuzas bjkbfajklbfajbfjabfafjlbadjfad", R.drawable.user)
+
+                when (val state = userReviewsViewModel.reviewsState) {
+                    is Resource.Loading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(vertical = 100.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = colorResource(R.color.darkGreenTxt)
+                            )
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(vertical = 100.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = state.message,
+                                    fontSize = 16.sp,
+                                    color = colorResource(R.color.grey)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                androidx.compose.material3.Surface(
+                                    onClick = { userReviewsViewModel.loadReviews() },
+                                    shape = RoundedCornerShape(13.dp),
+                                    color = colorResource(R.color.darkGreenTxt)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .width(100.dp)
+                                            .height(40.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "Retry",
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = colorResource(R.color.white)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    is Resource.Success -> {
+                        val reviews = state.data.reviews
+                        if (reviews.isEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(vertical = 100.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "No reviews yet",
+                                    fontSize = 18.sp,
+                                    color = colorResource(R.color.grey)
+                                )
+                            }
+                        } else {
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                reviews.forEach { review ->
+                                    ReviewItem(review)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -142,10 +214,7 @@ fun ReviewPageView(
 
 @Composable
 private fun ReviewItem(
-    name: String,
-    rating: String,
-    text: String,
-    image: Int
+    review: Review
 ) {
     Card(
         modifier = Modifier
@@ -164,18 +233,29 @@ private fun ReviewItem(
                 modifier = Modifier.fillMaxSize()
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(image),
-                        contentDescription = name,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
+                    if (!review.user.imageUrl.isNullOrBlank()) {
+                        AsyncImage(
+                            model = review.user.imageUrl,
+                            contentDescription = review.user.fullName,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.user_1),
+                            contentDescription = review.user.fullName,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         Text(
-                            text = name,
+                            text = review.user.fullName,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = colorResource(R.color.black)
@@ -189,7 +269,7 @@ private fun ReviewItem(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = rating,
+                                text = review.user.rating.toString(),
                                 fontSize = 11.sp,
                                 color = colorResource(R.color.black)
                             )
@@ -200,7 +280,7 @@ private fun ReviewItem(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = text,
+                    text = review.content,
                     fontSize = 10.sp,
                     color = colorResource(R.color.black)
                 )
@@ -209,28 +289,11 @@ private fun ReviewItem(
     }
 }
 
-
-
-@Composable
-private fun EditIconButton(
-    onClick: () -> Unit
-) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier.size(38.dp)
-    ) {
-        Image(
-            painter = painterResource(R.drawable.edit),
-            contentDescription = "Edit",
-            modifier = Modifier.size(30.dp)
-        )
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun ReviewPagePreview() {
-    ReviewPageView(
-        navController = rememberNavController()
-    )
+    // Preview requires a mock ViewModel, so this is kept simple
+    Box(modifier = Modifier.fillMaxSize()) {
+        Text("Review Page Preview")
+    }
 }

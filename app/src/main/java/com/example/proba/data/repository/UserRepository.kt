@@ -3,6 +3,7 @@ package com.example.proba.data.repository
 import com.example.proba.data.model.response.ErrorResponse
 import com.example.proba.data.model.response.ProductsListResponse
 import com.example.proba.data.model.response.ProfileResponse
+import com.example.proba.data.model.response.ReviewsResponse
 import com.example.proba.data.remote.ApiClient
 import com.example.proba.util.Resource
 import com.google.gson.Gson
@@ -108,6 +109,27 @@ class UserRepository {
             val errorResponse = parseError(errorBody)
             Resource.Error(
                 message = errorResponse?.message ?: "Failed to load user products"
+            )
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Network error occurred")
+        }
+    }
+
+    suspend fun getUserReviews(userId: String): Resource<ReviewsResponse> = withContext(Dispatchers.IO) {
+        try {
+            val response = userApi.getUserReviews(userId)
+
+            if (response.isSuccessful) {
+                response.body()?.let { reviewsResponse ->
+                    return@withContext Resource.Success(reviewsResponse)
+                }
+                return@withContext Resource.Error("Empty response body")
+            }
+
+            val errorBody = response.errorBody()?.string()
+            val errorResponse = parseError(errorBody)
+            Resource.Error(
+                message = errorResponse?.message ?: "Failed to load reviews"
             )
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Network error occurred")
