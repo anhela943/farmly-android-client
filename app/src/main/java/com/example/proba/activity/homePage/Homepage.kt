@@ -83,12 +83,7 @@ fun HomePage(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 100.dp)
         ) {
-            Spacer(modifier = Modifier.height(12.dp))
-            SearchView(
-                onMenuClick = { showFilter = true },
-                onSearchClick = { /* TODO */ },
-                onSearchChange = { query -> /* TODO */ }
-            )
+            Spacer(modifier = Modifier.height(22.dp))
             //reklama
             Card(
                 modifier = Modifier
