@@ -36,10 +36,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProductPageScreen(
     navController: NavController,
-    favoritesViewModel: FavoritesViewModel = viewModel(),
+    favoritesViewModel: FavoritesViewModel,
     productDetailViewModel: ProductDetailViewModel
 ) {
     val productState by productDetailViewModel.productState.collectAsState()
+    val favoriteIds by favoritesViewModel.favoriteIds.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val chatRepository = remember { ChatRepository() }
 
@@ -80,7 +81,7 @@ fun ProductPageScreen(
                         description = data.description,
                         imageUrl = data.imageUrl,
                         producerImageUrl = data.producer.imageUrl,
-                        isFavorite = favoritesViewModel.isFavorite(product),
+                        isFavorite = favoriteIds.contains(product.id),
                         onBackClick = { navController.popBackStack() },
                         onProducerClick = {
                             navController.navigate(MainRoutes.profileProducerRoute(data.producer.id))

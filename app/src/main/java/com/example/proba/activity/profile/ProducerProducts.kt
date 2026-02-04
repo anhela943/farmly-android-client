@@ -19,6 +19,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -43,8 +45,10 @@ import com.example.proba.viewmodel.FavoritesViewModel
 @Composable
 fun ProductsPageView(
     navController: NavController,
-    favoritesViewModel: FavoritesViewModel = viewModel()
+    favoritesViewModel: FavoritesViewModel
 ) {
+    val favoriteIds by favoritesViewModel.favoriteIds.collectAsState()
+
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.backgorund),
@@ -118,7 +122,7 @@ fun ProductsPageView(
                         producerReview = product1.producerReview,
                         city = product1.city,
                         imageUrl = product1.imageUrl,
-                        isFavorite = favoritesViewModel.isFavorite(product1),
+                        isFavorite = favoriteIds.contains(product1.id),
                         onProductClick = { /* TODO: pass real product ID */ },
                         onProducerClick = {
                             product1.producerId?.let {
@@ -142,7 +146,7 @@ fun ProductsPageView(
                         producerReview = product2.producerReview,
                         city = product2.city,
                         imageUrl = product2.imageUrl,
-                        isFavorite = favoritesViewModel.isFavorite(product2),
+                        isFavorite = favoriteIds.contains(product2.id),
                         onProductClick = { /* TODO: pass real product ID */ },
                         onProducerClick = {
                             product2.producerId?.let {
@@ -166,7 +170,7 @@ fun ProductsPageView(
                         producerReview = product3.producerReview,
                         city = product3.city,
                         imageUrl = product3.imageUrl,
-                        isFavorite = favoritesViewModel.isFavorite(product3),
+                        isFavorite = favoriteIds.contains(product3.id),
                         onProductClick = { /* TODO: pass real product ID */ },
                         onProducerClick = {
                             product3.producerId?.let {
@@ -190,7 +194,7 @@ fun ProductsPageView(
                         producerReview = product4.producerReview,
                         city = product4.city,
                         imageUrl = product4.imageUrl,
-                        isFavorite = favoritesViewModel.isFavorite(product4),
+                        isFavorite = favoriteIds.contains(product4.id),
                         onProductClick = { /* TODO: pass real product ID */ },
                         onProducerClick = {
                             product4.producerId?.let {
@@ -214,7 +218,7 @@ fun ProductsPageView(
                         producerReview = product5.producerReview,
                         city = product5.city,
                         imageUrl = product5.imageUrl,
-                        isFavorite = favoritesViewModel.isFavorite(product5),
+                        isFavorite = favoriteIds.contains(product5.id),
                         onProductClick = { /* TODO: pass real product ID */ },
                         onProducerClick = {
                             product5.producerId?.let {
@@ -238,7 +242,7 @@ fun ProductsPageView(
                         producerReview = product6.producerReview,
                         city = product6.city,
                         imageUrl = product6.imageUrl,
-                        isFavorite = favoritesViewModel.isFavorite(product6),
+                        isFavorite = favoriteIds.contains(product6.id),
                         onProductClick = { /* TODO: pass real product ID */ },
                         onProducerClick = {
                             product6.producerId?.let {
@@ -275,6 +279,7 @@ fun ProductsPageView(
 @Composable
 fun ProductsPageView() {
     ProductsPageView(
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        favoritesViewModel = viewModel()
     )
 }

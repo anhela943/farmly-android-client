@@ -14,7 +14,7 @@ class SocketManager(private val token: String) {
 
     companion object {
         private const val TAG = "SocketManager"
-        private const val BASE_URL = "https://farmly-rest-api.onrender.com/"
+        private const val BASE_URL = "https://novi2.onrender.com"
     }
 
     private var socket: Socket? = null

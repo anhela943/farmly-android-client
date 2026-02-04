@@ -28,6 +28,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,7 +63,7 @@ import com.example.proba.viewmodel.ProducerProfileViewModel
 fun ProfileProducerView(
     navController: NavController,
     userId: String?,
-    favoritesViewModel: FavoritesViewModel = viewModel()
+    favoritesViewModel: FavoritesViewModel
 ) {
     if (userId == null) {
         Box(
@@ -83,6 +85,7 @@ fun ProfileProducerView(
     val profileState = producerProfileViewModel.profileState
     val productsState = producerProfileViewModel.productsState
     val reviewsState = producerProfileViewModel.reviewsState
+    val favoriteIds by favoritesViewModel.favoriteIds.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -307,7 +310,7 @@ fun ProfileProducerView(
                                                     city = product.city,
                                                     imageUrl = product.imageUrl,
                                                     producerImageUrl = product.producerImageUrl,
-                                                    isFavorite = favoritesViewModel.isFavorite(product),
+                                                    isFavorite = favoriteIds.contains(product.id),
                                                     onProductClick = {
                                                         navController.navigate(MainRoutes.productRoute(product.id))
                                                     },
@@ -539,6 +542,7 @@ private fun ReviewItem(
 fun ProfileProducerViewPreview() {
     ProfileProducerView(
         navController = rememberNavController(),
-        userId = "1"
+        userId = "1",
+        favoritesViewModel = viewModel()
     )
 }

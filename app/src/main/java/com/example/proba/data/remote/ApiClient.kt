@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    private const val BASE_URL = "https://farmly-rest-api.onrender.com/"
+    private const val BASE_URL = "https://novi2.onrender.com"
     private const val TIMEOUT_SECONDS = 30L
 
     private var tokenManager: TokenManager? = null

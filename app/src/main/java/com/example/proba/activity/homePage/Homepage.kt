@@ -48,12 +48,13 @@ import kotlinx.coroutines.delay
 @Composable
 fun HomePage(
     navController: NavController,
-    favoritesViewModel: FavoritesViewModel = viewModel(),
+    favoritesViewModel: FavoritesViewModel,
     categoryViewModel: CategoryViewModel = viewModel(),
     productViewModel: ProductViewModel = viewModel()
 ) {
     val categoriesState by categoryViewModel.categories.collectAsState()
     val productsState by productViewModel.products.collectAsState()
+    val favoriteIds by favoritesViewModel.favoriteIds.collectAsState()
     var showFilter by remember { mutableStateOf(false) }
     val adImages = remember {
         listOf(R.drawable.onboarding1, R.drawable.onboarding2, R.drawable.onboarding3)
@@ -192,7 +193,7 @@ fun HomePage(
                                 city = product.city,
                                 imageUrl = product.imageUrl,
                                 producerImageUrl = product.producerImageUrl,
-                                isFavorite = favoritesViewModel.isFavorite(product),
+                                isFavorite = favoriteIds.contains(product.id),
                                 onProductClick = { navController.navigate(MainRoutes.productRoute(product.id)) },
                                 onProducerClick = {
                                     product.producerId?.let {
@@ -246,6 +247,7 @@ fun HomePage(
 @Composable
 fun HomePagePreview() {
     HomePage(
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        favoritesViewModel = viewModel()
     )
 }

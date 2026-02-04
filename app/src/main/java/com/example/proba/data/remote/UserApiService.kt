@@ -1,6 +1,8 @@
 package com.example.proba.data.remote
 
 import com.example.proba.data.model.request.CreateReviewRequest
+import com.example.proba.data.model.response.FavoriteActionResponse
+import com.example.proba.data.model.response.FavoritesListResponse
 import com.example.proba.data.model.response.ProductsListResponse
 import com.example.proba.data.model.response.ProfileResponse
 import com.example.proba.data.model.response.ReviewsResponse
@@ -8,6 +10,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
@@ -48,4 +51,17 @@ interface UserApiService {
     suspend fun createReview(
         @Body request: CreateReviewRequest
     ): Response<Unit>
+
+    @GET("/api/users/favorites")
+    suspend fun getFavorites(): Response<FavoritesListResponse>
+
+    @POST("/api/users/favorites/{productId}")
+    suspend fun addFavorite(
+        @Path("productId") productId: String
+    ): Response<FavoriteActionResponse>
+
+    @DELETE("/api/users/favorites/{productId}")
+    suspend fun removeFavorite(
+        @Path("productId") productId: String
+    ): Response<FavoriteActionResponse>
 }

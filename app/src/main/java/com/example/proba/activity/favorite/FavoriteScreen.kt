@@ -1,8 +1,6 @@
 package com.example.proba.activity.favorite
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,20 +13,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -45,16 +40,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proba.R
 import com.example.proba.activity.SearchView
 import com.example.proba.activity.bottomBarView
+import com.example.proba.activity.product.ProductView
+import com.example.proba.util.Resource
 import com.example.proba.viewmodel.FavoritesViewModel
 import com.example.proba.navigation.MainRoutes
-import coil.compose.AsyncImage
 
 @Composable
 fun FavoriteScreenView(
     navController: NavController,
-    favoritesViewModel: FavoritesViewModel = viewModel()
+    favoritesViewModel: FavoritesViewModel
 ) {
-    val favorites = favoritesViewModel.favorites
+    val favoritesState by favoritesViewModel.favoritesState.collectAsState()
+    val favoriteIds by favoritesViewModel.favoriteIds.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -115,47 +112,89 @@ fun FavoriteScreenView(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                if (favorites.isEmpty()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 40.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.favorite),
-                            contentDescription = "No favorites",
-                            modifier = Modifier.size(68.dp),
-                            colorFilter = ColorFilter.tint(colorResource(R.color.darkGreenTxt))
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Nema favorita",
-                            fontSize = 26.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = colorResource(R.color.darkGreenTxt)
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Dodaj proizvode klikom na srce",
-                            fontSize = 18.sp,
-                            color = colorResource(R.color.darkGreenTxt)
-                        )
+                when (val state = favoritesState) {
+                    is Resource.Loading -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 40.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator(
+                                color = colorResource(R.color.darkGreenTxt)
+                            )
+                        }
                     }
-                } else {
-                    favorites.forEach { item ->
-                        FavoriteItem(
-                            title = item.name,
-                            rating = item.producerReview ?: 0.0,
-                            owner = item.producer,
-                            imageUrl = item.imageUrl,
-                            onCardClick = {
-                                navController.navigate(MainRoutes.productRoute(item.id))
-                            },
-                            onHeartClick = {
-                                favoritesViewModel.removeFavorite(item)
+                    is Resource.Error -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 40.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = state.message ?: "Error loading favorites",
+                                fontSize = 18.sp,
+                                color = Color.Red,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                    is Resource.Success -> {
+                        val favorites = state.data
+                        if (favorites.isEmpty()) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 40.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.favorite),
+                                    contentDescription = "No favorites",
+                                    modifier = Modifier.size(68.dp),
+                                    colorFilter = ColorFilter.tint(colorResource(R.color.darkGreenTxt))
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "No favorites",
+                                    fontSize = 26.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = colorResource(R.color.darkGreenTxt)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Add to favorites by clicking the heart icon",
+                                    fontSize = 18.sp,
+                                    color = colorResource(R.color.darkGreenTxt)
+                                )
                             }
-                        )
+                        } else {
+                            favorites.forEach { item ->
+                                ProductView(
+                                    productName = item.name,
+                                    price = item.price,
+                                    producer = item.producer,
+                                    producerReview = item.producerReview,
+                                    city = item.city,
+                                    imageUrl = item.imageUrl,
+                                    producerImageUrl = item.producerImageUrl,
+                                    isFavorite = favoriteIds.contains(item.id),
+                                    onProductClick = {
+                                        navController.navigate(MainRoutes.productRoute(item.id))
+                                    },
+                                    onProducerClick = {
+                                        item.producerId?.let {
+                                            navController.navigate(MainRoutes.profileProducerRoute(it))
+                                        }
+                                    },
+                                    onFavoriteClick = {
+                                        favoritesViewModel.toggleFavorite(item.id)
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -171,98 +210,11 @@ fun FavoriteScreenView(
     }
 }
 
-@Composable
-private fun FavoriteItem(
-    title: String,
-    rating: Double,
-    owner: String,
-    imageUrl: String,
-    onCardClick: () -> Unit,
-    onHeartClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(82.dp)
-            .clickable { onCardClick() },
-        shape = RoundedCornerShape(20.dp),
-        border = BorderStroke(1.5.dp, colorResource(R.color.greenBackground)),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        elevation = CardDefaults.cardElevation(6.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.horizontalGradient(
-                        listOf(
-                            colorResource(R.color.greenFilter),
-                            colorResource(R.color.lightGreen)
-                        )
-                    )
-                )
-                .padding(horizontal = 12.dp, vertical = 8.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = title,
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clip(RoundedCornerShape(14.dp)),
-                    contentScale = ContentScale.Crop
-                )
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Row {
-                        Text(
-                            text = title,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colorResource(R.color.black)
-                        )
-                        Spacer(modifier = Modifier.width(7.dp))
-                        Text(
-                            text = rating.toString(),
-                            fontSize = 12.sp,
-                            color = colorResource(R.color.black)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = owner,
-                        fontSize = 12.sp,
-                        color = colorResource(R.color.black)
-                    )
-                }
-
-                IconButton(
-                    onClick = onHeartClick,
-                    modifier = Modifier.size(28.dp)
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.heart),
-                        contentDescription = "Favorite",
-                        modifier = Modifier.size(22.dp),
-                        colorFilter = ColorFilter.tint(colorResource(R.color.darkGreenTxt))
-                    )
-                }
-            }
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun FavoriteScreenViewPreview() {
     FavoriteScreenView(
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        favoritesViewModel = viewModel()
     )
 }

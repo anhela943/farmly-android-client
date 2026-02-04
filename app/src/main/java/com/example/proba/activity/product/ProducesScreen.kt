@@ -55,12 +55,13 @@ import kotlinx.coroutines.delay
 @Composable
 fun ProducesScreenView(
     navController: NavController,
-    favoritesViewModel: FavoritesViewModel = viewModel(),
+    favoritesViewModel: FavoritesViewModel,
     productViewModel: ProductViewModel = viewModel(),
     categoryViewModel: CategoryViewModel = viewModel()
 ) {
     var showFilter by remember { mutableStateOf(false) }
     val productsState by productViewModel.products.collectAsState()
+    val favoriteIds by favoritesViewModel.favoriteIds.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
     var selectedCategoryId by remember { mutableStateOf<String?>(null) }
     var priceRange by remember { mutableStateOf(0f..5000f) }
@@ -160,7 +161,7 @@ fun ProducesScreenView(
                                 city = product.city,
                                 imageUrl = product.imageUrl,
                                 producerImageUrl = product.producerImageUrl,
-                                isFavorite = favoritesViewModel.isFavorite(product),
+                                isFavorite = favoriteIds.contains(product.id),
                                 onProductClick = { navController.navigate(MainRoutes.productRoute(product.id)) },
                                 onProducerClick = {
                                     product.producerId?.let {
@@ -220,6 +221,7 @@ fun ProducesScreenView(
 @Composable
 fun ProducesScreenViewPreview() {
     ProducesScreenView(
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        favoritesViewModel = viewModel()
     )
 }
